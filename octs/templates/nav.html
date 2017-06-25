@@ -1,0 +1,55 @@
+<nav class="navbar  navbar-default navbar-fixed-top">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <a class="navbar-brand" href="javascript:void(0)">
+                <img alt="brand" style="max-width:200px;margin-top:-13px;" src="/static/img/logo.png"/>
+            </a>
+        </div>
+
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <ul class="nav navbar-nav navbar-right">
+                {% if current_user.is_authenticated %}
+              
+                    <li><a href="#">{{ current_user.name }}</a></li>
+                    <li><a href="{{ url_for('auth.logout') }}">登出</a></li>
+                {% else %}
+                    <li><a href="{{ url_for('auth.login') }}">登录</a></li>
+                {% endif %}
+
+            </ul>
+
+            <ul class="nav navbar-nav navbar-right" id="nav-links">
+                <!--<li class="active"><a href="{# {% url 'OnlineTeaching.views.index' %} #}">首页</a></li>-->
+                <li><a href="">首页</a></li>
+                <!--<li><h1>{{ request.path }}</h1></li>-->
+                <li><a href="javascript:void(0)">新闻公告</a></li>
+                <li><a href="javascript:void(0)">课程浏览</a></li>
+                <li>
+                    <a href="javascript:void(0)">本科课程</a>
+                </li>
+                <li>
+                    <a href="javascript:void(0)">研究生课程</a>
+                </li>
+                {% if current_user.is_authenticated %}
+                    <li>
+                        {% if current_user.roleString == 'admin' %}
+                            <a href="">管理员个人中心</a>
+                        {% elif current_user.roleString == 'teacher'%}
+                            <a href="">教师个人中心</a>
+                        {% elif current_user.roleString == 'student' %}
+                            <a href="">学生个人中心</a>
+                        {% endif %}
+                    </li>
+                {% endif %}
+                <li>
+
+                        <a>          </a>
+                </li>
+
+
+            </ul>
+
+        </div><!-- /.navbar-collapse -->
+    </div><!-- /.container-fluid -->
+</nav>
+

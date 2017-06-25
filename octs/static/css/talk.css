@@ -1,0 +1,33 @@
+.talk-link{
+  text-align: center;
+  text-decoration: none;
+  color: #eee;
+}
+.talk-link:hover{
+  text-decoration: none;
+}
+.course-thumbnail{
+  border: 1px solid #333;
+  border-width: 0 0 1px 0;
+  padding: 10px 0 10px 15px;
+}
+.course-thumbnail-active{
+  background-color: rgb(58,63,69);
+}
+.course-thumbnail img{
+  width: 40px;
+  height: 40px;
+}
+.course-menu{
+  border: 1px solid #222;
+  border-width: 0 1px 0 0;
+  background-color: rgb(46,50,56);
+  /*background-color: #3986c8;*/
+}
+#talk-div{
+  background-color: rgb(238,238,238);
+}
+#message-div{
+  border: 1px solid #777;
+  border-width: 0 0 1px 0;
+}

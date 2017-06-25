@@ -1,0 +1,25 @@
+body{
+  font-family: "Helvetica Neue","Hiragino Sans GB",Arial,"微软雅黑",sans-serif;
+  background-image: url("../img/bg.jpg");
+  background-size: 100% auto;
+}
+
+.login-container{
+  margin-top: 7%;
+}
+.login-form{
+  background-color: #3986c8;
+  border-radius: 5px;
+  box-shadow: 2px 2px 4px 1px rgba(0, 0, 0, 0.4);
+  text-align: center;
+  padding: 40px 0 10px 0;
+}
+.login-form .title{
+  color: #fff;
+  margin-top: -20px;
+  margin-bottom: 30px;
+  text-shadow: 2px 2px 5px #222;
+}
+.login-form .forgot-password{
+  color: #fff;
+}

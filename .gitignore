@@ -17,6 +17,9 @@ develop-eggs
 lib
 lib64
 .DS_Store
+.idea/workspace.xml
+dev.db
+migrations/
 
 # Installer logs
 pip-log.txt

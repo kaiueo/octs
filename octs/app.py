@@ -2,7 +2,7 @@
 """The app module, containing the app factory function."""
 from flask import Flask, render_template
 
-from octs import commands, public, user, auth
+from octs import commands, public, user, auth, teacher
 from octs.assets import assets
 from octs.extensions import bcrypt, cache, csrf_protect, db, debug_toolbar, login_manager, migrate
 from octs.settings import ProdConfig
@@ -41,6 +41,7 @@ def register_blueprints(app):
     app.register_blueprint(public.views.blueprint)
     app.register_blueprint(user.views.blueprint)
     app.register_blueprint(auth.views.blueprint)
+    app.register_blueprint(teacher.views.blueprint)
     return None
 
 

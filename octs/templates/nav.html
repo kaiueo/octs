@@ -35,7 +35,7 @@
                         {% if current_user.roleString == 'admin' %}
                             <a href="">管理员个人中心</a>
                         {% elif current_user.roleString == 'teacher'%}
-                            <a href="">教师个人中心</a>
+                            <a href="{{ url_for('teacher.home') }}">教师个人中心</a>
                         {% elif current_user.roleString == 'student' %}
                             <a href="">学生个人中心</a>
                         {% endif %}

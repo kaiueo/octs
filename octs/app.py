@@ -65,7 +65,9 @@ def register_shellcontext(app):
         return {
             'db': db,
             'User': user.models.User,
-            'Role': user.models.Role
+            'Role': user.models.Role,
+            'Course': user.models.Course,
+            'Term': user.models.Term
         }
 
     app.shell_context_processor(shell_context)

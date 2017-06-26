@@ -42,6 +42,11 @@ class Role(SurrogatePK, Model):
             db.session.add(role)
         db.session.commit()
 
+course_user_relation = db.Table('course_user_relation',
+                                db.Column('user_id', db.Integer, db.ForeignKey('users.id')),
+                                db.Column('course_id', db.Integer, db.ForeignKey('courses.id'))
+                                )
+
 class User(UserMixin, SurrogatePK, Model):
     """A user of the app."""
 
@@ -104,3 +109,55 @@ class User(UserMixin, SurrogatePK, Model):
     def __repr__(self):
         """Represent instance as a unique string."""
         return '<User({username!r})>'.format(username=self.username)
+
+
+class Term(SurrogatePK, Model):
+    __tablename__ = 'terms'
+    name = Column(db.String(256), unique=True)
+    start_time = Column(db.DateTime, nullable=False, default=dt.datetime.utcnow)
+    end_time = Column(db.DateTime, nullable=False, default=dt.datetime.utcnow)
+    week_number = Column(db.Integer, nullable=False, default=1)
+    courses = relationship('Course',  backref='term', lazy='dynamic')
+    def __init__(self, name, week_number, **kwargs):
+        """Create instance."""
+        db.Model.__init__(self, name=name, **kwargs)
+        self.week_number = week_number
+
+
+
+class Course(SurrogatePK, Model):
+
+    __tablename__ = 'courses'
+    name = Column(db.String(256))
+    credit = Column(db.Integer, nullable=False, default=1)
+    start_time = Column(db.DateTime, nullable=False, default=dt.datetime.utcnow)
+    location = Column(db.String(256))
+    course_introduction = Column(db.String())
+    course_outline = Column(db.String())
+    term_id = reference_col('terms', nullable=False)
+    users = relationship('User', secondary=course_user_relation, backref='courses', lazy='dynamic')
+
+    def __init__(self, name, **kwargs):
+        """Create instance."""
+        db.Model.__init__(self, name=name, **kwargs)
+
+    @staticmethod
+    def insert_courses():
+        term = Term('2017 夏', 2)
+        course = Course('软件开发实践')
+        course.term = term
+        for i in range(5):
+            user = User.query.filter_by(username='student{0}'.format(i)).first()
+            course.users.append(user)
+        user = User.query.filter_by(username='teacher1').first()
+        user.courses.append(course)
+
+        user = User.query.filter_by(username='teacher2').first()
+        user.courses.append(course)
+
+        db.session.add(term)
+        db.session.add(course)
+        db.session.commit()
+
+
+

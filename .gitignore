@@ -50,3 +50,10 @@ docs/_build
 
 # Virtualenvs
 env/
+__pycache__/
+octs/__pycache__/
+octs/auth/__pycache__/
+octs/public/__pycache__/
+octs/student/__pycache__/
+octs/teacher/__pycache__/
+octs/user/__pycache__/

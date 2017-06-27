@@ -20,8 +20,7 @@ def course_edit(id):
 
     return render_template('teacher/course_edit.html',course=course)
 
-def return_before():
-    return render_template('teacher/course.html')
+def forward_return
 
 
 @blueprint.route('/course/student/<id>')

@@ -51,7 +51,9 @@ class User(UserMixin, SurrogatePK, Model):
     """A user of the app."""
 
     __tablename__ = 'users'
+    user_id = Column(db.String(100), default='11111111', nullable=False)
     username = Column(db.String(80), unique=True, nullable=False)
+    gender = Column(db.Boolean(), default=False, nullable=False)
     #: The hashed password
     password = Column(db.Binary(128), nullable=True)
     created_at = Column(db.DateTime, nullable=False, default=dt.datetime.utcnow)
@@ -84,6 +86,10 @@ class User(UserMixin, SurrogatePK, Model):
             if user is None:
                 user = User("student{0}".format(i), Permission.STUDENT, '111')
                 user.name = '学生{0}'.format(i)
+                user.gender = False
+                if i == 3:
+                    user.gender = True
+                user.user_id = '{0}{0}{0}{0}{0}{0}{0}{0}'.format(i)
             db.session.add(user)
 
         for i in range(5):
@@ -91,10 +97,16 @@ class User(UserMixin, SurrogatePK, Model):
             if user is None:
                 user = User("teacher{0}".format(i), Permission.TEACHER, '111')
                 user.name = '教师{0}'.format(i)
+                user.gender = False
+                if i == 3:
+                    user.gender = True
+                user.user_id = '{0}{0}{0}{0}{0}{0}{0}{0}'.format(i)
             db.session.add(user)
 
         user = User("admin", Permission.ADMIN, '111')
         user.name = "admin"
+        user.user_id = '00000000'
+        user.gender = False
         db.session.add(user)
         db.session.commit()
 
@@ -114,8 +126,8 @@ class User(UserMixin, SurrogatePK, Model):
 class Term(SurrogatePK, Model):
     __tablename__ = 'terms'
     name = Column(db.String(256), unique=True)
-    start_time = Column(db.DateTime, nullable=False, default=dt.datetime.utcnow)
-    end_time = Column(db.DateTime, nullable=False, default=dt.datetime.utcnow)
+    start_time = Column(db.Date, nullable=False, default=dt.date.today)
+    end_time = Column(db.Date, nullable=False, default=dt.date.today)
     week_number = Column(db.Integer, nullable=False, default=1)
     courses = relationship('Course',  backref='term', lazy='dynamic')
     def __init__(self, name, week_number, **kwargs):
@@ -130,7 +142,7 @@ class Course(SurrogatePK, Model):
     __tablename__ = 'courses'
     name = Column(db.String(256))
     credit = Column(db.Integer, nullable=False, default=1)
-    start_time = Column(db.DateTime, nullable=False, default=dt.datetime.utcnow)
+    start_time = Column(db.Date, nullable=False, default=dt.date.today)
     location = Column(db.String(256))
     course_introduction = Column(db.String())
     course_outline = Column(db.String())

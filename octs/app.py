@@ -4,7 +4,7 @@ from flask import Flask, render_template
 
 from octs import commands, public, user, auth, teacher, student,admin
 from octs.assets import assets
-from octs.extensions import bcrypt, cache, csrf_protect, db, debug_toolbar, login_manager, migrate
+from octs.extensions import bcrypt, cache, csrf_protect, db, debug_toolbar, login_manager, migrate, bootstrap
 from octs.settings import ProdConfig
 
 
@@ -33,6 +33,7 @@ def register_extensions(app):
     login_manager.init_app(app)
     debug_toolbar.init_app(app)
     migrate.init_app(app, db)
+    bootstrap.init_app(app)
     return None
 
 

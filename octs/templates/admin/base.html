@@ -87,8 +87,8 @@
                     <li>
                         {% block navCommunicate %}
                             <a class="ajax-link"
-                               href="">
-                                <i class="glyphicon glyphicon-globe"></i><span>在线交流</span>
+                               href="{{ url_for('admin.term')}}" >
+                                <i class="glyphicon glyphicon-globe"></i><span>查看学期</span>
                             </a>
                         {% endblock %}
                     </li>

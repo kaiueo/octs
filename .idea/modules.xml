@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<project version="4">
-  <component name="ProjectModuleManager">
-    <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/octs.iml" filepath="$PROJECT_DIR$/.idea/octs.iml" />
-      <module fileurl="file://C:\Users\john\PycharmProjects\octs\.idea\octs.iml" filepath="C:\Users\john\PycharmProjects\octs\.idea\octs.iml" />
-    </modules>
-  </component>
-</project>

@@ -20,8 +20,7 @@ lib64
 .idea/workspace.xml
 dev.db
 migrations/
-.idea/misc.xml
-.idea/octs.iml
+.idea
 
 # Installer logs
 pip-log.txt

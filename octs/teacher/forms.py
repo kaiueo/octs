@@ -8,6 +8,6 @@ class CourseForm(Form):
     credit = FloatField('学分')
     location = StringField('地点')
     start_time = DateField('开始时间')
-    course_introduction = StringField('课程介绍',validators=[DataRequired()])
-    course_outline = StringField("课程大纲",validators=[DataRequired()])
+    course_introduction = StringField('课程介绍')
+    course_outline = StringField("课程大纲")
     submit = SubmitField('提交')

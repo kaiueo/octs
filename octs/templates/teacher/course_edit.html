@@ -1,0 +1,48 @@
+{% extends "teacher/index.html" %}
+{% import "bootstrap/wtf.html" as wtf  %}
+
+{% block teacherContent %}
+    <form method="POST">
+    <table class="table table-bordered table-hover definewidth m10" style="margin-left:3%;margin-top:2%;">
+    <tr>
+        <td width="10%" class="tableleft">{{ form.coursename.label }}</td>
+         <td>{{ form.coursename.data }}</td>
+    </tr>
+
+    <tr>
+        <td width="10%" class="tableleft">课程学分</td>
+        <td>{{ form.credit.data}}</td>
+    </tr>
+
+    <tr>
+        <td width="10%" class="tableleft">上课地点</td>
+        <td>{{ form.location.data}}</td>
+    </tr>
+    <tr>
+        <td width="10%" class="tableleft">开始时间</td>
+        <td>{{ form.start_time.data}}</td>
+    </tr>
+    <tr>
+        <td width="10%" class="tableleft">课程介绍</td>
+        <td>{{ form.course_introduction() }}</td>
+
+    </tr>
+    <tr>
+        <td class="tableleft">课程大纲</td>
+        <td>{{ form.course_outline() }}</td>
+    </tr>
+
+    <tr>
+        <td class="tableleft"></td>
+        <td>
+           {{ form.submit(class="btn btn-primary")}}&nbsp;&nbsp;
+            <a type="button" ><a class="btn btn-primary" href="{{ url_for('teacher.course') }}">返回列表</a></a>
+        </td>
+    </tr>
+</table>
+    </form>
+
+
+
+
+{% endblock %}

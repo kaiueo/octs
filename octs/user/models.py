@@ -134,7 +134,7 @@ class Course(SurrogatePK, Model):
     location = Column(db.String(256))
     course_introduction = Column(db.String())
     course_outline = Column(db.String())
-    term_id = reference_col('terms', nullable=False)
+    term_id = reference_col('terms')
     users = relationship('User', secondary=course_user_relation, backref='courses', lazy='dynamic')
 
     def __init__(self, name, **kwargs):

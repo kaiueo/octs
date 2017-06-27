@@ -1,10 +1,9 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends 'admin/base.html'%}
+{% import "bootstrap/wtf.html" as wtf  %}
 
-</body>
-</html>
+
+{% block adminContent %}
+
+    {{ wtf.quick_form(form) }}
+    <a class="btn btn-primary" href="{{ url_for('admin.course') }}">返回</a>
+{% endblock %}

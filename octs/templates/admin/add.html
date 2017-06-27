@@ -4,4 +4,5 @@
 
 {% block adminContent %}
     {{ wtf.quick_form(form) }}
+    <a class="btn btn-primary" href="{{ url_for('admin.course') }}">返回</a>
 {% endblock %}

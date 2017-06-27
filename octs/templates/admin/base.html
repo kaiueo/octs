@@ -32,7 +32,7 @@
                 <ul class="nav nav-pills nav-stacked main-menu">
                     <li class="nav-header">
                         {% block navTeHomepage %}
-                            <a class="ajax-link" href="">
+                            <a class="ajax-link" href="{{ url_for('admin.home') }}">
                                 <i class="glyphicon glyphicon-home"></i><span>我的主页</span>
                             </a>
                         {% endblock %}

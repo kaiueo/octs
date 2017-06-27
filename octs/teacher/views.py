@@ -20,10 +20,14 @@ def course_edit(id):
 
     return render_template('teacher/course_edit.html',course=course)
 
+def return_before():
+    return render_template('teacher/course.html')
+
 
 @blueprint.route('/course/student/<id>')
 def student(id):
     course=Course.query.filter_by(id=id).first()
     studentList = course.users
     return render_template('teacher/student.html',list=studentList)
+
 

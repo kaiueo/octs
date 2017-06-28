@@ -1,7 +1,7 @@
 from flask_wtf import Form
 from wtforms import PasswordField, StringField,SubmitField,FloatField,DateField
 from wtforms.validators import DataRequired, Email, EqualTo, Length
-
+# coding=utf-8
 
 class CourseForm(Form):
     coursename = StringField('名称')

@@ -11,16 +11,11 @@
 
 
 {% block content %}
-    <br/>
-    <br/>
-    <!-- left menu starts -->
-    <div class="col-sm-2 col-md-10 col-lg-2">
-        <div class="sidebar-nav">
-            <div class="nav-canvas">
-                <div class="nav-sm nav nav-stacked">
-                </div>
-                <ul class="nav nav-pills nav-stacked main-menu">
-                    <li class="nav-header">
+
+  <aside class="main-sidebar">
+  <section class="sidebar">
+  <ul class="sidebar-menu">
+  <li class="nav-header">
                         {% block navTeHomepage %}
                             <a class="ajax-link" href="{{ url_for('admin.home') }}">
                                 <i class="glyphicon glyphicon-home"></i><span>我的主页</span>
@@ -44,25 +39,17 @@
                             </a>
                         {% endblock %}
                     </li>
-                </ul>
-            </div>
-        </div>
-    </div>
-
-    {% block teacher %}
-
-        <!--显示已选课程,点击课程进入当前课程目录-->
-
-        <div class="col-sm-10 col-md-10 col-lg-10 content">
-            <div class="row">
+  </ul>
+  </section>
+  </aside>
+    <div class="content-wrapper">
+    <section class="content">
+<div class="box">
                 {% block adminContent %}
                 {% endblock %}
+</div>
+                </section>
+    </div>
 
-
-            </div>
-        </div>
-
-
-    {% endblock %}
 
 {% endblock %}

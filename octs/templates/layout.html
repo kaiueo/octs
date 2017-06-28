@@ -26,19 +26,42 @@
   {% endassets %}
 
   {% block css %}{% endblock %}
+
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <!-- Tell the browser to be responsive to screen width -->
+  <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+ 
+  <!-- Ionicons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ionicons/2.0.1/css/ionicons.min.css">
+  <!-- Theme style -->
+  <link rel="stylesheet" href="/static/dist/css/AdminLTE.min.css">
+  <!-- AdminLTE Skins. We have chosen the skin-blue for this starter
+        page. However, you can choose any other skin. Make sure you
+        apply the skin class to the body tag so the changes take effect.
+  -->
+  <link rel="stylesheet" href="/static/dist/css/skins/skin-blue.min.css">
  
 
 </head>
-<body class="{% block body_class %}{% endblock %}">
+<body class="hold-transition skin-blue sidebar-mini">
+
+<div class="wrapper" style="background-color: #ecf0f5;">
+<header class="main-header">
+<div>
+        <div class="logo">
+            <a class="navbar-brand" href="javascript:void(0)">
+                <img alt="brand" style="max-width:200px;margin-top:-13px;" src="/static/img/logo.png"/>
+            </a>
+        </div>
+
 {% block body %}
 {% with form=form  %}
 {% include "nav.html" %}
 {% endwith %}
+  </div>
+</header>
 
-<header>{% block header %}{% endblock %}</header>
-<div class="{% block content_class %}container{% endblock content_class %}">
 
-  <div role="main">
 <div class="container">
     {% for message in get_flashed_messages() %}
     <div class="alert alert-warning">
@@ -54,7 +77,6 @@
     {% block content %}{% endblock %}
   </div>
 
-</div><!-- end container -->
 
 {% include "footer.html" %}
 
@@ -67,6 +89,7 @@
 {% endblock %}
 <!-- end scripts -->
 {% endblock %}
+
 </body>
 </html>
 

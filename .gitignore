@@ -57,3 +57,4 @@ octs/public/__pycache__/
 octs/student/__pycache__/
 octs/teacher/__pycache__/
 octs/user/__pycache__/
+!/octs/templates/build/

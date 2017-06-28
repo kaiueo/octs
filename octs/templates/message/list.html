@@ -2,7 +2,7 @@
 
 {% block messageContent %}
 
-<table class="table table-hover definewidth m10">
+    <table class="table table-hover definewidth m10">
     <thead>
     <tr>
         <th>标题</th>
@@ -15,8 +15,8 @@
         <tr>
                 <td>{{ messages[i].title }}</td>
                 <td>{{ names[i] }}</td>
-				<td>{{ messages[i].create_time }}</td>
-                <td><a class="btn btn-default" href="">查看</a> </td>
+				<td>{{ moment(messages[i].create_time).fromNow() }}</td>
+                <td><a class="btn btn-default" href="{{ url_for('message.show_detail', id=messages[i].id) }}">查看</a> </td>
         </tr>
         {% endfor %}
 

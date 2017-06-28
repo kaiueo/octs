@@ -8,6 +8,7 @@ from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
 from flask_wtf.csrf import CSRFProtect
 from flask_bootstrap import Bootstrap
+from flask_moment import Moment
 
 bcrypt = Bcrypt()
 csrf_protect = CSRFProtect()
@@ -17,3 +18,4 @@ migrate = Migrate()
 cache = Cache()
 debug_toolbar = DebugToolbarExtension()
 bootstrap = Bootstrap()
+moment = Moment()

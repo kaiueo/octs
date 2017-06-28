@@ -52,7 +52,7 @@ def insert():
         course.term_id = 1
         db.session.add(course)
         db.session.commit()
-
+        return redirect(url_for('admin.course'))
     return render_template('admin/add.html',form=form)
 
 @blueprint.route('/course/edit/<id>',methods=['GET','POST'])
@@ -69,7 +69,7 @@ def edit(id):
         course.start_time = form.start_time.data
         db.session.add(course)
         db.session.commit()
-
+        return redirect(url_for('admin.course'))
     form.coursename.data = course.name
     form.credit.data = course.credit
     form.location.data = course.location

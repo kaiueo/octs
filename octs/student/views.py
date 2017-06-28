@@ -1,6 +1,6 @@
 from flask import Blueprint, flash, redirect, render_template, request, url_for
 from octs.user.models import Course,Term,Team,TeamUserRelation,User
-from octs.user.models import Course,Term,Team,TeamUserRelation,User
+from octs.user.models import Course,Term,Team,TeamUserRelation,User, Message
 from .forms import TeamForm
 from .forms import CourseForm
 from octs.database import db
@@ -78,7 +78,8 @@ def add_team(teamid, userid):
     userRela.in_team=True
     db.session.add(userRela)
     db.session.commit()
-    return render_template('student/team/myTeam.html')
+    flash('已提交申请')
+    return redirect(url_for('student.team'))
 
 @blueprint.route('/team/<id>')
 def my_team(id):
@@ -90,7 +91,7 @@ def my_team(id):
         tars = TeamUserRelation.query.filter(TeamUserRelation.team_id == teamid).filter(TeamUserRelation.is_accepted == True).all()
         turs = TeamUserRelation.query.filter(TeamUserRelation.is_accepted == False).filter(
             TeamUserRelation.team_id == teamid).all()
-        userlist = [tur.user for tur in turs] # l小写
+        userlist = [tur.user for tur in turs if tur.user.in_team==True] # l小写
         apply_num = len(userlist)
         userList = [tar.user for tar in tars]
         myteam = Team.query.filter_by(id=teamid).first()
@@ -110,7 +111,9 @@ def team_apply(id):
     for tur in turs:
         user_id = tur.user_id
         user = User.query.filter_by(id=user_id).first()
+        db.session.delete(tur)
         user.in_team = False
+        Message.sendMessage(11, user.id, '你的团队加入申请已被拒绝')
         db.session.add(user)
     team.status = 1
     db.session.add(team)

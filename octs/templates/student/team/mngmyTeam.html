@@ -55,11 +55,12 @@
             </table>
 
 
+{% if num > 0 %}
     <strong>申请名单：</strong></h3>
     <table class="table table-condensed table-hover definewidth m10">
     <thead>
 
-    {% if num > 0 %}
+
     <tr>
         <th>姓名</th>
         <th>性别</th>
@@ -67,7 +68,7 @@
     <th>操作</th>
 
     </tr>
-    {% endif %}
+
 
     </thead>
 
@@ -90,6 +91,7 @@
 
     {% endfor %}
     </table>
+        {% endif %}
     <th><a  class="btn btn-primary" href="{{ url_for('student.team') }}">返回上一页</a> </th>
 
 {% endblock %}

@@ -2,7 +2,7 @@
 """The app module, containing the app factory function."""
 from flask import Flask, render_template
 
-from octs import commands, public, user, auth, teacher, student,admin
+from octs import commands, public, user, auth, teacher, student,admin, message
 from octs.assets import assets
 from octs.extensions import bcrypt, cache, csrf_protect, db, debug_toolbar, login_manager, migrate, bootstrap
 from octs.settings import ProdConfig
@@ -45,6 +45,7 @@ def register_blueprints(app):
     app.register_blueprint(teacher.views.blueprint)
     app.register_blueprint(student.views.blueprint)
     app.register_blueprint(admin.views.blueprint)
+    app.register_blueprint(message.views.blueprint)
     return None
 
 
@@ -69,7 +70,11 @@ def register_shellcontext(app):
             'User': user.models.User,
             'Role': user.models.Role,
             'Course': user.models.Course,
-            'Term': user.models.Term
+            'Term': user.models.Term,
+            'Team': user.models.Team,
+            'TeamUserRelation': user.models.TeamUserRelation,
+            'Task': user.models.Task,
+            'Message': user.models.Message
         }
 
     app.shell_context_processor(shell_context)

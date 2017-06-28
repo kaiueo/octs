@@ -5,7 +5,7 @@ from octs.user.models import Term
 from octs.database import db
 import time
 import datetime
-
+# -*- coding: UTF-8 -*-
 blueprint = Blueprint('admin', __name__, url_prefix='/admin',static_folder='../static')
 
 @blueprint.route('/')

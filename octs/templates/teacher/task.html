@@ -1,0 +1,36 @@
+{% extends "teacher/index.html" %}
+
+{% block teacherContent %}
+    <form class="form-inline definewidth m20" action="#" method="get">
+        <a class="btn btn-primary" href={{ url_for('admin.insert') }}>添加</a>
+    </form>
+
+    <table class="table table-bordered table-hover definewidth m10">
+    <thead>
+    <tr>
+        <th>课程名称</th>
+
+
+
+
+        <th>管理菜单</th>
+    </tr>
+    </thead>
+        {% for course in list %}
+
+        <tr>
+                <td>{{ course.name }}</td>
+
+
+                <td>
+                    <a class="btn btn-primary" href="{{ url_for('teacher.delete',id =course.id) }}">删除</a>
+                <a class="btn btn-primary" href="{{ url_for('teacher.edit',id=course.id) }}">编辑</a>
+                </td>
+
+
+        </tr>
+    {% endfor %}
+
+
+       </table>
+{% endblock %}

@@ -27,3 +27,13 @@ def checkterm():
 @blueprint.route('/mainpage/')
 def mainpage():
     return render_template('student/mainpage.html')
+
+@blueprint.route('/team')
+def team():
+    return render_template('student/team.html')
+@blueprint.route('/team/create')
+def create_team():
+    return render_template('student/team/create.html')
+@blueprint.route('/team/myTeam')
+def my_team():
+    return render_template('student/team/myTeam.html')

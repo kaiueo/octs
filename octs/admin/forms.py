@@ -3,6 +3,7 @@ from wtforms import PasswordField, StringField,SubmitField,FloatField,DateField
 from wtforms.validators import DataRequired, Email, EqualTo, Length
 from octs.database import Column, Model, SurrogatePK, db, reference_col, relationship
 from octs.user.models import Term
+# -*- coding: UTF-8 -*-
 class CourseForm(Form):
     coursename = StringField('名称',validators=[DataRequired()])
     credit = FloatField('学分',validators=[DataRequired()])

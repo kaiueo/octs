@@ -35,6 +35,7 @@ def course_edit(id):
     form.course_outline.data=course.course_outline
 
 
+
     return render_template('teacher/course_edit.html',form=form)
 
 
@@ -48,5 +49,23 @@ def student(id):
 @blueprint.route('/mainpage/')
 def mainpage():
     return render_template('teacher/mainpage.html')
+
+@blueprint.route('/task')
+def task():
+    return render_template('teacher/task.html')
+
+@blueprint.route(('/task/add'))
+def add():
+    return render_template('teacher/add.html')
+
+@blueprint.route('/task/edit/<id>')
+def edit(id):
+    return render_template('teacher/edit.html')
+
+@blueprint.route('/task/delete/<id>')
+def delete(id):
+    return redirect(url_for('teacher.task'))
+
+
 
 

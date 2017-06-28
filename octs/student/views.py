@@ -55,10 +55,14 @@ def create_team(id):
         db.session.commit()
         return redirect(url_for('student.team'))
     return render_template('student/team/create.html', form=form,id=id)
-@blueprint.route('/team/myTeam')
-def my_team():
+
+
+@blueprint.route('/team/myTeam/<id>')
+def my_team(id):
+    temp = TeamUserRelation.query.filter_by(user_id=id).first()
+    teamid = temp.team_id
+    turs = TeamUserRelation.query.filter(TeamUserRelation.is_accepted == False).filter(TeamUserRelation.team_id == teamid).all()
+    userlist = [tur.user for tur in turs]
+    if temp.is_master:
+        return render_template('student/team/mngmyTeam.html',list=userlist)
     return render_template('student/team/myTeam.html')
-
-
-
-

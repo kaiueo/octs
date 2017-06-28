@@ -21,6 +21,7 @@ lib64
 dev.db
 migrations/
 .idea
+uploads
 
 # Installer logs
 pip-log.txt

@@ -1,5 +1,5 @@
 from flask_wtf import Form
-from wtforms import PasswordField, StringField,SubmitField,FloatField,DateField
+from wtforms import PasswordField, StringField,SubmitField,FloatField,DateField, FileField
 from wtforms.validators import DataRequired, Email, EqualTo, Length
 from octs.database import Column, Model, SurrogatePK, db, reference_col, relationship
 from octs.user.models import Term
@@ -18,3 +18,7 @@ class TermForm(Form):
     start_time = DateField('开始时间', validators=[DataRequired()])
     end_time = DateField('结束时间', validators=[DataRequired()])
     submit = SubmitField('提交')
+
+class MemberForm(Form):
+    file = FileField('成员文件', validators=[DataRequired()])
+    submit = SubmitField('上传')

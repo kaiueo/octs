@@ -1,0 +1,11 @@
+{% extends "admin/index.html" %}
+{% import "bootstrap/wtf.html" as wtf  %}
+{% block adminContent %}
+
+    <a class="btn btn-default" href="{{ url_for('admin.member', id=courseid) }}">返回</a>
+    <br><br>
+        {{ wtf.quick_form(form) }}
+
+
+
+{% endblock %}

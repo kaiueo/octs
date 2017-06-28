@@ -199,12 +199,14 @@ class Message(SurrogatePK, Model):
     from_id = Column(db.Integer, nullable=False)
     to_id = Column(db.Integer, nullable=False)
     message = Column(db.String())
+    has_read = Column(db.Boolean, nullable=False, default=False)
     create_time = Column(db.DateTime, nullable=False, default=dt.datetime.utcnow)
 
     def __init__(self, from_id, to_id, **kwargs):
         db.Model.__init__(self, **kwargs)
         self.from_id = from_id
         self.to_id = to_id
+        self.has_read = False
 
     @staticmethod
     def sendMessage(from_id, to_id, message):

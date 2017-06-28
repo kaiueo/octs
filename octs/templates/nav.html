@@ -21,16 +21,10 @@
 
             <ul class="nav navbar-nav navbar-right" id="nav-links">
                 <!--<li class="active"><a href="{# {% url 'OnlineTeaching.views.index' %} #}">首页</a></li>-->
-                <li><a href="">首页</a></li>
-                <!--<li><h1>{{ request.path }}</h1></li>-->
+                <li><a href="{{ url_for('public.home') }}">首页</a></li>
                 <li><a href="javascript:void(0)">新闻公告</a></li>
                 <li><a href="javascript:void(0)">课程浏览</a></li>
-                <li>
-                    <a href="javascript:void(0)">本科课程</a>
-                </li>
-                <li>
-                    <a href="javascript:void(0)">研究生课程</a>
-                </li>
+
                 {% if current_user.is_authenticated %}
                     <li>
                         {% if current_user.roleString == 'admin' %}

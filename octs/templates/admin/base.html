@@ -8,17 +8,7 @@
   </title>
 
 
-{% block index %}
-    <li><a href="">首页</a></li>
-{% endblock %}
 
-{% block center %}
-
-        <li class="active">
-            <a href="">个人中心</a>
-        </li>
-
-{% endblock %}
 
 {% block content %}
     <br/>
@@ -45,45 +35,7 @@
                             </a>
                         {% endblock %}
                     </li>
-                    {#                    <li>#}
-                    {#                        {% block navCourseManage %}#}
-                    {#                            <a class="ajax-link" href="#">#}
-                    {#                                <i class="glyphicon glyphicon-education"></i><span>课程管理</span>#}
-                    {#                            </a>#}
-                    {#                        {% endblock navCourseManage %}#}
-                    {#                    </li>#}
-                    <li>
-                        {% block navResManage %}
-                            <a class="ajax-link"
-                               href="">
-                                <i class="glyphicon glyphicon-eye-open"></i><span>资源管理</span>
-                            </a>
-                        {% endblock %}
-                    </li>
-                    <li>
-                        {% block navHwRelease %}
-                            <a id="pubhw" class="ajax-link"
-                               href="">
-                                <i class="glyphicon glyphicon-edit"></i><span>作业管理</span>
-                            </a>
-                        {% endblock %}
-                    </li>
-                    <li>
-                        {% block navHwCorrect %}
-                            <a class="ajax-link"
-                               href="">
-                                <i class="glyphicon glyphicon-pencil"></i><span>作业批改</span>
-                            </a>
-                        {% endblock %}
-                    </li>
-                    <li>
-                        {% block navTeamAudit %}
-                            <a class="ajax-link"
-                               href="">
-                                <i class="glyphicon glyphicon-ok"></i><span>团队审批</span>
-                            </a>
-                        {% endblock %}
-                    </li>
+
                     <li>
                         {% block navCommunicate %}
                             <a class="ajax-link"

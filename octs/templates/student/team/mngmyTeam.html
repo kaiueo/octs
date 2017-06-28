@@ -1,0 +1,88 @@
+{% extends 'student/index.html'%}
+
+{% block studentContent %}
+
+    
+            <h3><strong>团队信息：</strong></h3>
+            <table class="table table-condensed">
+                <tr>
+	              <td width="18%" height="30" align="center">团队名称：</td>
+	              <td width="82%" class="word_grey">{{ myteam.name }}</td>
+	            </tr>
+				<tr>
+	              <td width="18%" height="30" align="center">团队id：</td>
+	              <td width="82%" class="word_grey">{{ myteam.id }}</td>
+	            </tr>
+	            <tr>
+	              <td width="18%"  height="30" align="center">团队状态：</td>
+                    {% if myteam.status == 0 %}
+	                    <td width="82%" class="word_grey">组建中</td>
+                    {% elif  myteam.status == 1 %}
+                        <td width="82%" class="word_grey">待审核</td>
+                    {% elif  myteam.status == 2 %}
+                        <td width="82%" class="word_grey">被驳回</td>
+                    {% elif  myteam.status == 3 %}
+                        <td width="82%" class="word_grey">已通过</td>
+                    {% endif %}
+
+
+            </table>
+            <strong>团队成员名单：</strong></h3>
+            <table class="table table-condensed">
+            <thead>
+            <tr>
+                <th>姓名</th>
+                <th>性别</th>
+                <th>学号</th>
+        &nbsp;      &nbsp
+             </tr>
+            </thead>
+
+            {% for user in userList %}
+                <tr>
+                <td>{{ user.name }}</td>
+                    {% if user.gender== False %}
+                    <td>男</td>
+                {% else %}
+                    <td>女</td>
+                {% endif %}
+                <td>{{ user.user_id }}</td>
+                </tr>
+
+            {% endfor %}
+            </table>
+
+
+    <table class="table table-bordered table-hover definewidth m10">
+    <thead>
+    <tr>
+        <th>姓名</th>
+        <th>性别</th>
+        <th>学号</th>
+
+    </tr>
+
+    </thead>
+
+    {% for student in list %}
+
+
+        <tr>
+                <td>{{ student.name }}</td>
+                {% if student.gender== False %}
+                    <td>男</td>
+                {% else %}
+                    <td>女</td>
+                {% endif %}
+                <td>{{ student.user_id }}&nbsp &nbsp</td>
+        <td> &nbsp &nbsp &nbsp &nbsp &nbsp<a href="" class="btn btn-primary">同意申请</a>
+            &nbsp
+         <a href="" class="btn btn-primary">拒绝申请</a></td>
+
+        </tr>
+
+    {% endfor %}
+    </table>
+    <th><a  class="btn btn-primary" href="{{ url_for('student.team') }}">返回上一页</a> </th>
+
+{% endblock %}

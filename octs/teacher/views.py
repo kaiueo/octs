@@ -66,6 +66,7 @@ def add():
         task.teacher = form.teacher.data
         db.session.add(task)
         db.session.commit()
+        return redirect(url_for('teacher.task'))
     return render_template('teacher/add.html',form=form)
 
 @blueprint.route('/task/edit/<id>',methods = ['GET','POST'])
@@ -80,6 +81,7 @@ def task_edit(id):
         task.teacher = form.teacher.data
         db.session.add(task)
         db.session.commit()
+        return redirect(url_for('teacher.task'))
 
     form.taskname.data = task.name
     form.starttime.data = task.start_time

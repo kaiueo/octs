@@ -211,8 +211,9 @@ class Message(SurrogatePK, Model):
         self.has_read = False
 
     @staticmethod
-    def sendMessage(from_id, to_id, message):
+    def sendMessage(from_id, to_id, message, title='通知'):
         m = Message(from_id, to_id)
+        m.title = title
         m.message = message
         db.session.add(m)
         db.session.commit()

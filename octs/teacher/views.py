@@ -35,7 +35,6 @@ def course_edit(id):
     form.course_outline.data=course.course_outline
 
 
-
     return render_template('teacher/course_edit.html',form=form)
 
 
@@ -45,5 +44,9 @@ def student(id):
     course=Course.query.filter_by(id=id).first()
     studentList = course.users
     return render_template('teacher/student.html',list=studentList)
+
+@blueprint.route('/mainpage/')
+def mainpage():
+    return render_template('teacher/mainpage.html')
 
 

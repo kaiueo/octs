@@ -79,12 +79,6 @@ def my_team(id):
     Team.name,User.username,Team.status,Team.id,User.user_id,User.in_team)
 
     return render_template('student/team.html',list=teamlist,form=form)
-@blueprint.route('/team/create')
-def create_team():
-    return render_template('student/team/create.html')
-@blueprint.route('/team/myTeam')
-def my_team():
-    return render_template('student/team/myTeam.html')
 
 @blueprint.route('/team/<teamid>/add/<userid>',methods=['GET', 'POST'])
 def add_team(teamid, userid):

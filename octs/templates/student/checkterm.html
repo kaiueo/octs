@@ -1,0 +1,54 @@
+{% extends "student/index.html" %}
+
+{% block studentContent %}
+<html>
+
+<body>
+<h3><strong>基本信息：</strong></h3>
+   <table class="table table-condensed">
+       {% if endtime.end_time > nowtime %}
+                <tr>
+	              <td width="18%" height="30" align="center">学期名称：</td>
+	              <td width="82%" class="word_grey">{{ list[0].name }}</td>
+	            </tr>
+				<tr>
+	              <td width="18%" height="30" align="center">开始时间：</td>
+	              <td width="82%" class="word_grey">{{ list[0].start_time }}</td>
+	            </tr>
+	            <tr>
+	              <td height="28" align="center">结束时间：</td>
+	              <td width="82%" class="word_grey">{{ list[0].end_time }}</td>
+	            </tr>
+				<tr>
+	              <td height="28" align="center">周&nbsp;次：</td>
+	              <td width="82%" class="word_grey">{{ list[0].week_number }}</td>
+	            </tr>
+       {% else %}
+                <tr>
+                    <td width="18%" height="30" align="center">学期已结束！</td>
+                </tr>
+                <tr>
+	              <td width="18%" height="30" align="center">学期名称：</td>
+	              <td width="82%" class="word_grey">{{ list[0].name }}</td>
+	            </tr>
+				<tr>
+	              <td width="18%" height="30" align="center">开始时间：</td>
+	              <td width="82%" class="word_grey">{{ list[0].start_time }}</td>
+	            </tr>
+	            <tr>
+	              <td height="28" align="center">结束时间：</td>
+	              <td width="82%" class="word_grey">{{ list[0].end_time }}</td>
+	            </tr>
+				<tr>
+	              <td height="28" align="center">周&nbsp;次：</td>
+	              <td width="82%" class="word_grey">{{ list[0].week_number }}</td>
+	            </tr>
+
+        {% endif %}
+   </table>
+</body>
+</html>
+
+
+
+{% endblock %}

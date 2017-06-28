@@ -1,6 +1,6 @@
-{% extends "teacher/index.html" %}
+{% extends "student/index.html" %}
 
-{% block teacherContent %}
+{% block studentContent %}
 
     <table class="table table-bordered table-hover definewidth m10">
     <thead>
@@ -9,11 +9,11 @@
         <th>学分</th>
         <th>开始时间</th>
         <th>上课地点</th>
+
         <th>课程介绍</th>
         <th>课程大纲</th>
         <th>所属学期</th>
-        <th>学生列表</th>
-        <th>管理</th>
+
 
 
     </tr>
@@ -27,8 +27,7 @@
                 <td>{{ course.course_introduction }}</td>
                 <td>{{ course.course_outline }}</td>
                 <td>{{ course.term_id }}</td>
-                <td> <a href="{{ url_for('teacher.student',id=course.id) }}" class="btn btn-primary">查看</a></td>
-                <td> <a href="{{ url_for('teacher.course_edit',id=course.id) }}" class="btn btn-primary">编辑课程</a></td>
+
 
         </tr>
     {% endfor %}

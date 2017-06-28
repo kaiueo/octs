@@ -178,7 +178,8 @@ class TeamUserRelation(Model):
     __tablename__ = 'team_user_relation'
     user_id = Column(db.Integer, db.ForeignKey('users.id'), primary_key=True)
     team_id = Column(db.Integer, db.ForeignKey('teams.id'), primary_key=True)
-    is_master = Column(db.Boolean)
+    is_master = Column(db.Boolean, default=False)
+    is_accepted = Column(db.Boolean, default=False)
     user = relationship('User', backref='teams')
     team = relationship('Team', backref='users')
 
@@ -198,6 +199,7 @@ class Task(SurrogatePK, Model):
 class Message(SurrogatePK, Model):
     from_id = Column(db.Integer, nullable=False)
     to_id = Column(db.Integer, nullable=False)
+    title = Column(db.String(), default='通知')
     message = Column(db.String())
     has_read = Column(db.Boolean, nullable=False, default=False)
     create_time = Column(db.DateTime, nullable=False, default=dt.datetime.utcnow)

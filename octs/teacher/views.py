@@ -46,6 +46,10 @@ def student(id):
     studentList = course.users
     return render_template('teacher/student.html',list=studentList)
 
+@blueprint.route('/mainpage/')
+def mainpage():
+    return render_template('teacher/mainpage.html')
+
 @blueprint.route('/task')
 def task():
     taskList = Task.query.all()
@@ -89,5 +93,7 @@ def delete(id):
     db.session.delete(task)
     db.session.commit()
     return redirect(url_for('teacher.task'))
+
+
 
 

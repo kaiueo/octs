@@ -1,5 +1,109 @@
-{% extends 'student/base.html'%}
+{% extends "layout.html" %}
 
-{% block studentContent %}
+<title>{% block page_title %}
+  
+    学生首页
+  
+    {% endblock %}
+  </title>
+
+
+{% block index %}
+    <li><a href="">首页</a></li>
+{% endblock %}
+
+{% block center %}
+
+        <li class="active">
+            <a href="">个人中心</a>
+        </li>
+
+{% endblock %}
+
+{% block content %}
+    <br/>
+    <br/>
+    <!-- left menu starts -->
+    <div class="col-sm-2 col-md-10 col-lg-2">
+        <div class="sidebar-nav">
+            <div class="nav-canvas">
+                <div class="nav-sm nav nav-stacked">
+                </div>
+                <ul class="nav nav-pills nav-stacked main-menu">
+                    <li class="nav-header">
+                        {% block navTeHomepage %}
+                            <a class="ajax-link" href="{{ url_for('student.mainpage') }}">
+                                <i class="glyphicon glyphicon-home"></i><span>我的主页</span>
+                            </a>
+                        {% endblock %}
+                    </li>
+
+                    <li>
+                        {% block navCheckterm %}
+                            <a class="ajax-link" href="{{ url_for('student.checkterm') }}">
+                                <i class="glyphicon glyphicon-home"></i><span>查看学期</span>
+                            </a>
+                        {% endblock %}
+                    </li>
+                    <li>
+                        {% block navCourseSet %}
+                            <a class="ajax-link"
+                               href="{{ url_for('student.course') }}">
+                                <i class="glyphicon glyphicon-list-alt"></i><span>课程信息</span>
+                            </a>
+                        {% endblock %}
+                    </li>
+                    {#                    <li>#}
+                    {#                        {% block navCourseManage %}#}
+                    {#                            <a class="ajax-link" href="#">#}
+                    {#                                <i class="glyphicon glyphicon-education"></i><span>课程管理</span>#}
+                    {#                            </a>#}
+                    {#                        {% endblock navCourseManage %}#}
+                    {#                    </li>#}
+                    <li>
+                        {% block navResManage %}
+                            <a class="ajax-link"
+                               href="">
+                                <i class="glyphicon glyphicon-eye-open"></i><span>资源管理</span>
+                            </a>
+                        {% endblock %}
+                    </li>
+
+                    <li>
+                        {% block navTeamAudit %}
+                            <a class="ajax-link"
+                               href="{{ url_for('student.team')}}">
+                                <i class="glyphicon glyphicon-ok"></i><span>我的团队</span>
+                            </a>
+                        {% endblock %}
+                    </li>
+                    <li>
+                        {% block navCommunicate %}
+                            <a class="ajax-link"
+                               href="">
+                                <i class="glyphicon glyphicon-globe"></i><span>在线交流</span>
+                            </a>
+                        {% endblock %}
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    {% block student %}
+
+        <!--显示已选课程,点击课程进入当前课程目录-->
+
+        <div class="col-sm-10 col-md-10 col-lg-10 content">
+            <div class="row">
+                {% block studentContent %}
+                {% endblock %}
+
+
+            </div>
+        </div>
+
+
+    {% endblock %}
 
 {% endblock %}

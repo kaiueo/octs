@@ -5,7 +5,7 @@
     <form method="POST">
     <table class="table table-bordered table-hover definewidth m10" style="margin-left:3%;margin-top:2%;">
     <tr>
-        <td width="10%" class="tableleft">{{ form.coursename.label }}</td>
+        <td width="10%" class="tableleft">课程名称</td>
          <td>{{ form.coursename.data }}</td>
     </tr>
 
@@ -28,15 +28,15 @@
 
     </tr>
     <tr>
-        <td class="tableleft">课程大纲</td>
+        <td width="10" class="tableleft">课程大纲</td>
         <td>{{ form.course_outline() }}</td>
     </tr>
 
     <tr>
         <td class="tableleft"></td>
         <td>
-           {{ form.submit(class="btn btn-primary")}}&nbsp;&nbsp;
-            <a type="button" ><a class="btn btn-primary" href="{{ url_for('teacher.course') }}">返回列表</a></a>
+           {{ form.submit(class="btn btn-primary")}};&nbsp;
+            <a type="button"  class="btn btn-primary" href="{{ url_for('teacher.course') }}">返回列表</a></a>
         </td>
     </tr>
 </table>

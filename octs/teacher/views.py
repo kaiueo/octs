@@ -1,6 +1,6 @@
 from flask import Blueprint, flash, redirect, render_template, request, url_for,sessions
-from octs.user.models import Course
-from .forms import CourseForm
+from octs.user.models import Course,Task
+from .forms import CourseForm,TaskForm
 from octs.database import db
 
 blueprint = Blueprint('teacher', __name__, url_prefix='/teacher',static_folder='../static')
@@ -52,18 +52,48 @@ def mainpage():
 
 @blueprint.route('/task')
 def task():
-    return render_template('teacher/task.html')
+    taskList = Task.query.all()
+    return render_template('teacher/task.html',list = taskList)
 
-@blueprint.route(('/task/add'))
+@blueprint.route('/task/add',methods = ['GET','POST'])
 def add():
-    return render_template('teacher/add.html')
+    form = TaskForm()
+    if form.validate_on_submit():
+        task = Task()
+        task.name = form.taskname.data
+        task.start_time = form.starttime.data
+        task.end_time = form.endtime.data
+        task.teacher = form.teacher.data
+        db.session.add(task)
+        db.session.commit()
+        return redirect(url_for('teacher.task'))
+    return render_template('teacher/add.html',form=form)
 
-@blueprint.route('/task/edit/<id>')
-def edit(id):
-    return render_template('teacher/edit.html')
+@blueprint.route('/task/edit/<id>',methods = ['GET','POST'])
+def task_edit(id):
+    form = TaskForm()
+
+    task = Task.query.filter_by(id = id).first()
+    if form.validate_on_submit():
+        task.name = form.taskname.data
+        task.start_time = form.starttime.data
+        task.end_time = form.endtime.data
+        task.teacher = form.teacher.data
+        db.session.add(task)
+        db.session.commit()
+        return redirect(url_for('teacher.task'))
+
+    form.taskname.data = task.name
+    form.starttime.data = task.start_time
+    form.endtime.data = task.end_time
+    form.teacher.data =task.teacher
+    return render_template('teacher/edit.html',form = form)
 
 @blueprint.route('/task/delete/<id>')
 def delete(id):
+    task = Task.query.filter_by(id = id).first()
+    db.session.delete(task)
+    db.session.commit()
     return redirect(url_for('teacher.task'))
 
 

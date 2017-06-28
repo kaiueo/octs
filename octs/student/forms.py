@@ -1,7 +1,8 @@
 from flask_wtf import Form
 from wtforms import PasswordField, StringField,SubmitField,FloatField,DateField
 from wtforms.validators import DataRequired, Email, EqualTo, Length
-
+from octs.database import Column, Model, SurrogatePK, db, reference_col, relationship
+from octs.user.models import Team
 
 class CourseForm(Form):
     coursename = StringField('名称')
@@ -13,3 +14,7 @@ class CourseForm(Form):
     submit = SubmitField('查看')
 class TeamRequireForm(Form):
     submit=SubmitField('提交')
+
+class TeamForm(Form):
+    teamname = StringField('团队名称',validators=[DataRequired()])
+    submit = SubmitField('提交')

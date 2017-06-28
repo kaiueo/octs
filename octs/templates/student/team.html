@@ -33,7 +33,7 @@
    <table class="table table-condensed">
        <tr>
            <td>
-               <button style="margin-left:180px; background-color:#ffffff "type="submit" class="btn btn-primary" type="button"><a href="{{ url_for('student.my_team')}}">我的团队</a></button>
+               <button style="margin-left:180px; background-color:#ffffff "type="submit" class="btn btn-primary" type="button"><a href="{{ url_for('student.my_team', id=current_user.id)}}">我的团队</a></button>
                <button style="margin-left:180px; background-color:#ffffff "type="submit" class="btn btn-primary" type="button"><a href="{{ url_for('student.create_team')}}">申请团队</a></button>
            </td>
            <td>

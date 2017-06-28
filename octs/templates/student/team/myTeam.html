@@ -2,4 +2,58 @@
 
 {% block studentContent %}
 
+        {% if flag == 1 %}
+            <h3><strong>团队信息：</strong></h3>
+            <table class="table table-condensed">
+                <tr>
+	              <td width="18%" height="30" align="center">团队名称：</td>
+	              <td width="82%" class="word_grey">{{ myteam.name }}</td>
+	            </tr>
+				<tr>
+	              <td width="18%" height="30" align="center">团队id：</td>
+	              <td width="82%" class="word_grey">{{ myteam.id }}</td>
+	            </tr>
+	            <tr>
+	              <td width="18%"  height="30" align="center">团队状态：</td>
+                    {% if myteam.status == 0 %}
+	                    <td width="82%" class="word_grey">组建中</td>
+                    {% elif  myteam.status == 1 %}
+                        <td width="82%" class="word_grey">待审核</td>
+                    {% elif  myteam.status == 2 %}
+                        <td width="82%" class="word_grey">被驳回</td>
+                    {% elif  myteam.status == 3 %}
+                        <td width="82%" class="word_grey">已通过</td>
+                    {% endif %}
+
+
+            </table>
+            <strong>团队成员名单：</strong></h3>
+            <table class="table table-condensed">
+            <thead>
+            <tr>
+                <th>姓名</th>
+                <th>性别</th>
+                <th>学号</th>
+        &nbsp;      &nbsp
+             </tr>
+            </thead>
+
+            {% for user in userList %}
+                <tr>
+                <td>{{ user.name }}</td>
+                    {% if user.gender== False %}
+                    <td>男</td>
+                {% else %}
+                    <td>女</td>
+                {% endif %}
+                <td>{{ user.user_id }}</td>
+                </tr>
+
+            {% endfor %}
+                        </table>
+
+        {% elif flag == 0 %}
+            <h3><strong>你还没有团队，请尽快加入或创建团队</strong></h3>
+        {% endif %}
+
 {% endblock %}

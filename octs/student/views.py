@@ -1,5 +1,5 @@
 from flask import Blueprint, flash, redirect, render_template, request, url_for
-from octs.user.models import Course,Term
+from octs.user.models import User,Course,Term,Team,TeamUserRelation
 from .forms import CourseForm
 from octs.database import db
 import time
@@ -31,9 +31,24 @@ def mainpage():
 @blueprint.route('/team')
 def team():
     return render_template('student/team.html')
+
+
 @blueprint.route('/team/create')
 def create_team():
     return render_template('student/team/create.html')
-@blueprint.route('/team/myTeam')
-def my_team():
-    return render_template('student/team/myTeam.html')
+
+
+@blueprint.route('/team/<id>')
+def my_team(id):
+    t1 = TeamUserRelation.query.filter_by(user_id=id).first()
+    flag = 1
+    if t1 :
+        teamid = t1.team_id
+        tars = TeamUserRelation.query.filter(TeamUserRelation.team_id == teamid).filter(TeamUserRelation.is_accepted == True).all()
+        print(tars)
+        userList = [tar.user for tar in tars]
+        myteam = Team.query.filter_by(id=teamid).first()
+        return render_template('student/team/myTeam.html',myteam=myteam,flag=flag,userList=userList)
+    else:
+        flag = 0
+        return render_template('student/team/myTeam.html',flag=flag)

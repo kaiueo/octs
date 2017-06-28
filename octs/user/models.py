@@ -60,6 +60,7 @@ class User(UserMixin, SurrogatePK, Model):
     name = Column(db.String(30), nullable=True)
     roleString = Column(db.String(30), nullable=True)
     role_id = reference_col('roles', nullable=False)
+    in_team = Column(db.Boolean, nullable=False, default=False)
 
     def __init__(self, username, permission, password=None, **kwargs):
         """Create instance."""
@@ -170,6 +171,49 @@ class Course(SurrogatePK, Model):
         db.session.add(term)
         db.session.add(course)
         db.session.commit()
+
+
+
+class TeamUserRelation(Model):
+    __tablename__ = 'team_user_relation'
+    user_id = Column(db.Integer, db.ForeignKey('users.id'), primary_key=True)
+    team_id = Column(db.Integer, db.ForeignKey('teams.id'), primary_key=True)
+    is_master = Column(db.Boolean)
+    user = relationship('User', backref='teams')
+    team = relationship('Team', backref='users')
+
+
+class Team(SurrogatePK, Model):
+    __tablename__ = 'teams'
+    name = Column(db.String(1000))
+    status = Column(db.Integer)
+
+class Task(SurrogatePK, Model):
+    __tablename__ = 'tasks'
+    name = Column(db.String(1000))
+    start_time = Column(db.DateTime, nullable=False, default=dt.datetime.utcnow)
+    end_time = Column(db.DateTime, nullable=False, default=dt.datetime.utcnow)
+    teacher = Column(db.String(1000), nullable=False, default='x老师')
+
+class Message(SurrogatePK, Model):
+    from_id = Column(db.Integer, nullable=False)
+    to_id = Column(db.Integer, nullable=False)
+    message = Column(db.String())
+    create_time = Column(db.DateTime, nullable=False, default=dt.datetime.utcnow)
+
+    def __init__(self, from_id, to_id, **kwargs):
+        db.Model.__init__(self, **kwargs)
+        self.from_id = from_id
+        self.to_id = to_id
+
+    @staticmethod
+    def sendMessage(from_id, to_id, message):
+        m = Message(from_id, to_id)
+        m.message = message
+        db.session.add(m)
+        db.session.commit()
+
+
 
 
 

@@ -62,7 +62,9 @@
 {% assets "js_all" %}
     <script type="text/javascript" src="{{ ASSET_URL }}"></script>
 {% endassets %}
-{% block js %}{% endblock %}
+{% block js %}
+    {{ moment.include_moment() }}
+{% endblock %}
 <!-- end scripts -->
 {% endblock %}
 </body>

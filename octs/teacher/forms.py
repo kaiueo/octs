@@ -1,5 +1,5 @@
 from flask_wtf import Form
-from wtforms import PasswordField, StringField,SubmitField,FloatField,DateField
+from wtforms import PasswordField, StringField,SubmitField,FloatField,DateField,DateTimeField
 from wtforms.validators import DataRequired, Email, EqualTo, Length
 # coding=utf-8
 
@@ -11,3 +11,11 @@ class CourseForm(Form):
     course_introduction = StringField('课程介绍')
     course_outline = StringField("课程大纲")
     submit = SubmitField('提交')
+
+class TaskForm(Form):
+    taskname = StringField('名称')
+    starttime = DateTimeField('开始时间')
+    endtime = DateTimeField('结束时间')
+    teacher = StringField('教师')
+    submit = SubmitField('提交')
+

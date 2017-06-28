@@ -2,7 +2,7 @@
 
 <title>{% block page_title %}
   
-    管理员页面
+    信息
   
     {% endblock %}
   </title>
@@ -32,7 +32,7 @@
                 <ul class="nav nav-pills nav-stacked main-menu">
                     <li class="nav-header">
                         {% block navTeHomepage %}
-                            <a class="ajax-link" href="{{ url_for('admin.home') }}">
+                            <a class="ajax-link" href="{{ url_for('message.show_unread', id=current_user.id) }}">
                                 <i class="glyphicon glyphicon-home"></i><span>未读信息</span>
                             </a>
                         {% endblock %}
@@ -40,7 +40,7 @@
                     <li>
                         {% block navCourseSet %}
                             <a class="ajax-link"
-                               href="{{ url_for('admin.course') }}">
+                               href="{{ url_for('message.show_all', id=current_user.id) }}">
                                 <i class="glyphicon glyphicon-list-alt"></i><span>所有信息</span>
                             </a>
                         {% endblock %}

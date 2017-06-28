@@ -64,24 +64,6 @@ def create_team(id):
     return render_template('student/team/create.html', form=form,id=id)
 
 
-@blueprint.route('/team/myTeam/<id>')
-def my_team(id):
-    temp = TeamUserRelation.query.filter_by(user_id=id).first()
-    teamid = temp.team_id
-    turs = TeamUserRelation.query.filter(TeamUserRelation.is_accepted == False).filter(TeamUserRelation.team_id == teamid).all()
-    userlist = [tur.user for tur in turs]
-    if temp.is_master:
-        return render_template('student/team/mngmyTeam.html',list=userlist)
-    form=TeamRequireForm()
-    teamlist=Team.query.join(TeamUserRelation,TeamUserRelation.team_id==Team.id).filter(
-    TeamUserRelation.team_id==Team.id).filter(TeamUserRelation.is_master==True).join(
-    User,TeamUserRelation.user_id==User.id).filter(TeamUserRelation.user_id==User.id).add_columns(
-    Team.name,User.username,Team.status,Team.id,User.user_id,User.in_team)
-
-    return render_template('student/team.html',list=teamlist,form=form)
-@blueprint.route('/team/create')
-def create_team():
-    return render_template('student/team/create.html')
 
 @blueprint.route('/team/<teamid>/add/<userid>',methods=['GET', 'POST'])
 def add_team(teamid, userid):

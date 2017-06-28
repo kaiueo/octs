@@ -1,5 +1,5 @@
 from flask import Blueprint, flash, redirect, render_template, request, url_for
-from octs.user.models import Course,Term
+from octs.user.models import Course,Term,Team
 from .forms import CourseForm
 from octs.database import db
 import time
@@ -30,7 +30,8 @@ def mainpage():
 
 @blueprint.route('/team')
 def team():
-    return render_template('student/team.html')
+    teamlist=Team.query.all()
+    return render_template('student/team.html',list=teamlist)
 @blueprint.route('/team/create')
 def create_team():
     return render_template('student/team/create.html')

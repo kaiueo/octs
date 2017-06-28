@@ -2,9 +2,11 @@
 
 {% block studentContent %}
 
-    
+    {% if myteam.status==0 %}
+            <a href="{{ url_for('student.team_apply', id=myteam.id) }}" class="btn btn-primary">提交申请</a>
+{% endif %}
             <h3><strong>团队信息：</strong></h3>
-            <table class="table table-condensed">
+            <table class="table table-hover">
                 <tr>
 	              <td width="18%" height="30" align="center">团队名称：</td>
 	              <td width="82%" class="word_grey">{{ myteam.name }}</td>
@@ -28,7 +30,7 @@
 
             </table>
             <strong>团队成员名单：</strong></h3>
-            <table class="table table-condensed">
+            <table class="table table-condensed table-hover">
             <thead>
             <tr>
                 <th>姓名</th>
@@ -53,18 +55,23 @@
             </table>
 
 
-    <table class="table table-bordered table-hover definewidth m10">
+    <strong>申请名单：</strong></h3>
+    <table class="table table-condensed table-hover definewidth m10">
     <thead>
+
+    {% if num > 0 %}
     <tr>
         <th>姓名</th>
         <th>性别</th>
         <th>学号</th>
+    <th>操作</th>
 
     </tr>
+    {% endif %}
 
     </thead>
 
-    {% for student in list %}
+    {% for student in applylist %}
 
 
         <tr>

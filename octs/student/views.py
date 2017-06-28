@@ -90,13 +90,31 @@ def my_team(id):
         tars = TeamUserRelation.query.filter(TeamUserRelation.team_id == teamid).filter(TeamUserRelation.is_accepted == True).all()
         turs = TeamUserRelation.query.filter(TeamUserRelation.is_accepted == False).filter(
             TeamUserRelation.team_id == teamid).all()
-        userlist = [tur.user for tur in turs]
+        userlist = [tur.user for tur in turs] # l小写
+        apply_num = len(userlist)
         userList = [tar.user for tar in tars]
         myteam = Team.query.filter_by(id=teamid).first()
         if t1.is_master:
-            return render_template('student/team/mngmyTeam.html',myteam=myteam,list=userlist,userList=userList)
+            return render_template('student/team/mngmyTeam.html',myteam=myteam,applylist=userlist,userList=userList, num=apply_num)
         else:
-            return render_template('student/team/myTeam.html',myteam=myteam,flag=flag,userList=userList)
+            return render_template('student/team/myTeam.html',myteam=myteam,flag=flag,userList=userList, num=apply_num)
     else:
         flag = 0
         return render_template('student/team/myTeam.html',flag=flag)
+
+@blueprint.route('team/apply/<id>')
+def team_apply(id):
+    team = Team.query.filter_by(id=id).first()
+    turs = TeamUserRelation.query.filter_by(team_id=id).all()
+    turs = [tur for tur in turs if tur.is_accepted==False]
+    for tur in turs:
+        user_id = tur.user_id
+        user = User.query.filter_by(id=user_id).first()
+        user.in_team = False
+        db.session.add(user)
+    team.status = 1
+    db.session.add(team)
+    db.session.commit()
+    flash('成功')
+    return redirect(url_for('student.my_team', id=id))
+

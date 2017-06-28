@@ -11,3 +11,5 @@ class CourseForm(Form):
     course_introduction = StringField('课程介绍')
     course_outline = StringField("课程大纲")
     submit = SubmitField('查看')
+class TeamRequireForm(Form):
+    submit=SubmitField('提交')

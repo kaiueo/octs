@@ -44,6 +44,9 @@
                团队名称
            </td >
            <td width="18%" height="30" align="center">
+               团队组长
+           </td>
+           <td width="18%" height="30" align="center">
                团队状态
            </td>
            <td width="18%" height="30" align="center">
@@ -52,19 +55,24 @@
        </tr>
        {% for l in list %}
        <tr>
-             <td width="82%" class="word_grey" align="center">{{ l.name }}</td>
+             <td width="30%" class="word_grey" align="center">{{ l.name }}</td>
+             <td width="30%" class="word_grey" align="center">{{ l.username }}</td>
            {% if l.status==0 %}
-             <td width="82%" class="word_grey" align="center">组建中</td>
-               <td > <button disabled="true" width="82%" class="word_grey" align="center"> 申请加入</button></td>
+             <td width="30%" class="word_grey" align="center">组建中</td>
+               {% if current_user.in_team==False %}
+               <td align="center"> <a width="30%" class="btn btn-primary" align="center" href="{{ url_for('student.add_team', teamid=l.id, userid=current_user.id) }}"> 申请加入</a></td>
+               {% else %}
+                   <td align="center"> <button disabled="disabled" width="30%" class="word_grey" align="center">已申请加入</button></td>
+                   {% endif %}
            {% elif l.status==1 %}
-             <td width="82%" class="word_grey" align="center">待审核</td>
-               <td> <button disabled="false" width="82%" class="word_grey" align="center">无法加入</button></td>
+             <td width="30%" class="word_grey" align="center">待审核</td>
+               <td align="center"> <button disabled="disabled" width="30%" class="word_grey" align="center">无法加入</button></td>
            {% elif l.status==2 %}
-                 <td width="82%" class="word_grey" align="center">被驳回</td>
-               <td> <button disabled="false" width="82%" class="word_grey" align="center"> 无法加入</button></td>
+                 <td width="30%" class="word_grey" align="center">被驳回</td>
+               <td align="center"> <button disabled="disabled" width="30%" class="word_grey" align="center"> 无法加入</button></td>
            {% elif l.status==3 %}
-                 <td width="82%" class="word_grey" align="center">已完成</td>
-               <td> <button disabled="false" width="82%" class="word_grey" align="center"> 无法加入</button></td>
+                 <td width="30%" class="word_grey" align="center">已完成</td>
+               <td align="center"> <button disabled="disabled" width="30%" class="word_grey" align="center"> 无法加入</button></td>
            {% endif %}
        </tr>
        {% endfor %}

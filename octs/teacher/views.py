@@ -1,5 +1,5 @@
 from flask import Blueprint, flash, redirect, render_template, request, url_for,sessions
-from octs.user.models import Course,Task
+from octs.user.models import Course,Task,Term,Team,TeamUserRelation,User, Message
 from .forms import CourseForm,TaskForm
 from octs.database import db
 
@@ -95,6 +95,45 @@ def delete(id):
     db.session.delete(task)
     db.session.commit()
     return redirect(url_for('teacher.task'))
+
+@blueprint.route('/team',methods=['GET', 'POST'])
+def team():
+    teamlist = Team.query.join(TeamUserRelation, TeamUserRelation.team_id == Team.id).filter(
+        TeamUserRelation.team_id == Team.id).filter(TeamUserRelation.is_master == True).join(
+        User, TeamUserRelation.user_id == User.id).filter(TeamUserRelation.user_id == User.id).add_columns(
+        Team.name, User.username, Team.status, Team.id, User.user_id, User.in_team)
+    return render_template('teacher/team.html',list=teamlist)
+
+@blueprint.route('/team/permit/<teacherid>/<teamid>')
+def permit(teacherid,teamid):
+    team=Team.query.filter(Team.id==teamid).first()
+    team.status=3
+    db.session.add(team)
+    db.session.commit()
+    stulist=TeamUserRelation.query.filter(TeamUserRelation.team_id==teamid).filter(TeamUserRelation.is_accepted==True).all()
+    for stu in stulist:
+        Message.sendMessage(teacherid,stu.user_id,'提交团队申请已通过')
+    flash('已通过该团队申请！')
+    return redirect(url_for('teacher.team'))
+@blueprint.route('/team/reject/<teacherid>/<teamid>')
+def reject(teacherid,teamid):
+    team=Team.query.filter(Team.id==teamid).first()
+    team.status=2
+    db.session.add(team)
+    teamuser=TeamUserRelation.query.filter(TeamUserRelation.team_id==teamid).all()
+    for stu in teamuser:
+        user=User.query.filter(User.id==stu.user_id).first()
+        user.in_team=False
+        Message.sendMessage(teacherid,user.id,'提交申请已被驳回')
+        db.session.add(user)
+        db.session.delete(stu)
+    db.session.commit()
+    flash('已驳回该团队申请！')
+    return redirect(url_for('teacher.team'))
+
+
+
+
 
 
 

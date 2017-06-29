@@ -89,9 +89,9 @@
                     <td>女</td>
                 {% endif %}
                 <td>{{ student.user_id }}&nbsp &nbsp</td>
-        <td> &nbsp &nbsp &nbsp &nbsp &nbsp<a href="" class="btn btn-primary">同意申请</a>
+        <td> &nbsp &nbsp &nbsp &nbsp &nbsp<a href="{{ url_for('student.permit',id=current_user.id,userid=student.id) }}" class="btn btn-primary">同意申请</a>
             &nbsp
-         <a href="" class="btn btn-primary">拒绝申请</a></td>
+         <a href="{{ url_for('student.reject',id=current_user.id,userid=student.id) }}" class="btn btn-primary">拒绝申请</a></td>
 
         </tr>
 

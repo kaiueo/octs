@@ -1,5 +1,5 @@
 from flask import Blueprint, flash, redirect, render_template, request, url_for,sessions
-from octs.user.models import Course,Task, User, Message
+from octs.user.models import Course,Task, User, Message, Team,TeamUserRelation
 from .forms import CourseForm,TaskForm
 from octs.database import db
 from flask_login import current_user

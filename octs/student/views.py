@@ -4,6 +4,7 @@ from octs.user.models import Course,Term,Team,TeamUserRelation,User, Message
 from .forms import TeamForm
 from .forms import CourseForm
 from octs.database import db
+from flask_login import current_user
 import time
 import datetime
 from octs.student.forms import TeamRequireForm
@@ -17,7 +18,7 @@ def home():
 
 @blueprint.route('/course/')
 def course():
-    courseList = Course.query.all()
+    courseList = current_user.courses
     return render_template('student/course.html', list=courseList)
 
 

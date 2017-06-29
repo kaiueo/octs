@@ -38,6 +38,10 @@ def course():
     courseList = Course.query.all()
     return render_template('admin/course.html', list=courseList)
 
+@blueprint.route('/mainpage')
+def mainpage():
+    return render_template('admin/mainpage.html')
+
 @blueprint.route('/course/add',methods=['GET','POST'])
 def insert():
     form = CourseForm()

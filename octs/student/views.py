@@ -96,15 +96,15 @@ def my_team(id):
         userList = [tar.user for tar in tars]
         myteam = Team.query.filter_by(id=teamid).first()
         if t1.is_master:
-            return render_template('student/team/mngmyTeam.html',myteam=myteam,applylist=userlist,userList=userList, num=apply_num)
+            return render_template('student/team/mngmyTeam.html',userid=id,myteam=myteam,applylist=userlist,userList=userList, num=apply_num)
         else:
             return render_template('student/team/myTeam.html',myteam=myteam,flag=flag,userList=userList, num=apply_num)
     else:
         flag = 0
         return render_template('student/team/myTeam.html',flag=flag)
 
-@blueprint.route('team/apply/<id>')
-def team_apply(id):
+@blueprint.route('team/<userid>/apply/<id>')
+def team_apply(userid, id):
     team = Team.query.filter_by(id=id).first()
     turs = TeamUserRelation.query.filter_by(team_id=id).all()
     turs = [tur for tur in turs if tur.is_accepted==False]
@@ -119,5 +119,5 @@ def team_apply(id):
     db.session.add(team)
     db.session.commit()
     flash('成功')
-    return redirect(url_for('student.my_team', id=id))
+    return redirect(url_for('student.my_team', id=userid))
 

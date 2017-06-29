@@ -2,6 +2,8 @@
 {% import "bootstrap/wtf.html" as wtf  %}
 
 {% block teacherContent %}
+    <div class="box-header"><h3><strong>编辑课程</strong></h3></div>
+    <div class="box-body">
     <form method="POST">
     <table class="table table-bordered table-hover definewidth m10" style="margin-left:3%;margin-top:2%;">
     <tr>
@@ -35,14 +37,14 @@
     <tr>
         <td class="tableleft"></td>
         <td>
-           {{ form.submit(class="btn btn-primary")}};&nbsp;
+           {{ form.submit(class="btn btn-primary")}}&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
             <a type="button"  class="btn btn-primary" href="{{ url_for('teacher.course') }}">返回列表</a></a>
         </td>
     </tr>
 </table>
     </form>
 
-
+    </div>
 
 
 {% endblock %}

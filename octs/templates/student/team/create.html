@@ -1,5 +1,12 @@
 {% extends 'student/index.html'%}
 {% import "bootstrap/wtf.html" as wtf  %}
 {% block studentContent %}
-{{ wtf.quick_form(form) }}
+    <div class="box-header">
+        <a width="10%" class="btn btn-primary"  href={{ url_for('student.team') }}> 返回上一页</a></td>
+        <h2><strong>创建团队</strong></h2>
+
+    </div>
+    <div class="box-body">
+    {{ wtf.quick_form(form) }}
+    </div>
 {% endblock %}

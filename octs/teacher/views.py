@@ -130,11 +130,11 @@ def reject(teacherid,teamid):
     db.session.commit()
     flash('已驳回该团队申请！')
     return redirect(url_for('teacher.team'))
-
-
-
-
-
+@blueprint.route('team/detail/<teamid>')
+def team_detail(teamid):
+    teamlist=Team.query.filter(Team.id==teamid).join(TeamUserRelation,TeamUserRelation.team_id==Team.id).join(
+        User,User.id==TeamUserRelation.user_id).add_columns(User.name,User.gender,User.user_id).all()
+    return render_template('teacher/teamdetail.html',list=teamlist)
 
 
 

@@ -38,6 +38,10 @@ def course():
     courseList = Course.query.all()
     return render_template('admin/course.html', list=courseList)
 
+@blueprint.route('/mainpage')
+def mainpage():
+    return render_template('admin/mainpage.html')
+
 @blueprint.route('/course/add',methods=['GET','POST'])
 def insert():
     form = CourseForm()
@@ -120,7 +124,7 @@ def add_member(id):
     form = MemberForm()
     if form.validate_on_submit():
         file = form.file.data
-        filepath = os.getcwd()+'/uploads/'+file.filename
+        filepath = os.path.join(os.getcwd(), 'uploads/', file.filename)
         file.save(filepath)
         tables = excel_table_byindex(file=filepath, by_index=0)
         course = Course.query.filter_by(id=id).first()

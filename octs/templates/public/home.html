@@ -1,35 +1,83 @@
 
 {% extends "layout.html" %}
 {% block content %}
-<div class="content-wrapper" style="margin-left: 100px;">
 <!-- Main jumbotron for a primary marketing message or call to action -->
-<div class="jumbotron">
 
-  <h1>Welcome to flask</h1>
+<div class="jumbotron" style="min-height: 500px">
+    <div class="col-sm-0 col-md-0 col-lg-1"></div>
+    <div id="myCarousel" class="carousel slide col-sm-12 col-md-12 col-lg-10" >
+    <!-- 轮播（Carousel）指标 -->
 
-  <p>This is a starter Flask template. It includes Bootstrap 3, jQuery 2, Flask-SQLAlchemy, WTForms, and various testing utilities out of the box.</p>
-  <p><a href="https://github.com/sloria/cookiecutter-flask" class="btn btn-primary btn-large">Learn more &raquo;</a></p>
-</div><!-- /.jumbotron -->
-
-<div class="body-content">
-  <div class="row">
-    <div class="col-lg-4">
-      <h2><i class="fa fa-code"></i> Bootstrap 3</h2>
-      <p>Sleek, intuitive, and powerful mobile-first front-end framework for faster and easier web development.</p>
-      <p><a class="btn btn-default" href="http://getbootstrap.com/">Official website &raquo;</a></p>
+    <ol class="carousel-indicators">
+        <li data-target="#myCarousel" data-slide-to="0" class="active"></li>
+        <li data-target="#myCarousel" data-slide-to="1"></li>
+        <li data-target="#myCarousel" data-slide-to="2"></li>
+    </ol>
+    <!-- 轮播（Carousel）项目 -->
+    <div class="carousel-inner " >
+        <div class="item active" >
+            <img src="/static/img/031.jpg" alt="First slide" width="100%">
+        </div>
+        <div class="item">
+            <img src="/static/img/032.jpg" alt="Second slide" width="100%">
+        </div>
+        <div class="item">
+            <img src="/static/img/033.jpg" alt="Third slide" width="100%">
+        </div>
     </div>
-    <div class="col-lg-4">
-      <h2><i class="fa fa-flask"></i> SQLAlchemy</h2>
-      <p>SQLAlchemy is the Python SQL toolkit and Object Relational Mapper that gives application developers the full power and flexibility of SQL.</p>
-      <p><a href="http://www.sqlalchemy.org/" class="btn btn-default">Official website &raquo;</a></p>
-   </div>
-    <div class="col-lg-4">
-      <h2><i class="fa fa-edit"></i> WTForms</h2>
-      <p>WTForms is a flexible forms validation and rendering library for python web development.</p>
-      <p><a href="http://wtforms.simplecodes.com/" class="btn btn-default">Official website &raquo;</a></p>
-    </div>
-  </div><!-- /.row -->
+    <!-- 轮播（Carousel）导航 -->
+    <a class="carousel-control left" href="#myCarousel"
+        data-slide="prev">&lsaquo;
+    </a>
+    <a class="carousel-control right" href="#myCarousel"
+        data-slide="next">&rsaquo;
+    </a>
 </div>
-  </div>
+<div class="col-sm-0 col-md-0 col-lg-1"></div>
+</div>
+<div class="jumbotron m" style="min-height: 300px">
+    <div class="col-sm-1 col-md-1 col-lg-1"></div>
+    <div class="col-sm-6 col-md-5 col-lg-3">
+    <ul id="myTab" class="nav nav-tabs nav-stacked ">
+    <li class="active">
+        <a href="#home" data-toggle="tab">
+            最新公告
+        </a>
+    </li>
+    <li><a href="#ios" data-toggle="tab">教务提醒</a></li>
+    <li class="dropdown">
+        <a href="#" id="myTabDrop1" class="dropdown-toggle"
+           data-toggle="dropdown">
+            帮助信息<b class="caret"></b>
+        </a>
+        <ul class="dropdown-menu" role="menu" aria-labelledby="myTabDrop1">
+            <li><a href="#jmeter" tabindex="-1" data-toggle="tab">帮助文档</a></li>
+            <p></p>
+            <li><a href="#ejb" tabindex="-1" data-toggle="tab">联系我们</a></li>
+        </ul>
+    </li>
+</ul>
+    </div>
+<div id="myTabContent" class="tab-content  col-sm-6 col-md-7 col-lg-8">
+    <br/>
+
+    <div class="tab-pane fade in active col-sm-10 col-md-10 col-lg-10" id="home">
+
+        <p>提醒：每日9：00准时站会，会有检查，不要迟到。</p>
+        <p>                                          林广艳</p>
+    </div>
+    <div class="tab-pane fade col-sm-10 col-md-10 col-lg-10" id="ios">
+        <p>2017年暑期小学期已经开始，请各位同学提前登陆系统查询课程信息。</p>
+    </div>
+    <div class="tab-pane fade col-sm-10 col-md-10 col-lg-10" id="jmeter">
+        <p>暂无。</p>
+    </div>
+    <div class="tab-pane fade col-sm-10 col-md-10 col-lg-10" id="ejb">
+        <p>如果您在浏览网页的过程中遇到任何问题，请发送邮件至xxxx@buaa.edu.cn。
+        </p>
+    </div>
+</div>
+    </div>
+    <br/>
 {% endblock %}
 

@@ -4,6 +4,7 @@ from octs.user.models import Course,Term,Team,TeamUserRelation,User, Message
 from .forms import TeamForm
 from .forms import CourseForm
 from octs.database import db
+from flask_login import current_user
 import time
 import datetime
 from octs.student.forms import TeamRequireForm
@@ -17,13 +18,14 @@ def home():
 
 @blueprint.route('/course/')
 def course():
-    courseList = Course.query.all()
+    courseList = current_user.courses
     return render_template('student/course.html', list=courseList)
 
 
 @blueprint.route('/checkterm/')
 def checkterm():
-    termList = Term.query.all()
+    termList = Term.query.order_by(Term.start_time).all()
+    termList = list(reversed(termList))
     time_now = datetime.date.fromtimestamp(time.time())
     return render_template('student/checkterm.html', list=termList,endtime=termList[0],nowtime=time_now)
 
@@ -97,15 +99,15 @@ def my_team(id):
         myteam = Team.query.join(TeamUserRelation,Team.id==TeamUserRelation.team_id).filter(Team.id==teamid).add_columns(
         Team.id,Team.name,Team.status,TeamUserRelation.user_id,TeamUserRelation.is_accepted).first()
         if t1.is_master:
-            return render_template('student/team/mngmyTeam.html',myteam=myteam,applylist=userlist,userList=userList, num=apply_num)
+            return render_template('student/team/mngmyTeam.html',userid=id,myteam=myteam,applylist=userlist,userList=userList, num=apply_num)
         else:
             return render_template('student/team/myTeam.html',myteam=myteam,flag=flag,userList=userList, num=apply_num)
     else:
         flag = 0
         return render_template('student/team/myTeam.html',flag=flag)
 
-@blueprint.route('team/apply/<id>')
-def team_apply(id):
+@blueprint.route('team/<userid>/apply/<id>')
+def team_apply(userid, id):
     team = Team.query.filter_by(id=id).first()
     turs = TeamUserRelation.query.join(User, User.id == TeamUserRelation.user_id).filter(
         TeamUserRelation.is_accepted == False).filter(TeamUserRelation.team_id == team.id).add_columns(User.id,
@@ -124,7 +126,7 @@ def team_apply(id):
     db.session.add(team)
     db.session.commit()
     flash('成功')
-    return redirect(url_for('student.my_team', id=id))
+    return redirect(url_for('student.my_team', id=userid))
 
 @blueprint.route('/team/permit/<id>/<userid>')
 def permit(id,userid):

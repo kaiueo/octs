@@ -2,9 +2,16 @@
 
 
 {% block adminContent %}
+    <div class="box-header">
+        <h3><strong>成员管理</strong></h3>
+    </div>
+    <div class="box-body">
+    <a  class="btn btn-primary" href="{{ url_for('admin.course') }}">返回列表</a>
+    <br><br>
+     <a class="btn btn-primary" href="{{ url_for('admin.add_member', id=courseid) }}">添加成员</a>
 
-    <a class="btn btn-default" href="{{ url_for('admin.add_member', id=courseid) }}">添加成员</a>
-    <br>
+
+
 
     <table class="table table-bordered table-hover definewidth m10">
     <thead>
@@ -60,7 +67,7 @@
         {% endif %}
     {% endfor %}
 </table>
-    <th><a  class="btn btn-primary" href="{{ url_for('admin.course') }}">返回列表</a> </th>
 
+    </div>
 
 {% endblock %}

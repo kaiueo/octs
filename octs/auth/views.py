@@ -29,7 +29,7 @@ def login():
             if user is not None and user.check_password(form.password.data):
                 login_user(user)
                 flash('You are logged in.', 'success')
-                redirect_url = request.args.get('next') or url_for('user.members')
+                redirect_url = request.args.get('next') or url_for('public.home')
                 return redirect(redirect_url)
         else:
             flash_errors(form)

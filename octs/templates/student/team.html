@@ -41,7 +41,7 @@
                {% if current_user.in_team ==False %}
                <a class="btn btn-primary" href="{{ url_for('student.create_team',id=current_user.id)}}">申请团队</a>
                {% else %}
-               <a class="btn btn-primary" disabled="disabled">已创建团队</a></td>
+               <a class="btn btn-primary" disabled="disabled">无法创建团队</a></td>
                {% endif %}
            </td>
        </tr>
@@ -68,7 +68,7 @@
                {% if current_user.in_team==False %}
                <td align="center"> <a width="30%" class="btn btn-primary" align="center" href="{{ url_for('student.add_team', teamid=l.id, userid=current_user.id) }}"> 申请加入</a></td>
                {% else %}
-                   <td align="center"> <button disabled="disabled" width="30%" class="word_grey" align="center">已申请加入</button></td>
+                   <td align="center"> <button disabled="disabled" width="30%" class="word_grey" align="center">无法加入</button></td>
                    {% endif %}
            {% elif l.status==1 %}
              <td width="30%" class="word_grey" align="center">待审核</td>

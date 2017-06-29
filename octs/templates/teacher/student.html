@@ -32,7 +32,7 @@
         {% endif %}
     {% endfor %}
 </table>
-    <th><a  class="btn btn-primary" href="{{ url_for('teacher.course') }}">返回列表</a> </th>
+    <th><a  class="btn btn-primary" href="{{ url_for('teacher.course', teacherid=current_user.id) }}">返回列表</a> </th>
 
 
 {% endblock %}

@@ -2,7 +2,7 @@
 
 {% block teacherContent %}
     <form class="form-inline definewidth m20" action="#" method="get">
-        <a class="btn btn-primary" href={{ url_for('teacher.add') }}>添加</a>
+        <a class="btn btn-primary" href={{ url_for('teacher.add', courseid=courseid) }}>添加</a>
     </form>
 
     <table class="table table-bordered table-hover definewidth m10">
@@ -23,8 +23,8 @@
 
 
                 <td>
-                    <a class="btn btn-primary" href="{{ url_for('teacher.delete',id =task.id) }}">删除</a>
-                <a class="btn btn-primary" href="{{ url_for('teacher.task_edit',id=task.id) }}">编辑</a>
+                    <a class="btn btn-primary" href="{{ url_for('teacher.delete',courseid=courseid,id =task.id) }}">删除</a>
+                <a class="btn btn-primary" href="{{ url_for('teacher.task_edit',courseid=courseid,id=task.id) }}">编辑</a>
                 </td>
 
 

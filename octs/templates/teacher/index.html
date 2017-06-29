@@ -23,7 +23,7 @@
                     <li>
                         {% block navCourseSet %}
                             <a class="ajax-link"
-                               href="{{ url_for('teacher.course') }}">
+                               href="{{ url_for('teacher.course', teacherid=current_user.id) }}">
                                 <i class="glyphicon glyphicon-list-alt"></i><span>课程信息</span>
                             </a>
                         {% endblock %}
@@ -43,26 +43,12 @@
                             </a>
                         {% endblock %}
                     </li>
-                    <li>
-                        {% block navHwRelease %}
-                            <a id="pubhw" class="ajax-link"
-                               href="{{ url_for('teacher.task') }}">
-                                <i class="glyphicon glyphicon-edit"></i><span>作业管理</span>
-                            </a>
-                        {% endblock %}
-                    </li>
-                    <li>
-                        {% block navHwCorrect %}
-                            <a class="ajax-link"
-                               href="">
-                                <i class="glyphicon glyphicon-pencil"></i><span>作业批改</span>
-                            </a>
-                        {% endblock %}
-                    </li>
+
+
                     <li>
                         {% block navTeamAudit %}
                             <a class="ajax-link"
-                               href="">
+                               href="{{ url_for('teacher.team') }}">
                                 <i class="glyphicon glyphicon-ok"></i><span>团队审批</span>
                             </a>
                         {% endblock %}

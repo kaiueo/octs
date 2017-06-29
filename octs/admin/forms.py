@@ -10,7 +10,7 @@ class CourseForm(Form):
     location = StringField('地点',validators=[DataRequired()])
     course_introduction = StringField('课程介绍',validators=[DataRequired()])
     start_time = DateField('开始时间',validators=[DataRequired()])
-    submit = SubmitField('Submit')
+    submit = SubmitField('提交')
 
 class TermForm(Form):
     termname = StringField('名称',validators=[DataRequired()])

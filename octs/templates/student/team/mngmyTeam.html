@@ -2,10 +2,11 @@
 
 {% block studentContent %}
 
-    {% if myteam.status==0 %}
-            <a href="{{ url_for('student.team_apply', id=myteam.id) }}" class="btn btn-primary">提交申请</a>
-{% endif %}
-            <h3><strong>团队信息：</strong></h3>
+
+
+    <div class="box-header">
+        <h3><strong>团队信息：</strong></h3></div>
+    <div class="box-body">
             <table class="table table-hover">
                 <tr>
 	              <td width="18%" height="30" align="center">团队名称：</td>
@@ -29,7 +30,12 @@
 
 
             </table>
-            <strong>团队成员名单：</strong></h3>
+            {% if myteam.status==0 %}
+            &nbsp &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
+                <a href="{{ url_for('student.team_apply', userid=userid,id=myteam.id) }}" class="btn btn-primary">提交申请</a>
+            {% endif %}
+            <br><br>
+            <h4><strong>团队成员名单：</strong></h4>
             <table class="table table-condensed table-hover">
             <thead>
             <tr>
@@ -83,15 +89,19 @@
                     <td>女</td>
                 {% endif %}
                 <td>{{ student.user_id }}&nbsp &nbsp</td>
-        <td> &nbsp &nbsp &nbsp &nbsp &nbsp<a href="" class="btn btn-primary">同意申请</a>
+        <td> &nbsp &nbsp &nbsp &nbsp &nbsp<a href="{{ url_for('student.permit',id=current_user.id,userid=student.id) }}" class="btn btn-primary">同意申请</a>
             &nbsp
-         <a href="" class="btn btn-primary">拒绝申请</a></td>
+         <a href="{{ url_for('student.reject',id=current_user.id,userid=student.id) }}" class="btn btn-primary">拒绝申请</a></td>
 
         </tr>
 
     {% endfor %}
     </table>
+
         {% endif %}
+    <br><br>
     <th><a  class="btn btn-primary" href="{{ url_for('student.team') }}">返回上一页</a> </th>
+
+    </div>
 
 {% endblock %}

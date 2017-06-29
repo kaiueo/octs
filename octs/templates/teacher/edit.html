@@ -3,5 +3,5 @@
 
 {% block teacherContent %}
     {{ wtf.quick_form(form) }}
-    <a class="btn btn-primary" href="{{ url_for('teacher.task') }}">返回</a>
+    <a class="btn btn-primary" href="{{ url_for('teacher.task', courseid=courseid) }}">返回</a>
 {% endblock %}

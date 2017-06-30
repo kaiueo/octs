@@ -3,6 +3,9 @@
 {% block teacherContent %}
     <div class="box-header">
 <h3><strong>学生团队</strong></h3>
+    <td align="center">
+        <!--<a  class="btn btn-primary" href="{{ url_for('teacher.to_adjust',teacherid=current_user.id) }}">团队调整</a>-->
+    </td>
     </div>
     <div class="box-body">
    <table class="table table-condensed">
@@ -26,17 +29,17 @@
              <td width="25%" class="word_grey" align="center">{{ l.username }}</td>
            {% if l.status==0 %}
              <td width="30%" class="word_grey" align="center">组建中</td>
-                <td align="center"><a  class="btn btn-primary" disabled="disabled">不做批准</a></td>
+                <td align="center"><a  class="btn btn-primary" disabled="disabled">不能批准</a></td>
            {% elif l.status==1 %}
              <td width="25%" class="word_grey" align="center">待审核</td>
                <td align="center"> <a  class="btn btn-primary" href="{{ url_for('teacher.permit',teacherid=current_user.id,teamid=l.id) }}">同意</a>
                <a class="btn btn-primary" href="{{ url_for('teacher.reject',teacherid=current_user.id,teamid=l.id) }}">拒绝</a></td>
            {% elif l.status==2 %}
                  <td width="25%" class="word_grey" align="center">被驳回</td>
-               <td align="center"><a  class="btn btn-primary" disabled="disabled">不做批准</a></td>
+               <td align="center"><a  class="btn btn-primary" disabled="disabled">已驳回</a></td>
            {% elif l.status==3 %}
                  <td width="25%" class="word_grey" align="center">已完成</td>
-               <td align="center"><a  class="btn btn-primary" disabled="disabled">不做批准</a></td>
+               <td align="center"><a  class="btn btn-primary" disabled="disabled">成功组队</a></td>
            {% endif %}
        </tr>
        {% endfor %}

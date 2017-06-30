@@ -144,6 +144,16 @@ def team_detail(teamid):
     teamlist=Team.query.filter(Team.id==teamid).join(TeamUserRelation,TeamUserRelation.team_id==Team.id).join(
         User,User.id==TeamUserRelation.user_id).add_columns(User.name,User.gender,User.user_id).all()
     return render_template('teacher/teamdetail.html',list=teamlist)
+@blueprint.route('team/adjust/<teacherid>')
+def to_adjust(teacherid):
+    teamlist1=Team.query.join(TeamUserRelation,TeamUserRelation.team_id==Team.id).filter(Team.status==1).filter(
+        TeamUserRelation.is_master==True).join(User,User.id==TeamUserRelation.user_id).add_columns(
+        Team.name,Team.status,User.username).all()
+    teamlist2 = Team.query.join(TeamUserRelation,TeamUserRelation.team_id==Team.id).filter(Team.status==3).filter(
+        TeamUserRelation.is_master==True).join(User,User.id==TeamUserRelation.user_id).add_columns(
+        Team.name,Team.status,User.username).all()
+    teamlist=teamlist1+teamlist2
+    return render_template('teacher/adjust.html',teacher_id=teacherid,list=teamlist)
 
 @blueprint.route('/<courseid>/task/<taskid>/files', methods=['GET', 'POST'])
 def task_files(courseid, taskid):

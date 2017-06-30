@@ -1,0 +1,28 @@
+{% extends 'teacher/index.html'%}
+
+{% block teacherContent %}
+            <h3><strong>团队成员名单：</strong></h3>
+            <table class="table table-condensed">
+            <thead>
+            <tr>
+                <th>姓名</th>
+                <th>性别</th>
+                <th>学号</th>
+        &nbsp;      &nbsp
+             </tr>
+            </thead>
+            {% for user in list %}
+                <tr>
+                <td>{{ user.name }}</td>
+                    {% if user.gender== False %}
+                    <td>男</td>
+                {% else %}
+                    <td>女</td>
+                {% endif %}
+                <td>{{ user.user_id }}</td>
+                </tr>
+
+            {% endfor %}
+            </table>
+
+{% endblock %}

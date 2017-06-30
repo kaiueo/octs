@@ -16,6 +16,8 @@ class Config(object):
     CACHE_TYPE = 'simple'  # Can be "memcached", "redis", etc.
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     WTF_CSRF_ENABLED = False  # Allows form testing
+    UPLOADS_DEFAULT_DEST = os.path.join(PROJECT_ROOT, 'uploads')
+
 
 
 class ProdConfig(Config):

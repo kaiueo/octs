@@ -1,6 +1,6 @@
 from flask_wtf import Form
-from wtforms import PasswordField, StringField,SubmitField,FloatField,DateField,DateTimeField,TextAreaField
-from wtforms.validators import DataRequired, Email, EqualTo, Length
+from wtforms import PasswordField, StringField,SubmitField,FloatField,DateField,DateTimeField,TextAreaField, FileField
+from wtforms.validators import DataRequired, InputRequired
 # coding=utf-8
 
 class CourseForm(Form):
@@ -18,4 +18,8 @@ class TaskForm(Form):
     endtime = DateTimeField('结束时间')
     content = TextAreaField('内容')
     submit = SubmitField('提交')
+
+class FileForm(Form):
+    file = FileField('图片上传', validators=[DataRequired('请选择文件')])
+    submit = SubmitField('上传')
 

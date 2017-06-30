@@ -4,8 +4,11 @@ from flask import Flask, render_template
 
 from octs import commands, public, user, auth, teacher, student,admin, message
 from octs.assets import assets
-from octs.extensions import bcrypt, cache, csrf_protect, db, debug_toolbar, login_manager, migrate, bootstrap, moment
+from octs.extensions import bcrypt, cache, csrf_protect, db, debug_toolbar, login_manager, migrate, bootstrap, moment, data_uploader
 from octs.settings import ProdConfig
+from flask_uploads import configure_uploads
+
+
 
 
 def create_app(config_object=ProdConfig):
@@ -20,6 +23,7 @@ def create_app(config_object=ProdConfig):
     register_errorhandlers(app)
     register_shellcontext(app)
     register_commands(app)
+    configure_uploads(app, data_uploader)
     return app
 
 

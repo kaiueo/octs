@@ -58,6 +58,7 @@ class User(UserMixin, SurrogatePK, Model):
     password = Column(db.Binary(128), nullable=True)
     created_at = Column(db.DateTime, nullable=False, default=dt.datetime.utcnow)
     name = Column(db.String(30), nullable=True)
+    files = relationship('File', backref='user', lazy='dynamic')
     roleString = Column(db.String(30), nullable=True)
     role_id = reference_col('roles', nullable=False)
     in_team = Column(db.Boolean, nullable=False, default=False)
@@ -221,6 +222,20 @@ class Message(SurrogatePK, Model):
         m.message = message
         db.session.add(m)
         db.session.commit()
+
+
+class File(SurrogatePK, Model):
+    __tablename__ = 'files'
+    name = Column(db.String(), nullable=False)
+    path = Column(db.String(), nullable=False)
+    directory = Column(db.String(), nullable=False)
+    real_name = Column(db.String(), nullable=False)
+    user_id = reference_col('users', nullable=False)
+    task_id = Column(db.Integer())
+    course_id = Column(db.Integer())
+    create_time = Column(db.DateTime, nullable=False, default=dt.datetime.utcnow)
+
+
 
 
 

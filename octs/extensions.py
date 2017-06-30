@@ -9,6 +9,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_wtf.csrf import CSRFProtect
 from flask_bootstrap import Bootstrap
 from flask_moment import Moment
+from flask_uploads import UploadSet, ALL
 
 bcrypt = Bcrypt()
 csrf_protect = CSRFProtect()
@@ -19,3 +20,4 @@ cache = Cache()
 debug_toolbar = DebugToolbarExtension()
 bootstrap = Bootstrap()
 moment = Moment()
+data_uploader = UploadSet('files', ALL)

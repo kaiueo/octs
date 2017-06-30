@@ -25,8 +25,9 @@
 
 
                 <td>
-                    <a class="btn btn-primary" href="{{ url_for('teacher.delete',courseid=courseid,id =task.id) }}">删除</a>
+
                 <a class="btn btn-primary" href="{{ url_for('teacher.task_edit',courseid=courseid,id=task.id) }}">编辑</a>
+                    <a class="btn btn-primary" href="{{ url_for('teacher.delete',courseid=courseid,id =task.id) }}">删除</a>
                 </td>
 
 

@@ -7,6 +7,7 @@ from octs.extensions import data_uploader
 import time
 import os,zipfile
 from pypinyin import lazy_pinyin
+import xlwt
 
 blueprint = Blueprint('teacher', __name__, url_prefix='/teacher',static_folder='../static')
 
@@ -206,10 +207,10 @@ def to_adjust(teacherid):
     teamlist=teamlist1+teamlist2
     return render_template('teacher/adjust.html',teacher_id=teacherid,list=teamlist)
 
-@blueprint.route('/<courseid>/task/<taskid>/files', methods=['GET', 'POST'])
-def task_files(courseid, taskid):
+@blueprint.route('/<courseid>/task/<taskid>/files/<userid>', methods=['GET', 'POST'])
+def task_files(courseid, taskid,userid):
     form = FileForm()
-    file_records = File.query.filter_by(task_id=taskid).all()
+    file_records = File.query.filter(File.task_id==taskid).filter(File.user_id == userid).all()
     if form.validate_on_submit():
         for file in request.files.getlist('file'):
             file_record = File()
@@ -250,6 +251,11 @@ def task_file_download(courseid, taskid, fileid):
     if os.path.isfile(file_record.path):
         return send_from_directory(file_record.directory, file_record.real_name, as_attachment=True, attachment_filename='_'.join(lazy_pinyin(file_record.name)))
     abort(404)
+
+@blueprint.route('/task/files',methods = ['GET','POST'])
+def student_task():
+    form = FileForm()
+    return render_template('teacher/add.html')
 
 @blueprint.route('/source/<courseid>',methods=['GET','POST'])
 def source(courseid):

@@ -195,5 +195,3 @@ def task_file_download(courseid, taskid, fileid):
         return send_from_directory(file_record.directory, file_record.real_name, as_attachment=True, attachment_filename='_'.join(lazy_pinyin(file_record.name)))
     abort(404)
 
-
-

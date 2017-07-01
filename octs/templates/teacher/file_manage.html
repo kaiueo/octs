@@ -27,7 +27,7 @@
             </td>
             <td>
                 <a class="btn btn-primary" href="{{ url_for('teacher.task_file_download', courseid=courseid, taskid=taskid, fileid=file_record.id) }}">下载</a>
-                <a class="btn btn-danger" href="{{ url_for('teacher.task_file_delete', courseid=courseid, taskid=taskid, fileid=file_record.id) }}">删除</a>
+                <a class="btn btn-danger" href="{{ url_for('teacher.task_file_delete', courseid=courseid, taskid=taskid, fileid=file_record.id,userid = current_user.id) }}">删除</a>
             </td>
         </tr>
         {% endfor %}

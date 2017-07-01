@@ -208,7 +208,7 @@ def to_adjust(teacherid):
     return render_template('teacher/adjust.html',teacher_id=teacherid,list=teamlist)
 
 @blueprint.route('/<courseid>/task/<taskid>/files/<userid>', methods=['GET', 'POST'])
-def task_files(courseid, taskid,userid):
+def task_files(courseid,taskid,userid):
     form = FileForm()
     file_records = File.query.filter(File.task_id==taskid).filter(File.user_id == userid).all()
     if form.validate_on_submit():
@@ -233,17 +233,17 @@ def task_files(courseid, taskid,userid):
 
             db.session.add(file_record)
         db.session.commit()
-        return redirect(url_for('teacher.task_files', courseid=courseid, taskid=taskid))
+        return redirect(url_for('teacher.task_files', courseid=courseid, taskid=taskid,userid = userid))
     return render_template('teacher/file_manage.html',form=form, file_records=file_records, courseid=courseid, taskid=taskid)
 
-@blueprint.route('/<courseid>/task/<taskid>/files/delete/<fileid>', methods=['GET', 'POST'])
-def task_file_delete(courseid, taskid, fileid):
+@blueprint.route('/<courseid>/task/<taskid>/files/delete/<fileid>/<userid>', methods=['GET', 'POST'])
+def task_file_delete(courseid, taskid, fileid,userid):
     file_record = File.query.filter_by(id=fileid).first()
     os.remove(file_record.path)
     db.session.delete(file_record)
     db.session.commit()
     flash('删除成功')
-    return redirect(url_for('teacher.task_files', courseid=courseid, taskid=taskid))
+    return redirect(url_for('teacher.task_files', courseid=courseid, taskid=taskid,userid = userid))
 
 @blueprint.route('/<courseid>/task/<taskid>/files/download/<fileid>')
 def task_file_download(courseid, taskid, fileid):
@@ -252,10 +252,7 @@ def task_file_download(courseid, taskid, fileid):
         return send_from_directory(file_record.directory, file_record.real_name, as_attachment=True, attachment_filename='_'.join(lazy_pinyin(file_record.name)))
     abort(404)
 
-@blueprint.route('/task/files',methods = ['GET','POST'])
-def student_task():
-    form = FileForm()
-    return render_template('teacher/add.html')
+
 
 @blueprint.route('/source/<courseid>',methods=['GET','POST'])
 def source(courseid):

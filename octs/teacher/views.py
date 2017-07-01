@@ -70,7 +70,7 @@ def add(courseid):
         task.start_time = form.starttime.data
         task.end_time = form.endtime.data
         task.teacher = current_user.name
-        task.course_id = form.content.data
+        task.content = form.content.data
         course = Course.query.filter_by(id=courseid).first()
         course.tasks.append(task)
         db.session.add(task)
@@ -139,11 +139,15 @@ def reject(teacherid,teamid):
     db.session.commit()
     flash('已驳回该团队申请！')
     return redirect(url_for('teacher.team'))
+
+
 @blueprint.route('team/detail/<teamid>')
 def team_detail(teamid):
     teamlist=Team.query.filter(Team.id==teamid).join(TeamUserRelation,TeamUserRelation.team_id==Team.id).join(
         User,User.id==TeamUserRelation.user_id).add_columns(User.name,User.gender,User.user_id).all()
     return render_template('teacher/teamdetail.html',list=teamlist)
+
+
 @blueprint.route('team/adjust/<teacherid>')
 def to_adjust(teacherid):
     teamlist1=Team.query.join(TeamUserRelation,TeamUserRelation.team_id==Team.id).filter(Team.status==1).filter(

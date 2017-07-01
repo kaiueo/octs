@@ -44,8 +44,12 @@
             <p class="help-block">请选择文件</p>
   </div>
 
-    <input class="btn btn-default" id="submit" name="submit" type="submit" value="上传">
+    <input class="btn btn-primary" id="submit" name="submit" type="submit" value="上传">
 
 </form>
+     <br>
+     <a class="btn btn-primary" href="{{ url_for('teacher.course',teacherid = current_user.id) }}">返回</a>
+
     </div>
+
 {% endblock %}

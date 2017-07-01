@@ -7,7 +7,6 @@ from octs.extensions import data_uploader
 import time
 import os,zipfile
 from pypinyin import lazy_pinyin
-import xlwt
 
 blueprint = Blueprint('teacher', __name__, url_prefix='/teacher',static_folder='../static')
 

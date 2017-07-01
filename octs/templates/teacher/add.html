@@ -6,7 +6,6 @@
     <div class="box-body">
     {{ wtf.quick_form(form) }}
         <br>
-        <a class="btn btn-primary" href="{{ url_for('teacher.task_files', courseid=courseid, taskid=current_user.id) }}">上传附件</a>
     <a class="btn btn-primary" href="{{ url_for('teacher.task', courseid=courseid) }}">返回</a>
     </div>
 {% endblock %}

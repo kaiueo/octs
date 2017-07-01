@@ -1,0 +1,38 @@
+{% extends "student/index.html" %}
+{% import "bootstrap/wtf.html" as wtf  %}
+
+{% block studentContent %}
+    <div class="box-header">
+    <h3>附件管理</h3>
+    </div>
+    <div class="box-body">
+    <td>
+                <a class="btn btn-primary"
+                   href="{{ url_for('student.task_file_download_zip', courseid=courseid, taskid=taskid) }}">批量下载</a>
+            </td>
+    <table class="table">
+        {% if file_records|length>0 %}
+        <thead>
+        <td>文件名</td>
+        <td>操作</td>
+        </thead>
+    {% else %}
+    <p>文件列表为空</p>
+    {% endif %}
+        {% for file_record in file_records %}
+        <tr>
+            <td>
+                {{ file_record.name }}
+            </td>
+            <td>
+                <a class="btn btn-primary" href="{{ url_for('student.task_file_download', courseid=courseid, taskid=taskid, fileid=file_record.id) }}">下载</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+
+        <br><br>
+
+
+    </div>
+{% endblock %}

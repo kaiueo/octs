@@ -5,7 +5,7 @@ from octs.database import db
 from flask_login import current_user
 from octs.extensions import data_uploader
 import time
-import os, zipfile
+import os,zipfile
 from pypinyin import lazy_pinyin
 
 blueprint = Blueprint('teacher', __name__, url_prefix='/teacher',static_folder='../static')
@@ -20,6 +20,11 @@ def course(teacherid):
     teacher = User.query.filter_by(id=teacherid).first()
     courseList = teacher.courses
     return render_template('teacher/course.html', list=courseList)
+
+@blueprint.route('/<courseid>/task/<taskid>')
+def task_detail(courseid,taskid):
+    taskList = Task.query.filter_by(id=taskid).all()
+    return render_template('teacher/taskdetail.html',list=taskList,courseid=courseid)
 
 
 @blueprint.route('/<teacherid>/course/edit/<id>',methods=['GET','POST'])
@@ -99,11 +104,17 @@ def task_edit(courseid, id):
     form.content.data = task.content
     return render_template('teacher/edit.html',form = form, courseid=courseid, taskid=id)
 
-@blueprint.route('/<courseid>/task/delete/<id>')
-def delete(courseid, id):
-    task = Task.query.filter_by(id = id).first()
+@blueprint.route('/<courseid>/task/delete/<taskid>',methods=['GET','POST'])
+def delete(courseid, taskid):
+    file_records= File.query.filter_by(task_id=taskid).all()
+    for file_record in file_records:
+        os.remove(file_record.path)
+        db.session.delete(file_record)
+
+    task = Task.query.filter_by(id=taskid).first()
     db.session.delete(task)
     db.session.commit()
+    flash('删除成功')
     return redirect(url_for('teacher.task', courseid=courseid))
 
 @blueprint.route('/team',methods=['GET', 'POST'])
@@ -125,6 +136,7 @@ def permit(teacherid,teamid):
         Message.sendMessage(teacherid,stu.user_id,'提交团队申请已通过')
     flash('已通过该团队申请！')
     return redirect(url_for('teacher.team'))
+
 @blueprint.route('/team/reject/<teacherid>/<teamid>')
 def reject(teacherid,teamid):
     team=Team.query.filter(Team.id==teamid).first()
@@ -140,11 +152,13 @@ def reject(teacherid,teamid):
     db.session.commit()
     flash('已驳回该团队申请！')
     return redirect(url_for('teacher.team'))
+
 @blueprint.route('team/detail/<teamid>')
 def team_detail(teamid):
     teamlist=Team.query.filter(Team.id==teamid).join(TeamUserRelation,TeamUserRelation.team_id==Team.id).join(
         User,User.id==TeamUserRelation.user_id).add_columns(User.name,User.gender,User.user_id).all()
     return render_template('teacher/teamdetail.html',list=teamlist)
+
 @blueprint.route('team/adjust/<teacherid>')
 def to_adjust(teacherid):
     teamlist1=Team.query.join(TeamUserRelation,TeamUserRelation.team_id==Team.id).filter(Team.status==1).filter(

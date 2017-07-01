@@ -79,7 +79,8 @@ def register_shellcontext(app):
             'Team': user.models.Team,
             'TeamUserRelation': user.models.TeamUserRelation,
             'Task': user.models.Task,
-            'Message': user.models.Message
+            'Message': user.models.Message,
+            'Source':user.models.Source
         }
 
     app.shell_context_processor(shell_context)

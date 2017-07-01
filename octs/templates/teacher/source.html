@@ -1,9 +1,8 @@
 {% extends "teacher/index.html" %}
-{% import "bootstrap/wtf.html" as wtf  %}
 
 {% block teacherContent %}
-    <div class="box-header">
-    <h3>文件管理</h3>
+        <div class="box-header">
+    <h3>课程资源管理</h3>
     </div>
     <div class="box-body">
 
@@ -11,7 +10,7 @@
     <table class="table">
         {% if file_records|length>0 %}
         <thead>
-        <td>文件名</td>
+        <td>资源名</td>
         <td>操作</td>
         </thead>
     {% else %}
@@ -23,8 +22,8 @@
                 {{ file_record.name }}
             </td>
             <td>
-                <a class="btn btn-primary" href="{{ url_for('teacher.task_file_download', courseid=courseid, taskid=taskid, fileid=file_record.id) }}">下载</a>
-                <a class="btn btn-danger" href="{{ url_for('teacher.task_file_delete', courseid=courseid, taskid=taskid, fileid=file_record.id) }}">删除</a>
+                <a class="btn btn-primary" href="{{ url_for('teacher.source_download', courseid=courseid,fileid=file_record.id) }}">下载</a>
+                <a class="btn btn-danger" href="{{ url_for('teacher.source_delete', courseid=courseid,fileid=file_record.id) }}">删除</a>
             </td>
         </tr>
         {% endfor %}

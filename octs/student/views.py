@@ -166,7 +166,7 @@ def task(taskid):
     taskid = taskid
     flag = 0
     tur = TeamUserRelation.query.filter_by(user_id=current_user.id).first()
-    if(tur == None):
+    if(tur == None or tur.is_accepted == False):
         flag = 0
     else:
         flag = 1
@@ -201,6 +201,16 @@ def task_files(courseid, taskid):
         db.session.commit()
         return redirect(url_for('student.task_files', courseid=courseid, taskid=taskid))
     return render_template('student/file_manage.html',form=form, file_records=file_records, courseid=courseid, taskid=taskid)
+
+@blueprint.route('/course/<courseid>/tasklist/task/<taskid>/download')
+def task_file_download_zip(courseid, taskid):
+    tur = TeamUserRelation.query.filter_by(user_id=current_user.id).first()
+    teamid = tur.team_id
+    foldername = data_uploader.path('', folder='course/'+str(courseid)+'/teacher/tasks/'
+                                                                      +str(taskid))
+    filename = os.path.join(data_uploader.path('', folder='tmp'), 'taskfiles.zip')
+    zip_download = zipfolder(foldername, filename)
+    return send_file(filename, as_attachment=True)
 
 
 @blueprint.route('/<courseid>/checktask/<taskid>/files/download/<fileid>')
@@ -238,12 +248,15 @@ def source(courseid, taskid):
                 tmpname = str(current_user.id) + '-' + str(time.time())
                 file.filename = tmpname + '.' + filetype
 
-                file_record.directory = data_uploader.path('', folder='course/student/tasks/'+str(taskid))
+                file_record.directory = data_uploader.path('', folder='course/'+str(courseid)+'/student/tasks/'
+                                                                      +str(taskid)+'/'+str(teamid))
                 file_record.real_name = file.filename
 
-                file_record.path = data_uploader.path(file.filename, folder='course/student/tasks/'+str(taskid))
+                file_record.path = data_uploader.path(file.filename, folder='course/'+str(courseid)+'/student/tasks/'
+                                                                      +str(taskid)+'/'+str(teamid))
 
-                data_uploader.save(file, folder='course/student/tasks/'+str(taskid))
+                data_uploader.save(file, folder='course/'+str(courseid)+'/student/tasks/'
+                                                                      +str(taskid)+'/'+str(teamid))
 
                 db.session.add(file_record)
                 db.session.commit()
@@ -284,8 +297,13 @@ def zipfolder(foldername,filename):
     return zip_download
 
 @blueprint.route('/<courseid>/task/<taskid>/files/download')
-def task_file_download_zip(courseid, taskid):
-    foldername = data_uploader.path('', folder='course')
+def task_file_download_zip_source(courseid, taskid):
+    tur = TeamUserRelation.query.filter_by(user_id=current_user.id).first()
+    teamid = tur.team_id
+    foldername = data_uploader.path('', folder='course/'+str(courseid)+'/student/tasks/'
+                                                                      +str(taskid)+'/'+str(teamid))
     filename = os.path.join(data_uploader.path('', folder='tmp'), 'taskfiles.zip')
     zip_download = zipfolder(foldername, filename)
     return send_file(filename, as_attachment=True)
+
+

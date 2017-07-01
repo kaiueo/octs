@@ -20,6 +20,6 @@ class TaskForm(Form):
     submit = SubmitField('提交')
 
 class FileForm(Form):
-    file = FileField('图片上传', validators=[DataRequired('请选择文件')])
+    file = FileField('文件', validators=[DataRequired('请选择文件')])
     submit = SubmitField('上传')
 

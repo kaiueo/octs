@@ -31,6 +31,7 @@
                 <td> <a href="{{ url_for('teacher.student',id=course.id) }}" class="btn btn-primary">查看</a></td>
                 <td> <a href="{{ url_for('teacher.course_edit',teacherid=current_user.id,id=course.id) }}" class="btn btn-primary">编辑课程</a>
                     <a href="{{ url_for('teacher.task',courseid=course.id) }}" class="btn btn-primary">作业管理</a>
+                    <a href="{{ url_for('teacher.student_task',courseid=course.id,) }}" class="btn btn-primary">查看学生作业</a>
                     <a href="{{ url_for('teacher.source',courseid=course.id) }}" class="btn btn-primary">资源管理</a>
                 </td>
 

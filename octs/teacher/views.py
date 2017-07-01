@@ -5,7 +5,7 @@ from octs.database import db
 from flask_login import current_user
 from octs.extensions import data_uploader
 import time
-import os, zipfile
+import os,zipfile
 from pypinyin import lazy_pinyin
 
 blueprint = Blueprint('teacher', __name__, url_prefix='/teacher',static_folder='../static')

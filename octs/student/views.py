@@ -8,7 +8,7 @@ from flask_login import current_user
 from octs.extensions import data_uploader
 import time
 import datetime
-import os, zipfile
+import os, zipfile,xlwt
 from octs.student.forms import TeamRequireForm
 from pypinyin import lazy_pinyin
 
@@ -176,7 +176,24 @@ def task(taskid):
 @blueprint.route('/course/<courseid>/tasklist/task/<taskid>/files', methods=['GET', 'POST'])
 def task_files(courseid, taskid):
     form = FileForm()
-    file_records = File.query.filter_by(task_id=taskid).all()
+
+    # tur = TeamUserRelation.query.filter_by(user_id=current_user.id).first()
+    # teamid = tur.team_id
+    # mastersearch = TeamUserRelation.query.filter(TeamUserRelation.team_id == teamid).filter(
+    #     TeamUserRelation.is_master == True).first()
+    # masterid = mastersearch.user_id
+
+    user_ist = Course.query.filter_by(id=courseid).first().users
+    teachers = [user for user in user_ist if user.roleString=='teacher']
+
+    file_records = []
+    for teacher in teachers:
+        file_list = File.query.filter_by(user_id=teacher.id).all()
+        file_records.extend(file_list)
+
+    file_records = [file_record for file_record in file_records if file_record.task_id==int(taskid)]
+
+
     if form.validate_on_submit():
         for file in request.files.getlist('file'):
             file_record = File()
@@ -200,6 +217,7 @@ def task_files(courseid, taskid):
             db.session.add(file_record)
         db.session.commit()
         return redirect(url_for('student.task_files', courseid=courseid, taskid=taskid))
+    print(file_records)
     return render_template('student/file_manage.html',form=form, file_records=file_records, courseid=courseid, taskid=taskid)
 
 @blueprint.route('/course/<courseid>/tasklist/task/<taskid>/download')

@@ -45,7 +45,8 @@
   </div>
 
     <input class="btn btn-default" id="submit" name="submit" type="submit" value="上传">
-
+        <br><br>
 </form>
+    <a class="btn btn-primary" href="{{ url_for('teacher.task_edit', courseid=courseid,id=taskid) }}">返回上一页</a>
     </div>
 {% endblock %}

@@ -1,5 +1,5 @@
-from flask import Blueprint, flash, redirect, render_template, request, send_from_directory,url_for,abort, send_file
-from octs.user.models import Course,Term,Team,TeamUserRelation,User,Task,File
+from flask import Blueprint, flash, redirect, render_template, request, send_from_directory,url_for,abort,send_file
+from octs.user.models import Course,Term,Team,TeamUserRelation,User,Task,File,Source
 from octs.user.models import Course,Term,Team,TeamUserRelation,User, Message
 from .forms import TeamForm
 from .forms import CourseForm,FileForm
@@ -8,7 +8,7 @@ from flask_login import current_user
 from octs.extensions import data_uploader
 import time
 import datetime
-import os,zipfile
+import os, zipfile
 from octs.student.forms import TeamRequireForm
 from pypinyin import lazy_pinyin
 
@@ -46,10 +46,12 @@ def team():
 @blueprint.route('/team/create/<id>',methods=['GET','POST'])
 def create_team(id):
     form = TeamForm()
+    course = Course.query.order_by(Course.id.desc()).first()
     if form.validate_on_submit():
         team = Team()
         team.name = form.teamname.data
         team.status = 0
+        course.teams.append(team)
         db.session.add(team)
         db.session.commit()
         temp1 = Team.query.filter_by(name=form.teamname.data).first()
@@ -62,6 +64,7 @@ def create_team(id):
         teamuserrelation.is_accepted = True
         db.session.add(teamuserrelation)
         db.session.add(temp2)
+        db.session.add(course)
         db.session.commit()
         return redirect(url_for('student.team'))
     return render_template('student/team/create.html', form=form,id=id)

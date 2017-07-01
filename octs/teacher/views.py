@@ -245,6 +245,15 @@ def task_file_delete(courseid, taskid, fileid,userid):
     flash('删除成功')
     return redirect(url_for('teacher.task_files', courseid=courseid, taskid=taskid,userid = userid))
 
+@blueprint.route('/<courseid>/task/<taskid>/files/delete/<fileid>', methods=['GET', 'POST'])
+def student_task_file_delete(courseid, taskid, fileid):
+    file_record = File.query.filter_by(id=fileid).first()
+    os.remove(file_record.path)
+    db.session.delete(file_record)
+    db.session.commit()
+    flash('删除成功')
+    return redirect(url_for('teacher.student_task', courseid=courseid, taskid=taskid))
+
 @blueprint.route('/<courseid>/task/<taskid>/files/download/<fileid>')
 def task_file_download(courseid, taskid, fileid):
     file_record = File.query.filter_by(id=fileid).first()
@@ -252,7 +261,22 @@ def task_file_download(courseid, taskid, fileid):
         return send_from_directory(file_record.directory, file_record.real_name, as_attachment=True, attachment_filename='_'.join(lazy_pinyin(file_record.name)))
     abort(404)
 
-
+@blueprint.route('/<courseid>/task/<taskid>/files',methods = ['GET','POST'])
+def student_task(courseid,taskid):
+    form = FileForm()
+    course = Course.query.filter_by(id = courseid).first()
+    users = course.users
+    masters = []
+    for user in users:
+        tur = TeamUserRelation.query.filter(TeamUserRelation.user_id == user.id).filter(TeamUserRelation.is_master == True).first()
+        if tur is not None:
+            masters.append(tur)
+    print(masters)
+    file_records = []
+    for master in masters:
+        file_records.append((master.team_id ,File.query.filter(File.user_id == master.user_id).filter(File.task_id == int(taskid)).all()))
+    print(file_records)
+    return render_template('teacher/task_student.html',form = form,file_records=file_records,courseid = courseid,taskid = taskid)
 
 @blueprint.route('/source/<courseid>',methods=['GET','POST'])
 def source(courseid):
@@ -317,14 +341,21 @@ def zipfolder(foldername,filename):
 
 @blueprint.route('/<courseid>/task/<taskid>/files/download')
 def task_file_download_zip(courseid, taskid):
-    foldername = data_uploader.path('', folder='course/teacher/task')
+    foldername = data_uploader.path('', folder='course/'+str(courseid)+'/teacher/tasks/'+str(taskid))
+    filename = os.path.join(data_uploader.path('', folder='tmp'), 'taskfiles.zip')
+    zip_download = zipfolder(foldername, filename)
+    return send_file(filename, as_attachment=True)
+
+@blueprint.route('/<courseid>/task/<taskid>/studenttask/files/download')
+def student_task_file_download_zip(courseid, taskid):
+    foldername = data_uploader.path('', folder='course/'+str(courseid)+'/student/tasks/'+str(taskid))
     filename = os.path.join(data_uploader.path('', folder='tmp'), 'taskfiles.zip')
     zip_download = zipfolder(foldername, filename)
     return send_file(filename, as_attachment=True)
 
 @blueprint.route('/source/<courseid>/files/download')
 def source_file_download_zip(courseid):
-    foldername = data_uploader.path('',folder='course/teacher/source')
+    foldername = data_uploader.path('',folder='course'+str(courseid)+'/teacher/source')
     filename = os.path.join(data_uploader.path('',folder='tmp'),'sourcefiles.zip')
     zip_download = zipfolder(foldername,filename)
     return send_file(filename,as_attachment=True)

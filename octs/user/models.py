@@ -200,6 +200,12 @@ class Task(SurrogatePK, Model):
     teacher = Column(db.String(1000), nullable=False, default='x老师')
     course_id = reference_col('courses', nullable=False)
 
+class Source(SurrogatePK,Model):
+    __tablename__ = 'source'
+    name = Column(db.String(1000))
+    teacher = Column(db.String(1000),nullable=False,default='老师')
+    course_id = reference_col('courses',nullable=False)
+
 
 class Message(SurrogatePK, Model):
     from_id = Column(db.Integer, nullable=False)

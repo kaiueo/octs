@@ -1,11 +1,11 @@
-from flask import Blueprint, flash, redirect, render_template, request, url_for,send_from_directory, abort
-from octs.user.models import Course,Task, User, Message, Team,TeamUserRelation, File
+from flask import Blueprint, flash, redirect, render_template, request, url_for,send_from_directory, abort, make_response, send_file
+from octs.user.models import Course,Task, User, Message, Team,TeamUserRelation, File,Source
 from .forms import CourseForm,TaskForm, FileForm
 from octs.database import db
 from flask_login import current_user
 from octs.extensions import data_uploader
 import time
-import os
+import os, zipfile
 from pypinyin import lazy_pinyin
 
 blueprint = Blueprint('teacher', __name__, url_prefix='/teacher',static_folder='../static')
@@ -203,6 +203,76 @@ def task_file_download(courseid, taskid, fileid):
     if os.path.isfile(file_record.path):
         return send_from_directory(file_record.directory, file_record.real_name, as_attachment=True, attachment_filename='_'.join(lazy_pinyin(file_record.name)))
     abort(404)
+
+@blueprint.route('/source/<courseid>',methods=['GET','POST'])
+def source(courseid):
+    ##sourcelist=Source.query.filter_by(course_id=courseid).all()
+    ##return render_template('teacher/source.html', list=sourcelist, courseid=courseid)
+    form = FileForm()
+    file_records = File.query.filter_by(course_id=courseid).all()
+    if form.validate_on_submit():
+        for file in request.files.getlist('file'):
+            file_record = File()
+            file_record.user_id = current_user.id
+            file_record.course_id = courseid
+
+            filename = file.filename
+            file_record.name = filename
+
+            filetype = filename.split('.')[-1]
+            tmpname = str(current_user.id) + '-' + str(time.time())
+            file.filename = tmpname + '.' + filetype
+
+            file_record.directory = data_uploader.path('', folder='course/source')
+            file_record.real_name = file.filename
+
+            file_record.path = data_uploader.path(file.filename, folder='course/source')
+
+            data_uploader.save(file, folder='course/source')
+
+            db.session.add(file_record)
+        db.session.commit()
+        return redirect(url_for('teacher.source', courseid=courseid))
+    return render_template('teacher/source.html', form=form, file_records=file_records, courseid=courseid)
+
+@blueprint.route('<courseid>/source/files/download/<fileid>')
+def source_download(courseid,fileid):
+    file_record = File.query.filter_by(id=fileid).first()
+    if os.path.isfile(file_record.path):
+        return send_from_directory(file_record.directory, file_record.real_name, as_attachment=True,
+                                   attachment_filename='_'.join(lazy_pinyin(file_record.name)))
+    abort(404)
+
+@blueprint.route('<courseid>/source/files/delete/<fileid>')
+def source_delete(courseid,fileid):
+    file_record = File.query.filter_by(id=fileid).first()
+    os.remove(file_record.path)
+    db.session.delete(file_record)
+    db.session.commit()
+    flash('删除成功')
+    return redirect(url_for('teacher.source', courseid=courseid))
+
+def zipfolder(foldername,filename):
+    '''
+        zip folder foldername and all its subfiles and folders into
+        a zipfile named filename
+    '''
+    zip_download=zipfile.ZipFile(filename,'w',zipfile.ZIP_DEFLATED)
+    for root,dirs,files in os.walk(foldername):
+        print(root, dirs, files)
+        for filename in files:
+            zip_download.write(os.path.join(root,filename), arcname=os.path.join(os.path.basename(root) ,filename))
+    zip_download.close()
+    return zip_download
+
+@blueprint.route('/<courseid>/task/<taskid>/files/download')
+def task_file_download_zip(courseid, taskid):
+    foldername = data_uploader.path('', folder='course')
+    filename = os.path.join(data_uploader.path('', folder='tmp'), 'taskfiles.zip')
+    zip_download = zipfolder(foldername, filename)
+    return send_file(filename, as_attachment=True)
+
+
 
 
 

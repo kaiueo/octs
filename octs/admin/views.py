@@ -9,10 +9,6 @@ import os
 import xlrd
 # -*- coding: UTF-8 -*-
 blueprint = Blueprint('admin', __name__, url_prefix='/admin',static_folder='../static')
-
-@blueprint.route('/')
-def home():
-    return render_template('admin/index.html')
 @blueprint.route('/term')
 def term():
     termList = Term.query.order_by(Term.start_time).all()
@@ -39,7 +35,7 @@ def course():
     return render_template('admin/course.html', list=courseList)
 
 @blueprint.route('/mainpage')
-def mainpage():
+def home():
     return render_template('admin/mainpage.html')
 
 @blueprint.route('/course/add',methods=['GET','POST'])

@@ -15,10 +15,6 @@ from pypinyin import lazy_pinyin
 
 blueprint = Blueprint('student', __name__, url_prefix='/student',static_folder='../static')
 
-@blueprint.route('/')
-def home():
-    return render_template('student/index.html')
-
 @blueprint.route('/course/')
 def course():
     courseList = current_user.courses
@@ -33,7 +29,7 @@ def checkterm():
     return render_template('student/checkterm.html', list=termList,endtime=termList[0],nowtime=time_now)
 
 @blueprint.route('/mainpage/')
-def mainpage():
+def home():
     return render_template('student/mainpage.html')
 
 @blueprint.route('/team',methods=['GET', 'POST'])

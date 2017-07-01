@@ -1,11 +1,11 @@
-from flask import Blueprint, flash, redirect, render_template, request, url_for,send_from_directory, abort
+from flask import Blueprint, flash, redirect, render_template, request, url_for,send_from_directory, abort, make_response, send_file
 from octs.user.models import Course,Task, User, Message, Team,TeamUserRelation, File,Source
 from .forms import CourseForm,TaskForm, FileForm
 from octs.database import db
 from flask_login import current_user
 from octs.extensions import data_uploader
 import time
-import os
+import os, zipfile
 from pypinyin import lazy_pinyin
 
 blueprint = Blueprint('teacher', __name__, url_prefix='/teacher',static_folder='../static')
@@ -248,6 +248,25 @@ def source_delete(courseid,fileid):
     flash('删除成功')
     return redirect(url_for('teacher.source', courseid=courseid))
 
+def zipfolder(foldername,filename):
+    '''
+        zip folder foldername and all its subfiles and folders into
+        a zipfile named filename
+    '''
+    zip_download=zipfile.ZipFile(filename,'w',zipfile.ZIP_DEFLATED)
+    for root,dirs,files in os.walk(foldername):
+        print(root, dirs, files)
+        for filename in files:
+            zip_download.write(os.path.join(root,filename), arcname=os.path.join(os.path.basename(root) ,filename))
+    zip_download.close()
+    return zip_download
+
+@blueprint.route('/<courseid>/task/<taskid>/files/download')
+def task_file_download_zip(courseid, taskid):
+    foldername = data_uploader.path('', folder='course')
+    filename = os.path.join(data_uploader.path('', folder='tmp'), 'taskfiles.zip')
+    zip_download = zipfolder(foldername, filename)
+    return send_file(filename, as_attachment=True)
 
 
 

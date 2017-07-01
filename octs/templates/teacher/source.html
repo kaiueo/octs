@@ -6,6 +6,10 @@
     </div>
     <div class="box-body">
 
+    {% if file_records|length>0 %}
+        <a href="{{ url_for('teacher.source_file_download_zip', courseid=courseid) }}" class="btn btn-primary">打包下载</a>
+    {% endif %}
+
 
     <table class="table">
         {% if file_records|length>0 %}

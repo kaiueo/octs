@@ -70,7 +70,8 @@ def add(courseid):
         task.start_time = form.starttime.data
         task.end_time = form.endtime.data
         task.teacher = current_user.name
-        task.course_id = form.content.data
+        ##task.course_id = form.content.data
+        task.content = form.content.data
         course = Course.query.filter_by(id=courseid).first()
         course.tasks.append(task)
         db.session.add(task)
@@ -172,12 +173,12 @@ def task_files(courseid, taskid):
             tmpname = str(current_user.id) + '-' + str(time.time())
             file.filename = tmpname + '.' + filetype
 
-            file_record.directory = data_uploader.path('', folder='course')
+            file_record.directory = data_uploader.path('', folder='course/teacher/task')
             file_record.real_name = file.filename
 
-            file_record.path = data_uploader.path(file.filename, folder='course')
+            file_record.path = data_uploader.path(file.filename, folder='course/teacher/task')
 
-            data_uploader.save(file, folder='course')
+            data_uploader.save(file, folder='course/teacher/task')
 
             db.session.add(file_record)
         db.session.commit()
@@ -219,12 +220,12 @@ def source(courseid):
             tmpname = str(current_user.id) + '-' + str(time.time())
             file.filename = tmpname + '.' + filetype
 
-            file_record.directory = data_uploader.path('', folder='course/source')
+            file_record.directory = data_uploader.path('', folder='course/teacher/source')
             file_record.real_name = file.filename
 
-            file_record.path = data_uploader.path(file.filename, folder='course/source')
+            file_record.path = data_uploader.path(file.filename, folder='course/teacher/source')
 
-            data_uploader.save(file, folder='course/source')
+            data_uploader.save(file, folder='course/teacher/source')
 
             db.session.add(file_record)
         db.session.commit()
@@ -263,10 +264,17 @@ def zipfolder(foldername,filename):
 
 @blueprint.route('/<courseid>/task/<taskid>/files/download')
 def task_file_download_zip(courseid, taskid):
-    foldername = data_uploader.path('', folder='course')
+    foldername = data_uploader.path('', folder='course/teacher/task')
     filename = os.path.join(data_uploader.path('', folder='tmp'), 'taskfiles.zip')
     zip_download = zipfolder(foldername, filename)
     return send_file(filename, as_attachment=True)
+
+@blueprint.route('/source/<courseid>/files/download')
+def source_file_download_zip(courseid):
+    foldername = data_uploader.path('',folder='course/teacher/source')
+    filename = os.path.join(data_uploader.path('',folder='tmp'),'sourcefiles.zip')
+    zip_download = zipfolder(foldername,filename)
+    return send_file(filename,as_attachment=True)
 
 
 

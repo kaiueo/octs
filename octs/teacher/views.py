@@ -7,6 +7,7 @@ from octs.extensions import data_uploader
 import time
 import os, zipfile
 from pypinyin import lazy_pinyin
+import xlwt
 
 blueprint = Blueprint('teacher', __name__, url_prefix='/teacher',static_folder='../static')
 
@@ -107,6 +108,42 @@ def team():
         User, TeamUserRelation.user_id == User.id).filter(TeamUserRelation.user_id == User.id).add_columns(
         Team.name, User.username, Team.status, Team.id, User.user_id, User.in_team)
     return render_template('teacher/team.html',list=teamlist)
+
+@blueprint.route('/team/download')
+def team_download():
+    teams = Team.query.filter_by(status=3).all()
+    book = xlwt.Workbook()
+
+    alignment = xlwt.Alignment()  # Create Alignment
+    alignment.horz = xlwt.Alignment.HORZ_CENTER  # May be: HORZ_GENERAL, HORZ_LEFT, HORZ_CENTER, HORZ_RIGHT, HORZ_FILLED, HORZ_JUSTIFIED, HORZ_CENTER_ACROSS_SEL, HORZ_DISTRIBUTED
+    alignment.vert = xlwt.Alignment.VERT_CENTER  # May be: VERT_TOP, VERT_CENTER, VERT_BOTTOM, VERT_JUSTIFIED, VERT_DISTRIBUTED
+    style = xlwt.XFStyle()  # Create Style
+    style.alignment = alignment  # Add Alignment to Style
+
+    sheet1 = book.add_sheet('团队信息', cell_overwrite_ok=True)
+    row0 = ['团队id', '团队名称', '姓名', '学号', '性别', 'Master']
+    for i in range(0, len(row0)):
+        sheet1.write(0, i, row0[i])
+
+    row_num = 1
+    for team in teams:
+        turs = TeamUserRelation.query.filter_by(team_id=team.id).all()
+        turs_length = len(turs)
+        sheet1.write_merge(row_num, row_num + turs_length - 1, 0, 0, team.id, style)
+        sheet1.write_merge(row_num, row_num + turs_length - 1, 1, 1, team.name, style)
+        for i in range(turs_length):
+            if turs[i].is_accepted:
+                sheet1.write(row_num+i, 2, turs[i].user.name)
+                sheet1.write(row_num + i, 3, turs[i].user.user_id)
+                gender = '男' if turs[i].user.gender==False else '女'
+                sheet1.write(row_num + i, 4, gender)
+                if turs[i].is_master == True:
+                    sheet1.write(row_num + i, 5, '√')
+        row_num = row_num + turs_length
+    filename = 'team_table_' + str(time.time()) + '.xls'
+    book.save(os.path.join(data_uploader.path('', folder='tmp'), filename))
+    return send_from_directory(data_uploader.path('', folder='tmp'), filename, as_attachment=True)
+
 
 @blueprint.route('/team/permit/<teacherid>/<teamid>')
 def permit(teacherid,teamid):
@@ -214,6 +251,8 @@ def task_file_download_zip(courseid, taskid):
     filename = os.path.join(data_uploader.path('', folder='tmp'), 'taskfiles.zip')
     zip_download = zipfolder(foldername, filename)
     return send_file(filename, as_attachment=True)
+
+
 
 
 

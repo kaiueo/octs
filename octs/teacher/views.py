@@ -187,12 +187,12 @@ def task_files(courseid, taskid):
             tmpname = str(current_user.id) + '-' + str(time.time())
             file.filename = tmpname + '.' + filetype
 
-            file_record.directory = data_uploader.path('', folder='course/teacher/task')
+            file_record.directory = data_uploader.path('', folder='course/'+str(courseid)+'/teacher/tasks/'+str(taskid))
             file_record.real_name = file.filename
 
-            file_record.path = data_uploader.path(file.filename, folder='course/teacher/task')
+            file_record.path = data_uploader.path(file.filename, folder='course/'+str(courseid)+'/teacher/tasks/'+str(taskid))
 
-            data_uploader.save(file, folder='course/teacher/task')
+            data_uploader.save(file, folder='course/'+str(courseid)+'/teacher/tasks/'+str(taskid))
 
             db.session.add(file_record)
         db.session.commit()
@@ -234,12 +234,12 @@ def source(courseid):
             tmpname = str(current_user.id) + '-' + str(time.time())
             file.filename = tmpname + '.' + filetype
 
-            file_record.directory = data_uploader.path('', folder='course/teacher/source')
+            file_record.directory = data_uploader.path('', folder='course/'+str(courseid)+'/teacher/source')
             file_record.real_name = file.filename
 
-            file_record.path = data_uploader.path(file.filename, folder='course/teacher/source')
+            file_record.path = data_uploader.path(file.filename, folder='course/'+str(courseid)+'/teacher/source')
 
-            data_uploader.save(file, folder='course/teacher/source')
+            data_uploader.save(file, folder='course/'+str(courseid)+'/teacher/source')
 
             db.session.add(file_record)
         db.session.commit()

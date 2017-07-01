@@ -6,7 +6,10 @@
     <h3>附件管理</h3>
     </div>
     <div class="box-body">
-
+    <td>
+                <a class="btn btn-primary"
+                   href="{{ url_for('student.task_file_download_zip', courseid=courseid, taskid=taskid) }}">批量下载</a>
+            </td>
     <table class="table">
         {% if file_records|length>0 %}
         <thead>

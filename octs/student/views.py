@@ -1,5 +1,5 @@
-from flask import Blueprint, flash, redirect, render_template, request, send_from_directory,url_for,abort
-from octs.user.models import Course,Term,Team,TeamUserRelation,User,Task,File
+from flask import Blueprint, flash, redirect, render_template, request, send_from_directory,url_for,abort,send_file
+from octs.user.models import Course,Term,Team,TeamUserRelation,User,Task,File,Source
 from octs.user.models import Course,Term,Team,TeamUserRelation,User, Message
 from .forms import TeamForm
 from .forms import CourseForm,FileForm
@@ -8,7 +8,7 @@ from flask_login import current_user
 from octs.extensions import data_uploader
 import time
 import datetime
-import os
+import os, zipfile
 from octs.student.forms import TeamRequireForm
 from pypinyin import lazy_pinyin
 
@@ -200,3 +200,25 @@ def task_file_download(courseid, taskid, fileid):
     if os.path.isfile(file_record.path):
         return send_from_directory(file_record.directory, file_record.real_name, as_attachment=True, attachment_filename='_'.join(lazy_pinyin(file_record.name)))
     abort(404)
+
+
+def zipfolder(foldername,filename):
+    '''
+        zip folder foldername and all its subfiles and folders into
+        a zipfile named filename
+    '''
+    zip_download=zipfile.ZipFile(filename,'w',zipfile.ZIP_DEFLATED)
+    for root,dirs,files in os.walk(foldername):
+        print(root, dirs, files)
+        for filename in files:
+            zip_download.write(os.path.join(root,filename), arcname=os.path.join(os.path.basename(root) ,filename))
+    zip_download.close()
+    return zip_download
+
+
+@blueprint.route('/<courseid>/task/<taskid>/files/download')
+def task_file_download_zip(courseid, taskid):
+    foldername = data_uploader.path('', folder='course')
+    filename = os.path.join(data_uploader.path('', folder='tmp'), 'taskfiles.zip')
+    zip_download = zipfolder(foldername, filename)
+    return send_file(filename, as_attachment=True)

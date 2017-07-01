@@ -186,12 +186,12 @@ def task_files(courseid, taskid):
             tmpname = str(current_user.id) + '-' + str(time.time())
             file.filename = tmpname + '.' + filetype
 
-            file_record.directory = data_uploader.path('', folder='course/teacher/tasks/'+ str(taskid))
+            file_record.directory = data_uploader.path('', folder='course')
             file_record.real_name = file.filename
 
-            file_record.path = data_uploader.path(file.filename, folder='course/teacher/tasks/'+ str(taskid))
+            file_record.path = data_uploader.path(file.filename, folder='course')
 
-            data_uploader.save(file, folder='course/teacher/tasks/'+ str(taskid))
+            data_uploader.save(file, folder='course')
 
             db.session.add(file_record)
         db.session.commit()

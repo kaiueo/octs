@@ -1,13 +1,16 @@
-from flask import Blueprint, flash, redirect, render_template, request, url_for
-from octs.user.models import Course,Term,Team,TeamUserRelation,User
+from flask import Blueprint, flash, redirect, render_template, request, send_from_directory,url_for,abort
+from octs.user.models import Course,Term,Team,TeamUserRelation,User,Task,File
 from octs.user.models import Course,Term,Team,TeamUserRelation,User, Message
 from .forms import TeamForm
-from .forms import CourseForm
+from .forms import CourseForm,FileForm
 from octs.database import db
 from flask_login import current_user
+from octs.extensions import data_uploader
 import time
 import datetime
+import os
 from octs.student.forms import TeamRequireForm
+from pypinyin import lazy_pinyin
 
 
 blueprint = Blueprint('student', __name__, url_prefix='/student',static_folder='../static')
@@ -15,7 +18,7 @@ blueprint = Blueprint('student', __name__, url_prefix='/student',static_folder='
 @blueprint.route('/course/')
 def course():
     courseList = current_user.courses
-    return render_template('student/course.html', list=courseList)
+    return render_template('student/course/course.html', list=courseList)
 
 
 @blueprint.route('/checkterm/')
@@ -38,6 +41,8 @@ def team():
     Team.name,User.username,Team.status,Team.id,User.user_id,User.in_team)
 
     return render_template('student/team.html',list=teamlist,form=form)
+
+
 @blueprint.route('/team/create/<id>',methods=['GET','POST'])
 def create_team(id):
     form = TeamForm()
@@ -102,7 +107,7 @@ def my_team(id):
         flag = 0
         return render_template('student/team/myTeam.html',flag=flag)
 
-@blueprint.route('team/<userid>/apply/<id>')
+@blueprint.route('/team/<userid>/apply/<id>')
 def team_apply(userid, id):
     team = Team.query.filter_by(id=id).first()
     turs = TeamUserRelation.query.join(User, User.id == TeamUserRelation.user_id).filter(
@@ -134,7 +139,7 @@ def permit(id,userid):
     flash('已同意该同学申请！')
     return redirect(url_for('student.my_team',id=id))
 
-@blueprint.route('team/reject/<id>/<userid>')
+@blueprint.route('/team/reject/<id>/<userid>')
 def reject(id,userid):
     temp = TeamUserRelation.query.filter_by(user_id=userid).first()
     db.session.delete(temp)
@@ -147,3 +152,51 @@ def reject(id,userid):
     return redirect(url_for('student.my_team',id=id))
 
 
+@blueprint.route('/<courseid>/tasklist')
+def tasklist(courseid):
+    tasklist = Task.query.filter_by(course_id = courseid).all()
+    return render_template('student/course/tasklist.html', list=tasklist)
+
+
+@blueprint.route('/course/tasklist/task/<taskid>')
+def task(taskid):
+    taskid = taskid
+    task = Task.query.filter_by(id=taskid).first()
+    return render_template('student/course/task.html',task = task)
+
+@blueprint.route('/course/<courseid>/tasklist/task/<taskid>/files', methods=['GET', 'POST'])
+def task_files(courseid, taskid):
+    form = FileForm()
+    file_records = File.query.filter_by(task_id=taskid).all()
+    if form.validate_on_submit():
+        for file in request.files.getlist('file'):
+            file_record = File()
+            file_record.user_id = current_user.id
+            file_record.task_id = taskid
+
+            filename = file.filename
+            file_record.name = filename
+
+            filetype = filename.split('.')[-1]
+            tmpname = str(current_user.id) + '-' + str(time.time())
+            file.filename = tmpname + '.' + filetype
+
+            file_record.directory = data_uploader.path('', folder='course')
+            file_record.real_name = file.filename
+
+            file_record.path = data_uploader.path(file.filename, folder='course')
+
+            data_uploader.save(file, folder='course')
+
+            db.session.add(file_record)
+        db.session.commit()
+        return redirect(url_for('student.task_files', courseid=courseid, taskid=taskid))
+    return render_template('student/file_manage.html',form=form, file_records=file_records, courseid=courseid, taskid=taskid)
+
+
+@blueprint.route('/<courseid>/checktask/<taskid>/files/download/<fileid>')
+def task_file_download(courseid, taskid, fileid):
+    file_record = File.query.filter_by(id=fileid).first()
+    if os.path.isfile(file_record.path):
+        return send_from_directory(file_record.directory, file_record.real_name, as_attachment=True, attachment_filename='_'.join(lazy_pinyin(file_record.name)))
+    abort(404)

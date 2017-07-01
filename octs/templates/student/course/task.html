@@ -36,6 +36,12 @@
             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
             <a class="btn btn-primary"
                href="{{ url_for('student.tasklist',courseid=task.course_id) }}">返回列表</a>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+            {% if flag == 1 %}
+            <a class="btn btn-primary"
+               href="{{ url_for('student.source',courseid=task.course_id,taskid=task.id) }}">提交情况</a>
+
+            {% endif %}
             <br>
         </th>
     </div>

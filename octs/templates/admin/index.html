@@ -1,5 +1,55 @@
-{% extends 'admin/base.html'%}
+{% extends "layout.html" %}
 
-{% block adminContent %}
+<title>{% block page_title %}
+
+    管理员页面
+
+    {% endblock %}
+  </title>
+
+
+
+
+{% block content %}
+
+  <aside class="main-sidebar">
+  <section class="sidebar">
+  <ul class="sidebar-menu">
+  <li class="nav-header">
+                        {% block navTeHomepage %}
+                            <a class="ajax-link" href="{{ url_for('admin.home') }}">
+                                <i class="glyphicon glyphicon-home"></i><span>我的主页</span>
+                            </a>
+                        {% endblock %}
+                    </li>
+                    <li>
+                        {% block navCourseSet %}
+                            <a class="ajax-link" href="{{ url_for('admin.course') }}">
+                                <i class="glyphicon glyphicon-list-alt"></i><span>课程信息</span>
+                            </a>
+                        {% endblock %}
+                    </li>
+
+                    <li>
+                        {% block navCommunicate %}
+                            <a class="ajax-link"
+                               href="{{ url_for('admin.term')}}" >
+                                <i class="glyphicon glyphicon-globe"></i><span>查看学期</span>
+                            </a>
+                        {% endblock %}
+                    </li>
+  </ul>
+  </section>
+  </aside>
+    <div class="content-wrapper">
+    <section class="content">
+<div class="box">
+                {% block adminContent %}
+                {% endblock %}
+</div>
+                </section>
+    </div>
+
 
 {% endblock %}
+

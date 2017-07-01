@@ -1,5 +1,5 @@
 from flask_wtf import Form
-from wtforms import PasswordField, StringField,SubmitField,FloatField,DateField
+from wtforms import PasswordField, StringField,SubmitField,FloatField,DateField,FileField
 from wtforms.validators import DataRequired, Email, EqualTo, Length
 from octs.database import Column, Model, SurrogatePK, db, reference_col, relationship
 from octs.user.models import Team
@@ -18,3 +18,7 @@ class TeamRequireForm(Form):
 class TeamForm(Form):
     teamname = StringField('团队名称',validators=[DataRequired()])
     submit = SubmitField('提交')
+
+class FileForm(Form):
+    file = FileField('附件下载', validators=[DataRequired('请选择文件')])
+    submit = SubmitField('下载')

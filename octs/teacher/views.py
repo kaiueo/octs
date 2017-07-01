@@ -1,21 +1,31 @@
 from flask import Blueprint, flash, redirect, render_template, request, url_for,send_from_directory, abort, make_response, send_file
-from octs.user.models import Course,Task, User, Message, Team,TeamUserRelation, File
+from octs.user.models import Course,Task, User, Message, Team,TeamUserRelation, File,Source
 from .forms import CourseForm,TaskForm, FileForm
 from octs.database import db
 from flask_login import current_user
 from octs.extensions import data_uploader
 import time
-import os, zipfile
+import os,zipfile
 from pypinyin import lazy_pinyin
 import xlwt
 
 blueprint = Blueprint('teacher', __name__, url_prefix='/teacher',static_folder='../static')
+
+@blueprint.route('/')
+def home():
+    return render_template('teacher/index.html')
+
 
 @blueprint.route('/<teacherid>/course/')
 def course(teacherid):
     teacher = User.query.filter_by(id=teacherid).first()
     courseList = teacher.courses
     return render_template('teacher/course.html', list=courseList)
+
+@blueprint.route('/<courseid>/task/<taskid>')
+def task_detail(courseid,taskid):
+    taskList = Task.query.filter_by(id=taskid).all()
+    return render_template('teacher/taskdetail.html',list=taskList,courseid=courseid)
 
 
 @blueprint.route('/<teacherid>/course/edit/<id>',methods=['GET','POST'])
@@ -49,7 +59,7 @@ def student(id):
     return render_template('teacher/student.html',list=studentList)
 
 @blueprint.route('/mainpage/')
-def home():
+def mainpage():
     return render_template('teacher/mainpage.html')
 
 @blueprint.route('/<courseid>/task')
@@ -66,7 +76,8 @@ def add(courseid):
         task.start_time = form.starttime.data
         task.end_time = form.endtime.data
         task.teacher = current_user.name
-        task.course_id = form.content.data
+        ##task.course_id = form.content.data
+        task.content = form.content.data
         course = Course.query.filter_by(id=courseid).first()
         course.tasks.append(task)
         db.session.add(task)
@@ -94,11 +105,17 @@ def task_edit(courseid, id):
     form.content.data = task.content
     return render_template('teacher/edit.html',form = form, courseid=courseid, taskid=id)
 
-@blueprint.route('/<courseid>/task/delete/<id>')
-def delete(courseid, id):
-    task = Task.query.filter_by(id = id).first()
+@blueprint.route('/<courseid>/task/delete/<taskid>',methods=['GET','POST'])
+def delete(courseid, taskid):
+    file_records= File.query.filter_by(task_id=taskid).all()
+    for file_record in file_records:
+        os.remove(file_record.path)
+        db.session.delete(file_record)
+
+    task = Task.query.filter_by(id=taskid).first()
     db.session.delete(task)
     db.session.commit()
+    flash('删除成功')
     return redirect(url_for('teacher.task', courseid=courseid))
 
 @blueprint.route('/team',methods=['GET', 'POST'])
@@ -156,6 +173,7 @@ def permit(teacherid,teamid):
         Message.sendMessage(teacherid,stu.user_id,'提交团队申请已通过')
     flash('已通过该团队申请！')
     return redirect(url_for('teacher.team'))
+
 @blueprint.route('/team/reject/<teacherid>/<teamid>')
 def reject(teacherid,teamid):
     team=Team.query.filter(Team.id==teamid).first()
@@ -171,11 +189,13 @@ def reject(teacherid,teamid):
     db.session.commit()
     flash('已驳回该团队申请！')
     return redirect(url_for('teacher.team'))
+
 @blueprint.route('team/detail/<teamid>')
 def team_detail(teamid):
     teamlist=Team.query.filter(Team.id==teamid).join(TeamUserRelation,TeamUserRelation.team_id==Team.id).join(
         User,User.id==TeamUserRelation.user_id).add_columns(User.name,User.gender,User.user_id).all()
     return render_template('teacher/teamdetail.html',list=teamlist)
+
 @blueprint.route('team/adjust/<teacherid>')
 def to_adjust(teacherid):
     teamlist1=Team.query.join(TeamUserRelation,TeamUserRelation.team_id==Team.id).filter(Team.status==1).filter(
@@ -204,12 +224,12 @@ def task_files(courseid, taskid):
             tmpname = str(current_user.id) + '-' + str(time.time())
             file.filename = tmpname + '.' + filetype
 
-            file_record.directory = data_uploader.path('', folder='course')
+            file_record.directory = data_uploader.path('', folder='course/teacher/task')
             file_record.real_name = file.filename
 
-            file_record.path = data_uploader.path(file.filename, folder='course')
+            file_record.path = data_uploader.path(file.filename, folder='course/teacher/task')
 
-            data_uploader.save(file, folder='course')
+            data_uploader.save(file, folder='course/teacher/task')
 
             db.session.add(file_record)
         db.session.commit()
@@ -232,6 +252,54 @@ def task_file_download(courseid, taskid, fileid):
         return send_from_directory(file_record.directory, file_record.real_name, as_attachment=True, attachment_filename='_'.join(lazy_pinyin(file_record.name)))
     abort(404)
 
+@blueprint.route('/source/<courseid>',methods=['GET','POST'])
+def source(courseid):
+    ##sourcelist=Source.query.filter_by(course_id=courseid).all()
+    ##return render_template('teacher/source.html', list=sourcelist, courseid=courseid)
+    form = FileForm()
+    file_records = File.query.filter_by(course_id=courseid).all()
+    if form.validate_on_submit():
+        for file in request.files.getlist('file'):
+            file_record = File()
+            file_record.user_id = current_user.id
+            file_record.course_id = courseid
+
+            filename = file.filename
+            file_record.name = filename
+
+            filetype = filename.split('.')[-1]
+            tmpname = str(current_user.id) + '-' + str(time.time())
+            file.filename = tmpname + '.' + filetype
+
+            file_record.directory = data_uploader.path('', folder='course/teacher/source')
+            file_record.real_name = file.filename
+
+            file_record.path = data_uploader.path(file.filename, folder='course/teacher/source')
+
+            data_uploader.save(file, folder='course/teacher/source')
+
+            db.session.add(file_record)
+        db.session.commit()
+        return redirect(url_for('teacher.source', courseid=courseid))
+    return render_template('teacher/source.html', form=form, file_records=file_records, courseid=courseid)
+
+@blueprint.route('<courseid>/source/files/download/<fileid>')
+def source_download(courseid,fileid):
+    file_record = File.query.filter_by(id=fileid).first()
+    if os.path.isfile(file_record.path):
+        return send_from_directory(file_record.directory, file_record.real_name, as_attachment=True,
+                                   attachment_filename='_'.join(lazy_pinyin(file_record.name)))
+    abort(404)
+
+@blueprint.route('<courseid>/source/files/delete/<fileid>')
+def source_delete(courseid,fileid):
+    file_record = File.query.filter_by(id=fileid).first()
+    os.remove(file_record.path)
+    db.session.delete(file_record)
+    db.session.commit()
+    flash('删除成功')
+    return redirect(url_for('teacher.source', courseid=courseid))
+
 def zipfolder(foldername,filename):
     '''
         zip folder foldername and all its subfiles and folders into
@@ -247,10 +315,19 @@ def zipfolder(foldername,filename):
 
 @blueprint.route('/<courseid>/task/<taskid>/files/download')
 def task_file_download_zip(courseid, taskid):
-    foldername = data_uploader.path('', folder='course')
+    foldername = data_uploader.path('', folder='course/teacher/task')
     filename = os.path.join(data_uploader.path('', folder='tmp'), 'taskfiles.zip')
     zip_download = zipfolder(foldername, filename)
     return send_file(filename, as_attachment=True)
+
+@blueprint.route('/source/<courseid>/files/download')
+def source_file_download_zip(courseid):
+    foldername = data_uploader.path('',folder='course/teacher/source')
+    filename = os.path.join(data_uploader.path('',folder='tmp'),'sourcefiles.zip')
+    zip_download = zipfolder(foldername,filename)
+    return send_file(filename,as_attachment=True)
+
+
 
 
 

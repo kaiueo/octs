@@ -1,0 +1,37 @@
+{% extends "student/index.html" %}
+
+{% block studentContent %}
+    <div class="box-header"><h3><strong>作业列表</strong></h3></div>
+    <div class="box-body">
+    <table class="table table-bordered table-hover definewidth m10">
+    <thead>
+    <tr>
+        <th>作业名</th>
+        <th>作业内容</th>
+        <th>开始时间</th>
+        <th>结束时间</th>
+        <th>任课教师</th>
+        <th>课程id</th>
+        <th>操作</th>
+
+    </tr>
+
+    </thead>
+
+    {% for task in list %}
+        <tr>
+                <td>{{ task.name }}</td>
+                <td>{{ task.cotent }}</td>
+                <td>{{ task.start_time }}</td>
+                <td>{{ task.end_time }}</td>
+                <td>{{ task.teacher }}</td>
+                <td>{{ task.course_id }}</td>
+                <td> <a  class="btn btn-primary" href="{{ url_for('student.task',taskid=task.id )}}">查看作业</a> </td>
+        </tr>
+    {% endfor %}
+</table>
+    <br><br>
+    <th><a  class="btn btn-primary" href="{{ url_for('student.course') }}">返回列表</a> </th>
+</div>
+
+{% endblock %}

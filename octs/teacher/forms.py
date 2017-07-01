@@ -23,3 +23,5 @@ class FileForm(Form):
     file = FileField('文件', validators=[DataRequired('请选择文件')])
     submit = SubmitField('上传')
 
+
+

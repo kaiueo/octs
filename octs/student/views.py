@@ -1,6 +1,6 @@
 from flask import Blueprint, flash, redirect, render_template, request, send_from_directory,url_for,abort,send_file
 from octs.user.models import Course,Term,Team,TeamUserRelation,User,Task,File,Source,TaskTeamRelation
-from octs.user.models import Course,Term,Team,TeamUserRelation,User, Message
+from octs.user.models import Course,Term,Team,TeamUserRelation,User, Message,UserScore
 from .forms import TeamForm
 from .forms import CourseForm,FileForm
 from octs.database import db
@@ -11,6 +11,9 @@ import datetime
 import os, zipfile,xlwt
 from octs.student.forms import TeamRequireForm
 from pypinyin import lazy_pinyin
+from flask_wtf import Form
+from wtforms import PasswordField, StringField,SubmitField,FloatField,DateField,FileField, FieldList
+from wtforms.validators import DataRequired, Email, EqualTo, Length
 
 
 blueprint = Blueprint('student', __name__, url_prefix='/student',static_folder='../static')
@@ -18,7 +21,18 @@ blueprint = Blueprint('student', __name__, url_prefix='/student',static_folder='
 @blueprint.route('/course/')
 def course():
     courseList = current_user.courses
-    return render_template('student/course/course.html', list=courseList)
+    userid = current_user.id
+    flag = 0
+    team = TeamUserRelation.query.filter_by(user_id=userid).first()
+    if(team == None ):
+        flag = 1
+    else:
+        if(team.is_master == False):
+            flag = 1
+        else:
+            flag = 0
+
+    return render_template('student/course/course.html', list=courseList,flag=flag)
 
 
 @blueprint.route('/checkterm/')
@@ -348,5 +362,44 @@ def task_file_download_zip_source(courseid, taskid):
     filename = os.path.join(data_uploader.path('', folder='tmp'), 'taskfiles.zip')
     zip_download = zipfolder(foldername, filename)
     return send_file(filename, as_attachment=True)
+
+@blueprint.route('/course/give_grade', methods=['GET', 'POST'])
+def give_grade():
+    team = TeamUserRelation.query.filter_by(user_id=current_user.id).first()
+    turs = TeamUserRelation.query.filter_by(team_id=team.team_id).all()
+    user_ids = [tur.user_id for tur in turs]
+    for tur in turs:
+        user = UserScore.query.filter_by(user_id=tur.user_id).first()
+        if(user == None):
+            new_user = UserScore()
+            new_user.user_id = tur.user_id
+            db.session.add(new_user)
+            db.session.commit()
+    user_grades = []
+    user_names = []
+    for user_id in user_ids:
+        user = User.query.filter_by(id=user_id).first()
+        user_names.append(user.name)
+        us = UserScore.query.filter_by(user_id=user_id).first()
+        user_grades.append(us)
+
+    user_num = len(turs)
+    class GradeForm(Form):
+        pass
+
+    for i in range(user_num):
+        setattr(GradeForm, 'grade'+str(i), FloatField(user_names[i], validators=[DataRequired()]))
+
+    form = GradeForm()
+    if form.validate_on_submit():
+        for i in range(user_num):
+            user_grades[i].grade = getattr(form, 'grade'+str(i)).data
+            db.session.add(user_grades[i])
+        db.session.commit()
+
+    for i in range(user_num):
+        getattr(form, 'grade'+str(i)).data = user_grades[i].grade
+
+    return render_template("student/course/give_grade.html",form=form, user_num=user_num)
 
 

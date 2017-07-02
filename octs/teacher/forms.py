@@ -22,4 +22,3 @@ class TaskForm(Form):
 class FileForm(Form):
     file = FileField('图片上传', validators=[DataRequired('请选择文件')])
     submit = SubmitField('上传')
-

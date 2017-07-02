@@ -182,6 +182,7 @@ class TeamUserRelation(Model):
     team_id = Column(db.Integer, db.ForeignKey('teams.id'), primary_key=True)
     is_master = Column(db.Boolean, default=False)
     is_accepted = Column(db.Boolean, default=False)
+    is_adjust=Column(db.Boolean,default=False)
     user = relationship('User', backref='teams')
     team = relationship('Team', backref='users')
 

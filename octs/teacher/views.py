@@ -125,6 +125,9 @@ def delete(courseid, taskid):
         db.session.delete(file_record)
 
     task = Task.query.filter_by(id=taskid).first()
+    ttrs = TaskTeamRelation.query.filter_by(task_id=task.id).all()
+    for ttr in ttrs:
+        db.session.delete(ttr)
     db.session.delete(task)
     db.session.commit()
     flash('删除成功')
@@ -447,9 +450,61 @@ def former_task_file_download_zip(courseid):
     zip_download = zipfolder(foldername, filename)
     return send_file(filename, as_attachment=True)
 
+@blueprint.route('/<courseid>/task/submit')
+def multi_check(courseid):
+    tasks = Task.query.filter_by(course_id = courseid).all()
+    ttrs_all = []
+    for task in tasks:
+        ##team = Team.query.filter_by(course_id = task.course_id).first()
+        ttrs = TaskTeamRelation.query.filter_by(task_id = task.id).all()
+        if ttrs is not None:
+            ttrs_all.extend(ttrs)
 
+    teams = Team.query.filter_by(course_id = courseid).all()
+    return render_template('teacher/multi_check.html',ttrs_all = ttrs_all,courseid = courseid,tasks = tasks,teams = teams)
 
+@blueprint.route('/<courseid>/task/submit/download')
+def task_check_download(courseid):
+    book = xlwt.Workbook()
+    tasklist = Task.query.filter_by(course_id=courseid).all()
 
+    ttrs_all = []
+    for task in tasklist:
+        ttrs = TaskTeamRelation.query.filter_by(task_id = task.id).all()
+        if ttrs is not None:
+            ttrs_all.extend(ttrs)
+    teamlist = Team.query.filter_by(course_id = courseid).all()
+    ##tasks = Task.query.filter_by(course_id=courseid).all()
+    alignment = xlwt.Alignment()  # Create Alignment
+    alignment.horz = xlwt.Alignment.HORZ_CENTER  # May be: HORZ_GENERAL, HORZ_LEFT, HORZ_CENTER, HORZ_RIGHT, HORZ_FILLED, HORZ_JUSTIFIED, HORZ_CENTER_ACROSS_SEL, HORZ_DISTRIBUTED
+    alignment.vert = xlwt.Alignment.VERT_CENTER  # May be: VERT_TOP, VERT_CENTER, VERT_BOTTOM, VERT_JUSTIFIED, VERT_DISTRIBUTED
+    style = xlwt.XFStyle()  # Create Style
+    style.alignment = alignment  # Add Alignment to Style
 
+    sheet1 = book.add_sheet('作业信息', cell_overwrite_ok=True)
+    row0 = ['团队id', '团队名称']
+    for task in tasklist:
+        row0.append(task.name)
+
+    for i in range(0, len(row0)):
+        sheet1.write(0, i, row0[i])
+
+    row_num = 1
+
+    for team in teamlist:
+        ##turs = TeamUserRelation.query.filter_by(team_id=team.id).all()
+        i = 2
+        sheet1.write(row_num, 0 , team.id)
+        sheet1.write(row_num, 1, team.name)
+        for ttrs in ttrs_all:
+            if ttrs.team_id == team.id:
+                sheet1.write(row_num, i , ttrs.score)
+                i = i+1
+        ##row_num = row_num + turs_length
+        row_num = row_num + 1
+
+    filename = 'task_check_table_' + str(time.time()) + '.xls'
+    book.save(os.path.join(data_uploader.path('', folder='tmp'), filename))
+    return send_from_directory(data_uploader.path('', folder='tmp'), filename, as_attachment=True)
 
 

@@ -125,6 +125,7 @@ def team_apply(userid, id):
         db.session.delete(tur)
         user.in_team = False
         Message.sendMessage(11, user.id, '你的团队加入申请已被拒绝')
+        flash('已拒绝该同学的申请！')
         db.session.add(user)
     team.status = 1
     db.session.add(team)
@@ -139,7 +140,7 @@ def permit(id,userid):
     db.session.add(stuPermit)
     db.session.commit()
     Message.sendMessage(id, userid, '你的团队加入申请已被接受！')
-    flash('已同意该同学申请！')
+    flash('已同意该同学的申请！')
     return redirect(url_for('student.my_team',id=id))
 
 @blueprint.route('/team/reject/<id>/<userid>')
@@ -150,7 +151,7 @@ def reject(id,userid):
     stu.in_team=False
     db.session.add(stu)
     db.session.commit()
-    flash('                                              已拒绝该同学')
+    flash('已拒绝该同学')
     Message.sendMessage(id,userid,'你的团队加入申请被拒绝！另请高明吧！')
     return redirect(url_for('student.my_team',id=id))
 

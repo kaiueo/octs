@@ -41,7 +41,6 @@ def home():
 @blueprint.route('/course/add',methods=['GET','POST'])
 def insert():
     form = CourseForm()
-
     if form.validate_on_submit():
         course = Course(form.coursename.data)
         ##course.name = form.coursename.data

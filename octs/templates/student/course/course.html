@@ -2,8 +2,7 @@
 
 {% block studentContent %}
 
-    <br><br>
-    <div class="box-header"><h3><strong>课程信息：</strong></h3></div>
+    <div class="box-header"><h3><strong>课程信息</strong></h3></div>
     <div class="box-body">
     <table class="table table-bordered table-hover definewidth m10">
     <thead>
@@ -23,14 +22,14 @@
     </thead>
     {% for course in list %}
         <tr>
-                <td>{{ course.name }}</td>
-                <td>{{ course.credit }}</td>
-                <td>{{ course.start_time }}</td>
-                <td>{{ course.location }}</td>
-                <td>{{ course.course_introduction }}</td>
-                <td>{{ course.course_outline }}</td>
-                <td>{{ course.term_id }}</td>
-                <td>    <a width="10%" class="btn btn-primary"  href="{{ url_for('student.tasklist',courseid=course.id) }}">
+                <td style="width: 12%">{{ course.name }}</td>
+                <td style="width: 4%">{{ course.credit }}</td>
+                <td style="width: 7%">{{ course.start_time }}</td>
+                <td style="width: 6%">{{ course.location }}</td>
+                <td style="width: 15%">{{ course.course_introduction }}</td>
+                <td style="width: 15%">{{ course.course_outline }}</td>
+                <td style="width: 8%">{{ course.term_id }}</td>
+                <td width="10%"> <a  class="btn btn-primary"  href="{{ url_for('student.tasklist',courseid=course.id) }}">
                     查看作业</a></td>
 
 

@@ -8,16 +8,23 @@
   <ul class="sidebar-menu">
   <li class="nav-header">
                         {% block navTeHomepage %}
-                            <a class="ajax-link" href="{{ url_for('teacher.mainpage') }}">
+                            <a class="ajax-link" href="{{ url_for('teacher.home') }}">
                                 <i class="glyphicon glyphicon-home"></i><span>我的主页</span>
                             </a>
                         {% endblock %}
                     </li>
+                    <!--<li>
+                        {% block navCheckterm %}
+                            <a class="ajax-link" href="{{ url_for('teacher.checkterm') }}">
+                                <i class="glyphicon glyphicon-globe"></i><span>查看学期</span>
+                            </a>
+                        {% endblock %}
+                    </li>-->
                     <li>
                         {% block navCourseSet %}
                             <a class="ajax-link"
                                href="{{ url_for('teacher.course', teacherid=current_user.id) }}">
-                                <i class="glyphicon glyphicon-list-alt"></i><span>课程信息</span>
+                                <i class="glyphicon glyphicon-list-alt"></i><span>课程管理</span>
                             </a>
                         {% endblock %}
                     </li>

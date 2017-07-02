@@ -1,5 +1,5 @@
 from flask import Blueprint, flash, redirect, render_template, request, url_for,send_from_directory, abort, make_response, send_file
-from octs.user.models import Course,Task, User, Message, Team,TeamUserRelation, File,Source
+from octs.user.models import Course,Task, User, Message, Team,TeamUserRelation, File,Source,Term
 from .forms import CourseForm,TaskForm, FileForm
 from octs.database import db
 from flask_login import current_user
@@ -8,13 +8,18 @@ import time
 import os,zipfile
 from pypinyin import lazy_pinyin
 import xlwt
+import datetime
 
 blueprint = Blueprint('teacher', __name__, url_prefix='/teacher',static_folder='../static')
 
-@blueprint.route('/')
-def home():
-    return render_template('teacher/index.html')
 
+
+@blueprint.route('/checkterm/')
+def checkterm():
+    termList = Term.query.order_by(Term.start_time).all()
+    termList = list(reversed(termList))
+    time_now = datetime.date.fromtimestamp(time.time())
+    return render_template('teacher/checkterm.html', list=termList,endtime=termList[0],nowtime=time_now)
 
 @blueprint.route('/<teacherid>/course/')
 def course(teacherid):
@@ -59,7 +64,7 @@ def student(id):
     return render_template('teacher/student.html',list=studentList)
 
 @blueprint.route('/mainpage/')
-def mainpage():
+def home():
     return render_template('teacher/mainpage.html')
 
 @blueprint.route('/<courseid>/task')

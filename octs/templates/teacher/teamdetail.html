@@ -1,14 +1,16 @@
 {% extends 'teacher/index.html'%}
 
 {% block teacherContent %}
-            <h3><strong>团队成员名单：</strong></h3>
+    <div class="box-header">
+            <h3><strong>团队成员名单</strong></h3>
+    </div>
+    <div class="box-body">
             <table class="table table-condensed">
             <thead>
             <tr>
                 <th>姓名</th>
                 <th>性别</th>
                 <th>学号</th>
-        &nbsp;      &nbsp
              </tr>
             </thead>
             {% for user in list %}
@@ -24,5 +26,5 @@
 
             {% endfor %}
             </table>
-
+</div>
 {% endblock %}

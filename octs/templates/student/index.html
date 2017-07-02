@@ -28,7 +28,7 @@
                     <li>
                         {% block navCheckterm %}
                             <a class="ajax-link" href="{{ url_for('student.checkterm') }}">
-                                <i class="glyphicon glyphicon-home"></i><span>查看学期</span>
+                                <i class="glyphicon glyphicon-globe"></i><span>查看学期</span>
                             </a>
                         {% endblock %}
                     </li>
@@ -36,7 +36,7 @@
                         {% block navCourseSet %}
                             <a class="ajax-link"
                                href="{{ url_for('student.course') }}">
-                                <i class="glyphicon glyphicon-list-alt"></i><span>课程信息</span>
+                                <i class="glyphicon glyphicon-list-alt"></i><span>查看课程</span>
                             </a>
                         {% endblock %}
                     </li>
@@ -52,7 +52,7 @@
                         {% block navTeamAudit %}
                             <a class="ajax-link"
                                href="{{ url_for('student.team')}}">
-                                <i class="glyphicon glyphicon-ok"></i><span>我的团队</span>
+                                <i class="glyphicon glyphicon-ok"></i><span>团队管理</span>
                             </a>
                         {% endblock %}
                     </li>

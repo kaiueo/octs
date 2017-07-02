@@ -3,7 +3,7 @@
 
 {% block teacherContent %}
     <div class="box-header">
-        <h3><strong>文件管理</strong></h3>
+        <h3><strong>作业文件管理</strong></h3>
     </div>
     <div class="box-body">
 
@@ -37,16 +37,16 @@
 
     <form action="" method="post" class="form" enctype="multipart/form-data" role="form">
 
-<div class="form-group  has-error required"><label class="control-label" for="file">作业上传</label>
+<div class="form-group  has-error required"><label class="control-label" for="file">资源上传</label>
 
           <input id="file" name="file" required="" type="file" multiple="multiple">
 
             <p class="help-block">请选择文件</p>
   </div>
 
-    <input class="btn btn-default" id="submit" name="submit" type="submit" value="上传">
+    <input class="btn btn-primary" id="submit" name="submit" type="submit" value="上传">
         <br><br>
 </form>
-    <a class="btn btn-primary" href="{{ url_for('teacher.task_edit', courseid=courseid,id=taskid) }}">返回上一页</a>
+    <a class="btn btn-primary" href="{{ url_for('teacher.task_edit', courseid=courseid,id=taskid) }}">返回</a>
     </div>
 {% endblock %}

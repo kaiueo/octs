@@ -277,6 +277,13 @@ def source(courseid, taskid):
             time_flag = 1
         else:
             time_flag = 0
+
+        sub_flag = 0
+        if (submit_time-submitted_time>0):
+            sub_flag = 1
+        else:
+            sub_flag = 0
+
         file_records = File.query.filter(File.task_id==taskid).filter(File.user_id==masterid ).all()
         if form.validate_on_submit():
             for file in request.files.getlist('file'):
@@ -304,9 +311,16 @@ def source(courseid, taskid):
                 db.session.add(file_record)
                 db.session.commit()
 
+                taskteamrelation = TaskTeamRelation.query.filter(TaskTeamRelation.task_id==taskid).filter(TaskTeamRelation.team_id==teamid).first()
+                # taskteamrelation.team_id = teamid
+                # taskteamrelation.task_id = taskid
+                taskteamrelation.submit_num = ttr.submit_num + 1
+                db.session.add(taskteamrelation)
+                db.session.commit()
+
             return redirect(url_for('student.source', courseid=courseid, taskid=taskid))
         return render_template('student/course/task_file_manage.html', form=form, file_records=file_records, courseid=courseid,
-                                   taskid=taskid,flag=flag,resttime=rest_time,timeflag=time_flag)
+                                   taskid=taskid,flag=flag,resttime=rest_time,timeflag=time_flag,sub_flag=sub_flag)
 
 
 

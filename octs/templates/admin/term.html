@@ -7,8 +7,9 @@
 </div>
 
     <div class="box-body">
+    {% if list|length>0 %}
    <table class="table table-condensed">
-       {% if endtime.end_time > nowtime %}
+       {% if list[0].end_time > nowtime %}
                 <tr>
 	              <td width="18%" height="30" align="center">学期名称：</td>
 	              <td width="82%" class="word_grey">{{ list[0].name }}</td>
@@ -52,6 +53,9 @@
                 </tr>
         {% endif %}
    </table>
+    {% else %}
+        <button style="margin-left:180px; background-color:#ffffff "type="submit" class="btn btn-primary" type="button"><a href="{{ url_for('admin.term_add')}}">添加学期</a></button>
+    {% endif %}
     </div>
 
 {% endblock %}

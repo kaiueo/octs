@@ -96,6 +96,7 @@ def task_edit(courseid, id):
         task.start_time = form.starttime.data
         task.end_time = form.endtime.data
         task.content = form.content.data
+        task.submit_num = form.subnum.data
         db.session.add(task)
         db.session.commit()
         return redirect(url_for('teacher.task', courseid=courseid))
@@ -104,6 +105,7 @@ def task_edit(courseid, id):
     form.starttime.data = task.start_time
     form.endtime.data = task.end_time
     form.content.data = task.content
+    form.subnum.data = task.submit_num
     return render_template('teacher/edit.html',form = form, courseid=courseid, taskid=id)
 
 @blueprint.route('/<courseid>/task/delete/<taskid>',methods=['GET','POST'])

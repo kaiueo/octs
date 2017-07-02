@@ -1,5 +1,5 @@
 from flask import Blueprint, flash, redirect, render_template, request, url_for,send_from_directory, abort, make_response, send_file, session
-from octs.user.models import Course,Task, User, Message, Team,TeamUserRelation, File,Source,Term
+from octs.user.models import Course,Task, User, Message, Team,TeamUserRelation, File,Source,Term, TaskTeamRelation
 from .forms import CourseForm,TaskForm, FileForm
 from octs.database import db
 from flask_login import current_user
@@ -76,11 +76,17 @@ def add(courseid):
         task.name = form.taskname.data
         task.start_time = form.starttime.data
         task.end_time = form.endtime.data
+        task.submit_num = form.subnum.data
         task.teacher = current_user.name
-        ##task.course_id = form.content.data
         task.content = form.content.data
         course = Course.query.filter_by(id=courseid).first()
         course.tasks.append(task)
+        teams = course.teams
+        for team in teams:
+            ttr = TaskTeamRelation()
+            ttr.team = team
+            ttr.task = task
+            db.session.add(ttr)
         db.session.add(task)
         db.session.add(course)
         db.session.commit()
@@ -96,6 +102,7 @@ def task_edit(courseid, id):
         task.start_time = form.starttime.data
         task.end_time = form.endtime.data
         task.content = form.content.data
+        task.submit_num = form.subnum.data
         db.session.add(task)
         db.session.commit()
         return redirect(url_for('teacher.task', courseid=courseid))
@@ -104,6 +111,7 @@ def task_edit(courseid, id):
     form.starttime.data = task.start_time
     form.endtime.data = task.end_time
     form.content.data = task.content
+    form.subnum.data = task.submit_num
     return render_template('teacher/edit.html',form = form, courseid=courseid, taskid=id)
 
 @blueprint.route('/<courseid>/task/delete/<taskid>',methods=['GET','POST'])
@@ -259,6 +267,11 @@ def adjust_add(teacherid,userid,teamid):
         db.session.commit()
         Message.sendMessage(teacherid,userid,'你已经被老师调整至其他组！请注意查看')
         flash('已将该学生调整到该团队！')
+        translist=session['deleted_stu']
+        for user in translist:
+            if user['id'] == int(userid):
+                translist.remove(user)
+        session['deleted_stu']=translist
     return redirect(url_for('teacher.team_adjust', teacherid=teacherid, teamid=teamid))
 
 @blueprint.route('/<courseid>/task/<taskid>/files', methods=['GET', 'POST'])

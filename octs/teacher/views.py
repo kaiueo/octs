@@ -1,5 +1,5 @@
 from flask import Blueprint, flash, redirect, render_template, request, url_for,send_from_directory, abort, make_response, send_file
-from octs.user.models import Course,Task, User, Message, Team,TeamUserRelation, File,Source
+from octs.user.models import Course,Task, User, Message, Team,TeamUserRelation, File,Source,Term
 from .forms import CourseForm,TaskForm, FileForm
 from octs.database import db
 from flask_login import current_user
@@ -20,6 +20,7 @@ def home():
 def course(teacherid):
     teacher = User.query.filter_by(id=teacherid).first()
     courseList = teacher.courses
+
     return render_template('teacher/course.html', list=courseList)
 
 @blueprint.route('/<courseid>/task/<taskid>')

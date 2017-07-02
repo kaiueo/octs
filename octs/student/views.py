@@ -1,6 +1,6 @@
 from flask import Blueprint, flash, redirect, render_template, request, send_from_directory,url_for,abort,send_file
 from octs.user.models import Course,Term,Team,TeamUserRelation,User,Task,File,Source,TaskTeamRelation
-from octs.user.models import Course,Term,Team,TeamUserRelation,User, Message，Tag, UserScore
+from octs.user.models import Course,Term,Team,TeamUserRelation,User, Message, Tag, UserScore
 from .forms import TeamForm
 from .forms import CourseForm,FileForm
 from octs.database import db

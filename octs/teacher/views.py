@@ -69,6 +69,7 @@ def add(courseid):
         task.name = form.taskname.data
         task.start_time = form.starttime.data
         task.end_time = form.endtime.data
+        task.submit_num = form.subnum.data
         task.teacher = current_user.name
         task.course_id = form.content.data
         course = Course.query.filter_by(id=courseid).first()

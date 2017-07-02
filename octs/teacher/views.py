@@ -20,7 +20,8 @@ def home():
 def course(teacherid):
     teacher = User.query.filter_by(id=teacherid).first()
     courseList = teacher.courses
-    return render_template('teacher/course.html', list=courseList)
+    term = Term.query.order_by(Term.id.desc()).first()
+    return render_template('teacher/course.html', list=courseList,termid=term.id)
 
 @blueprint.route('/<courseid>/task/<taskid>')
 def task_detail(courseid,taskid):

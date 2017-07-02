@@ -25,9 +25,10 @@
 
 
                 <td>
-                <a class="btn btn-primary" href="{{ url_for('teacher.task_detail',courseid=courseid,taskid=task.id) }}">查看作业</a>
+                <a class="btn btn-primary" href="{{ url_for('teacher.task_detail',courseid=courseid,taskid=task.id) }}">查看作业信息</a>
                 <a class="btn btn-primary" href="{{ url_for('teacher.task_edit',courseid=courseid,id=task.id) }}">编辑</a>
                     <a class="btn btn-primary" href="{{ url_for('teacher.delete',courseid=courseid,taskid =task.id) }}">删除</a>
+                    <a class="btn btn-primary" href="{{ url_for('teacher.student_task',courseid=courseid,taskid =task.id) }}">查看学生作业</a>
                 </td>
 
 

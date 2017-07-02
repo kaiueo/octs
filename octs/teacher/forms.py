@@ -18,6 +18,7 @@ class TaskForm(Form):
     endtime = DateTimeField('结束时间')
     subnum = FloatField('可提交次数')
     content = TextAreaField('内容')
+    weight = FloatField('作业权重')
     submit = SubmitField('提交')
 
 class FileForm(Form):

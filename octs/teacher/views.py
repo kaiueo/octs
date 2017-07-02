@@ -77,6 +77,7 @@ def add(courseid):
         task.start_time = form.starttime.data
         task.end_time = form.endtime.data
         task.submit_num = form.subnum.data
+        task.weight = form.weight.data
         task.teacher = current_user.name
         task.content = form.content.data
         course = Course.query.filter_by(id=courseid).first()
@@ -103,6 +104,7 @@ def task_edit(courseid, id):
         task.end_time = form.endtime.data
         task.content = form.content.data
         task.submit_num = form.subnum.data
+        task.weight = form.weight.data
         db.session.add(task)
         db.session.commit()
         return redirect(url_for('teacher.task', courseid=courseid))
@@ -112,6 +114,7 @@ def task_edit(courseid, id):
     form.endtime.data = task.end_time
     form.content.data = task.content
     form.subnum.data = task.submit_num
+    form.weight.data = task.weight
     return render_template('teacher/edit.html',form = form, courseid=courseid, taskid=id)
 
 @blueprint.route('/<courseid>/task/delete/<taskid>',methods=['GET','POST'])

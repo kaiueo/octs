@@ -1,5 +1,5 @@
 from flask import Blueprint, flash, redirect, render_template, request, url_for,send_from_directory, abort, make_response, send_file, session
-from octs.user.models import Course,Task, User, Message, Team,TeamUserRelation, File,Source,Term, TaskTeamRelation
+from octs.user.models import Course,Task, User, Message, Team,TeamUserRelation, File,Source,Term,TaskTeamRelation
 from .forms import CourseForm,TaskForm, FileForm
 from octs.database import db
 from flask_login import current_user
@@ -77,6 +77,7 @@ def add(courseid):
         task.start_time = form.starttime.data
         task.end_time = form.endtime.data
         task.submit_num = form.subnum.data
+        task.weight = form.weight.data
         task.teacher = current_user.name
         task.content = form.content.data
         course = Course.query.filter_by(id=courseid).first()
@@ -103,6 +104,7 @@ def task_edit(courseid, id):
         task.end_time = form.endtime.data
         task.content = form.content.data
         task.submit_num = form.subnum.data
+        task.weight = form.weight.data
         db.session.add(task)
         db.session.commit()
         return redirect(url_for('teacher.task', courseid=courseid))
@@ -112,6 +114,7 @@ def task_edit(courseid, id):
     form.endtime.data = task.end_time
     form.content.data = task.content
     form.subnum.data = task.submit_num
+    form.weight.data = task.weight
     return render_template('teacher/edit.html',form = form, courseid=courseid, taskid=id)
 
 @blueprint.route('/<courseid>/task/delete/<taskid>',methods=['GET','POST'])
@@ -327,6 +330,26 @@ def task_file_download(courseid, taskid, fileid):
     if os.path.isfile(file_record.path):
         return send_from_directory(file_record.directory, file_record.real_name, as_attachment=True, attachment_filename='_'.join(lazy_pinyin(file_record.name)))
     abort(404)
+
+@blueprint.route('/<courseid>/task/<taskid>/scores')
+def task_give_score(courseid,taskid):
+    tasklist=Task.query.filter(Task.id==taskid).first()
+    if time.strftime('%Y-%m-%d %H:%M:%S',time.localtime(time.time()))<str(tasklist.end_time):
+        flash('这项作业还未截止！暂时不能批改')
+        return render_template('teacher/task_score.html')
+    else:
+        task_team_list=TaskTeamRelation.query.join(Task,Task.id==TaskTeamRelation.task_id).join(Team,Team.id==TaskTeamRelation.team_id
+            ).filter(TaskTeamRelation.task_id==taskid).add_columns(Task.name,Team.name,TaskTeamRelation.task_id,TaskTeamRelation.team_id).all()
+
+@blueprint.route('/<courseid>/task<taskid>/scores')
+def task_score(courseid,taskid):
+    teamidList = TaskTeamRelation.query.filter_by(task_id=taskid).all()
+    teams = []
+    for teamid in teamidList:
+        team = Team.query.filter_by(id=teamid.team_id)
+        teams.append(team)
+    task = Task.query.filter_by(id=taskid).first()
+    return render_template('teacher/task_one_score.html',teams=teams,task=task,courseid=courseid)
 
 @blueprint.route('/<courseid>/task/<taskid>/files',methods = ['GET','POST'])
 def student_task(courseid,taskid):

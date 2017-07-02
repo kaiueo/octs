@@ -35,18 +35,7 @@
 
         <br><br>
 
-    <form action="" method="post" class="form" enctype="multipart/form-data" role="form">
 
-<div class="form-group  has-error required"><label class="control-label" for="file">作业上传</label>
-
-          <input id="file" name="file" required="" type="file" multiple="multiple">
-
-            <p class="help-block">请选择文件</p>
-  </div>
-
-    <input class="btn btn-default" id="submit" name="submit" type="submit" value="上传">
-        <br><br>
-</form>
-    <a class="btn btn-primary" href="{{ url_for('teacher.task_edit', courseid=courseid,id=taskid) }}">返回上一页</a>
+    <a class="btn btn-primary" href="{{ url_for('teacher.task', courseid=courseid) }}">返回上一页</a>
     </div>
 {% endblock %}

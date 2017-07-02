@@ -1,7 +1,7 @@
 <nav class="navbar navbar-static-top" role="navigation">
 
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-            <ul class="nav navbar-nav navbar-right">
+            <ul class="nav navbar-nav navbar-right" style="margin-right: 3%">
                 {% if current_user.is_authenticated %}
 
                     <li><a href="{{ url_for('message.show_unread', id=current_user.id) }}"><span class="glyphicon glyphicon-bell"></span> </a> </li>

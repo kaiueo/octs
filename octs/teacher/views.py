@@ -11,11 +11,6 @@ import xlwt
 
 blueprint = Blueprint('teacher', __name__, url_prefix='/teacher',static_folder='../static')
 
-@blueprint.route('/')
-def home():
-    return render_template('teacher/index.html')
-
-
 @blueprint.route('/<teacherid>/course/')
 def course(teacherid):
     teacher = User.query.filter_by(id=teacherid).first()
@@ -60,7 +55,7 @@ def student(id):
     return render_template('teacher/student.html',list=studentList)
 
 @blueprint.route('/mainpage/')
-def mainpage():
+def home():
     return render_template('teacher/mainpage.html')
 
 @blueprint.route('/<courseid>/task')

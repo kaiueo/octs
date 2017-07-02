@@ -5,10 +5,8 @@
         <h3><strong>添加成员</strong></h3>
     </div>
     <div class="box-body">
-    <a class="btn btn-primary" href="{{ url_for('admin.member', id=courseid) }}">返回上一页</a>
-    <br><br>
-        {{ wtf.quick_form(form) }}
-
+        {{ wtf.quick_form(form) }}<br>
+<a class="btn btn-primary" href="{{ url_for('admin.member', id=courseid) }}">返回</a>
     </div>
 
 {% endblock %}

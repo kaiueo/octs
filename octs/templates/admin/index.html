@@ -1,18 +1,8 @@
 {% extends "layout.html" %}
 
-<title>{% block page_title %}
-
-    管理员页面
-
-    {% endblock %}
-  </title>
-
-
-
-
 {% block content %}
 
-  <aside class="main-sidebar">
+  <aside class="main-sidebar" style="min-height: 800px">
   <section class="sidebar">
   <ul class="sidebar-menu">
   <li class="nav-header">
@@ -25,7 +15,7 @@
                     <li>
                         {% block navCourseSet %}
                             <a class="ajax-link" href="{{ url_for('admin.course') }}">
-                                <i class="glyphicon glyphicon-list-alt"></i><span>课程信息</span>
+                                <i class="glyphicon glyphicon-list-alt"></i><span>课程管理</span>
                             </a>
                         {% endblock %}
                     </li>
@@ -34,7 +24,7 @@
                         {% block navCommunicate %}
                             <a class="ajax-link"
                                href="{{ url_for('admin.term')}}" >
-                                <i class="glyphicon glyphicon-globe"></i><span>查看学期</span>
+                                <i class="glyphicon glyphicon-globe"></i><span>学期管理</span>
                             </a>
                         {% endblock %}
                     </li>
@@ -42,8 +32,8 @@
   </section>
   </aside>
     <div class="content-wrapper">
-    <section class="content">
-<div class="box">
+    <section class="content" >
+<div class="box" style="min-height: 735px">
                 {% block adminContent %}
                 {% endblock %}
 </div>

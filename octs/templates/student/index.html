@@ -1,13 +1,5 @@
 {% extends "layout.html" %}
 
-<title>{% block page_title %}
-  
-    学生首页
-  
-    {% endblock %}
-  </title>
-
-
 {% block index %}
     <li><a href="">首页</a></li>
 {% endblock %}
@@ -22,7 +14,7 @@
 
 {% block content %}
 
-<aside class="main-sidebar">
+<aside class="main-sidebar" style="min-height: 800px">
   <section class="sidebar">
   <ul class="sidebar-menu">
   <li class="nav-header">
@@ -36,7 +28,7 @@
                     <li>
                         {% block navCheckterm %}
                             <a class="ajax-link" href="{{ url_for('student.checkterm') }}">
-                                <i class="glyphicon glyphicon-home"></i><span>查看学期</span>
+                                <i class="glyphicon glyphicon-globe"></i><span>查看学期</span>
                             </a>
                         {% endblock %}
                     </li>
@@ -44,7 +36,7 @@
                         {% block navCourseSet %}
                             <a class="ajax-link"
                                href="{{ url_for('student.course') }}">
-                                <i class="glyphicon glyphicon-list-alt"></i><span>课程信息</span>
+                                <i class="glyphicon glyphicon-list-alt"></i><span>查看课程</span>
                             </a>
                         {% endblock %}
                     </li>
@@ -60,7 +52,7 @@
                         {% block navTeamAudit %}
                             <a class="ajax-link"
                                href="{{ url_for('student.team')}}">
-                                <i class="glyphicon glyphicon-ok"></i><span>我的团队</span>
+                                <i class="glyphicon glyphicon-ok"></i><span>团队管理</span>
                             </a>
                         {% endblock %}
                     </li>
@@ -70,7 +62,7 @@
   </aside>
     <div class="content-wrapper">
     <section class="content">
-<div class="box">
+<div class="box" style="min-height: 735px">
                 {% block studentContent %}
                 {% endblock %}
 </div>

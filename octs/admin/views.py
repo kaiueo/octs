@@ -7,6 +7,7 @@ import time
 import datetime
 import os
 import xlrd
+import re
 # -*- coding: UTF-8 -*-
 blueprint = Blueprint('admin', __name__, url_prefix='/admin',static_folder='../static')
 @blueprint.route('/term')
@@ -41,7 +42,6 @@ def home():
 @blueprint.route('/course/add',methods=['GET','POST'])
 def insert():
     form = CourseForm()
-
     if form.validate_on_submit():
         course = Course(form.coursename.data)
         ##course.name = form.coursename.data
@@ -116,6 +116,13 @@ def excel_table_byindex(file='file.xls', colnameindex=0, by_index=0):
             list.append(app)
     return list
 
+def isnumber(num):
+    regex = re.compile(r"^(-?\d+)(\.\d*)?$")
+    if re.match(regex,num):
+        return True
+    else:
+        return False
+
 @blueprint.route('/course/member/add/<id>' ,methods=['GET','POST'])
 def add_member(id):
     form = MemberForm()
@@ -126,7 +133,12 @@ def add_member(id):
         tables = excel_table_byindex(file=filepath, by_index=0)
         course = Course.query.filter_by(id=id).first()
         for row in tables:
-            user_id = row['user_id']
+            if isnumber(str(row['user_id'])):
+                row_user_id = str(int(row['user_id']))
+            else:
+                row_user_id = str(row['user_id'])
+
+            user_id = row_user_id
             name = row['name']
             gender = row['gender']
             user = User.query.filter_by(user_id=user_id).first()
@@ -141,7 +153,12 @@ def add_member(id):
 
         tables = excel_table_byindex(file=filepath, by_index=1)
         for row in tables:
-            user_id = row['user_id']
+            if isnumber(str(row['user_id'])):
+                row_user_id = str(int(row['user_id']))
+            else:
+                row_user_id = str(row['user_id'])
+
+            user_id = row_user_id
             name = row['name']
             gender = row['gender']
             user = User.query.filter_by(user_id=user_id).first()

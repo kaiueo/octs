@@ -11,11 +11,6 @@ import xlwt
 
 blueprint = Blueprint('teacher', __name__, url_prefix='/teacher',static_folder='../static')
 
-@blueprint.route('/')
-def home():
-    return render_template('teacher/index.html')
-
-
 @blueprint.route('/<teacherid>/course/')
 def course(teacherid):
     teacher = User.query.filter_by(id=teacherid).first()
@@ -60,7 +55,7 @@ def student(id):
     return render_template('teacher/student.html',list=studentList)
 
 @blueprint.route('/mainpage/')
-def mainpage():
+def home():
     return render_template('teacher/mainpage.html')
 
 @blueprint.route('/<courseid>/task')
@@ -137,6 +132,36 @@ def team():
         User, TeamUserRelation.user_id == User.id).filter(TeamUserRelation.user_id == User.id).add_columns(
         Team.name, User.username, Team.status, Team.id, User.user_id, User.in_team)
     return render_template('teacher/team.html',list=teamlist)
+
+@blueprint.route('/task/score<taskid>/download')
+def score_download(taskid):
+    teamidList = TaskTeamRelation.query.filter_by(task_id=taskid).all()
+    teams = []
+    for teamid in teamidList:
+        team = Team.query.filter_by(id=teamid.team_id).first()
+        teams.append(team)
+    task = Task.query.filter_by(id=taskid).first()
+
+    book = xlwt.Workbook()
+
+    alignment = xlwt.Alignment()  # Create Alignment
+    alignment.horz = xlwt.Alignment.HORZ_CENTER  # May be: HORZ_GENERAL, HORZ_LEFT, HORZ_CENTER, HORZ_RIGHT, HORZ_FILLED, HORZ_JUSTIFIED, HORZ_CENTER_ACROSS_SEL, HORZ_DISTRIBUTED
+    alignment.vert = xlwt.Alignment.VERT_CENTER  # May be: VERT_TOP, VERT_CENTER, VERT_BOTTOM, VERT_JUSTIFIED, VERT_DISTRIBUTED
+    style = xlwt.XFStyle()  # Create Style
+    style.alignment = alignment  # Add Alignment to Style
+
+    sheet1 = book.add_sheet('本次作业信息('+task.name+')',cell_overwrite_ok=True)
+    row0 = ['团队id','团队名称','作业得分']
+    for i in range(0,len(row0)):
+        sheet1.write(0,i,row0[i], style)
+    row_num =1
+    for team in teams:
+        sheet1.write(row_num,0,team.id,style)
+        sheet1.write(row_num,1,team.name,style)
+        sheet1.write(row_num,2,team.score,style)
+    filename = 'score_table_'+ str(time.time()) + '.xls'
+    book.save(os.path.join(data_uploader.path('',folder='tmp'),filename))
+    return send_from_directory(data_uploader.path('', folder='tmp'), filename, as_attachment=True)
 
 @blueprint.route('/team/download')
 def team_download():
@@ -356,6 +381,16 @@ def task_edit_score(courseid,taskid,teamid):
 
     form.task_score.data=taskscore.score
     return render_template('teacher/set_score.html',form=form,courseid=courseid,taskid=taskid,teamid=teamid)
+
+@blueprint.route('/<courseid>/task<taskid>/scores')
+def task_score(courseid,taskid):
+    teamidList = TaskTeamRelation.query.filter_by(task_id=taskid).all()
+    teams = []
+    for teamid in teamidList:
+        team = Team.query.filter_by(id=teamid.team_id).first()
+        teams.append(team)
+    task = Task.query.filter_by(id=taskid).first()
+    return render_template('teacher/task_one_score.html',teams=teams,task=task,courseid=courseid,taskid=taskid)
 
 @blueprint.route('/<courseid>/task/<taskid>/files',methods = ['GET','POST'])
 def student_task(courseid,taskid):

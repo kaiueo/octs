@@ -1,5 +1,5 @@
 from flask_wtf import Form
-from wtforms import PasswordField, StringField,SubmitField,FloatField,DateField,FileField
+from wtforms import PasswordField, StringField,SubmitField,FloatField,DateField,FileField, FieldList
 from wtforms.validators import DataRequired, Email, EqualTo, Length
 from octs.database import Column, Model, SurrogatePK, db, reference_col, relationship
 from octs.user.models import Team
@@ -26,3 +26,5 @@ class FileForm(Form):
 class FileUploadForm(Form):
     file = FileField('文件', validators=[DataRequired('请选择文件')])
     submit = SubmitField('上传')
+
+

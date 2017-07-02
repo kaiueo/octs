@@ -4,18 +4,14 @@
     <div class="box-body">
         <h3><strong>课程信息</strong></h3>
     </div>
-    <div class="box-body">
-        <a class="btn btn-primary" href="{{ url_for('admin.insert') }}">添加</a>
-    <br>
-    <br>
 
+    <div class="box-body">
+        <a class="btn btn-primary" href="{{ url_for('admin.insert') }}">添加课程</a>
+    <br/><br/>
     <table class="table table-bordered table-hover definewidth m10">
     <thead>
     <tr>
         <th>课程名称</th>
-
-
-
 
         <th>管理菜单</th>
     </tr>
@@ -25,11 +21,10 @@
         <tr>
                 <td>{{ course.name }}</td>
 
-
                 <td>
-                    <a class="btn btn-primary" href="{{ url_for('admin.delete',id =course.id) }}">删除</a>
-                <a class="btn btn-primary" href="{{ url_for('admin.edit',id=course.id) }}">编辑</a>
-                    <a class="btn btn-primary" href="{{ url_for('admin.member', id=course.id) }}">成员管理</a>
+                    <a class="btn btn-primary" href="{{ url_for('admin.edit',id=course.id) }}">编辑</a>&nbsp;
+                    <a class="btn btn-danger" href="{{ url_for('admin.delete',id =course.id) }}">删除</a>&nbsp;
+                    <a class="btn btn-info" href="{{ url_for('admin.member', id=course.id) }}">成员管理</a>
                 </td>
 
 

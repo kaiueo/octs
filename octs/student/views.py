@@ -293,7 +293,7 @@ def source(courseid, taskid):
             time_flag = 0
 
         sub_flag = 0
-        if (submit_time-submitted_time>0):
+        if (submit_time-ttr.submit_num>0):
             sub_flag = 1
         else:
             sub_flag = 0

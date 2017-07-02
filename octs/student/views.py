@@ -1,5 +1,5 @@
 from flask import Blueprint, flash, redirect, render_template, request, send_from_directory,url_for,abort,send_file
-from octs.user.models import Course,Term,Team,TeamUserRelation,User,Task,File,Source
+from octs.user.models import Course,Term,Team,TeamUserRelation,User,Task,File,Source,TaskTeamRelation
 from octs.user.models import Course,Term,Team,TeamUserRelation,User, Message
 from .forms import TeamForm
 from .forms import CourseForm,FileForm
@@ -113,16 +113,17 @@ def my_team(id):
 @blueprint.route('/team/<userid>/apply/<id>')
 def team_apply(userid, id):
     team = Team.query.filter_by(id=id).first()
+
     turs = TeamUserRelation.query.join(User, User.id == TeamUserRelation.user_id).filter(
         TeamUserRelation.is_accepted == False).filter(TeamUserRelation.team_id == team.id).add_columns(User.id,
                                                                                                       User.user_id,
                                                                                                       User.username,
-                                                                                                      User.gender)
-    turs = [tur for tur in turs if tur.is_accepted==False]
+                                                                                                      User.gender).all()
+
+    turs = [tur for tur in turs if tur[0].is_accepted==False]
     for tur in turs:
-        user_id = tur.user_id
-        user = User.query.filter_by(id=user_id).first()
-        db.session.delete(tur)
+        user = User.query.filter_by(id=tur[1]).first()
+        db.session.delete(tur[0])
         user.in_team = False
         Message.sendMessage(11, user.id, '你的团队加入申请已被拒绝')
         db.session.add(user)
@@ -166,11 +167,16 @@ def task(taskid):
     taskid = taskid
     flag = 0
     tur = TeamUserRelation.query.filter_by(user_id=current_user.id).first()
-    team = Team.query.filter_by(id=tur.team_id).first()
-    if(tur == None or tur.is_accepted == False or team.status!=2):
+
+    if(tur == None or tur.is_accepted == False ):
         flag = 0
     else:
-        flag = 1
+        team = Team.query.filter_by(id=tur.team_id).first()
+        if(team.status!=3):
+            flag = 0
+        else:
+            flag = 1
+
     task = Task.query.filter_by(id=taskid).first()
     return render_template('student/course/task.html',task = task,flag=flag)
 
@@ -244,15 +250,32 @@ def source(courseid, taskid):
         form = FileForm()
         flag = 0
         tur = TeamUserRelation.query.filter_by(user_id=current_user.id).first()
-
         teamid = tur.team_id
         mastersearch = TeamUserRelation.query.filter(TeamUserRelation.team_id==teamid).filter(TeamUserRelation.is_master==True).first()
-
         masterid = mastersearch.user_id
-        if(tur.is_master==True):
-            flag=1
+
+        ttr = TaskTeamRelation.query.filter(TaskTeamRelation.team_id==teamid).filter(TaskTeamRelation.task_id==taskid).first()
+        task = Task.query.filter_by(id=taskid).first()
+        submit_time = task.submit_num
+        if( ttr!= None ):
+            submitted_time = ttr.submit_num
+            rest_time = submit_time - submitted_time
         else:
-            flag=0
+            rest_time = submit_time
+
+        if(tur.is_master==True):
+            flag = 1
+        else:
+            flag = 0
+
+        time_flag = 0
+        task_record = Task.query.filter_by(id=taskid).first()
+        task_endtime = task_record.end_time
+        time_now = datetime.datetime.fromtimestamp(time.time())
+        if (time_now > task_endtime):
+            time_flag = 1
+        else:
+            time_flag = 0
         file_records = File.query.filter(File.task_id==taskid).filter(File.user_id==masterid ).all()
         if form.validate_on_submit():
             for file in request.files.getlist('file'):
@@ -279,9 +302,10 @@ def source(courseid, taskid):
 
                 db.session.add(file_record)
                 db.session.commit()
+
             return redirect(url_for('student.source', courseid=courseid, taskid=taskid))
         return render_template('student/course/task_file_manage.html', form=form, file_records=file_records, courseid=courseid,
-                                   taskid=taskid,flag=flag)
+                                   taskid=taskid,flag=flag,resttime=rest_time,timeflag=time_flag)
 
 
 

@@ -20,7 +20,8 @@ def home():
 def course(teacherid):
     teacher = User.query.filter_by(id=teacherid).first()
     courseList = teacher.courses
-    return render_template('teacher/course.html', list=courseList)
+    term = Term.query.order_by(Term.id.desc()).first()
+    return render_template('teacher/course.html', list=courseList,termid=term.id)
 
 @blueprint.route('/<courseid>/task/<taskid>')
 def task_detail(courseid,taskid):
@@ -76,11 +77,17 @@ def add(courseid):
         task.start_time = form.starttime.data
         task.end_time = form.endtime.data
         task.submit_num = form.subnum.data
+        task.weight = form.weight.data
         task.teacher = current_user.name
-        ##task.course_id = form.content.data
         task.content = form.content.data
         course = Course.query.filter_by(id=courseid).first()
         course.tasks.append(task)
+        teams = course.teams
+        for team in teams:
+            ttr = TaskTeamRelation()
+            ttr.team = team
+            ttr.task = task
+            db.session.add(ttr)
         db.session.add(task)
         db.session.add(course)
         db.session.commit()
@@ -96,6 +103,8 @@ def task_edit(courseid, id):
         task.start_time = form.starttime.data
         task.end_time = form.endtime.data
         task.content = form.content.data
+        task.submit_num = form.subnum.data
+        task.weight = form.weight.data
         db.session.add(task)
         db.session.commit()
         return redirect(url_for('teacher.task', courseid=courseid))
@@ -104,6 +113,8 @@ def task_edit(courseid, id):
     form.starttime.data = task.start_time
     form.endtime.data = task.end_time
     form.content.data = task.content
+    form.subnum.data = task.submit_num
+    form.weight.data = task.weight
     return render_template('teacher/edit.html',form = form, courseid=courseid, taskid=id)
 
 @blueprint.route('/<courseid>/task/delete/<taskid>',methods=['GET','POST'])
@@ -428,6 +439,13 @@ def source_file_download_zip(courseid):
     filename = os.path.join(data_uploader.path('',folder='tmp'),'sourcefiles.zip')
     zip_download = zipfolder(foldername,filename)
     return send_file(filename,as_attachment=True)
+
+@blueprint.route('/<courseid>/files/download')
+def former_task_file_download_zip(courseid):
+    foldername = data_uploader.path('', folder='course/'+str(courseid)+'/student')
+    filename = os.path.join(data_uploader.path('', folder='tmp'), 'taskfiles.zip')
+    zip_download = zipfolder(foldername, filename)
+    return send_file(filename, as_attachment=True)
 
 
 

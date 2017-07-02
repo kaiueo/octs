@@ -33,6 +33,9 @@
                 <td> <a href="{{ url_for('teacher.course_edit',teacherid=current_user.id,id=course.id) }}" class="btn btn-primary">编辑课程</a>
                                 <a href="{{ url_for('teacher.task',courseid=course.id) }}" class="btn btn-primary">作业管理</a>
                                 <a href="{{ url_for('teacher.source',courseid=course.id) }}" class="btn btn-primary">资源管理</a>
+                                <a href="{{ url_for('teacher.calcu_score') }}" class="btn btn-primary">计算总成绩</a>
+                                <a href="{{ url_for('teacher.grade_download') }}" class="btn btn-primary">生成团队成绩报表</a>
+                                <a href="{{ url_for('teacher.grade_download_stu') }}" class="btn btn-primary">生成个人成绩报表</a>
                         </td>
 
         {% endif %}

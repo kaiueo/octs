@@ -28,7 +28,7 @@ def login():
             user = User.query.filter_by(username=form.username.data).first()
             if user is not None and user.check_password(form.password.data):
                 login_user(user)
-                flash('You are logged in.', 'success')
+                flash('您已成功登陆', 'success')
                 redirect_url = url_for('public.home')
                 return redirect(redirect_url)
         else:
@@ -41,7 +41,7 @@ def login():
 def logout():
     """Logout."""
     logout_user()
-    flash('You are logged out.', 'info')
+    flash('您已成功登出', 'info')
     return redirect(url_for('public.home'))
 
 

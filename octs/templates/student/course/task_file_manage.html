@@ -1,0 +1,54 @@
+{% extends "student/index.html" %}
+{% import "bootstrap/wtf.html" as wtf  %}
+
+{% block studentContent %}
+    <div class="box-header">
+    <h3>提交情况</h3>
+    </div>
+    <div class="box-body">
+
+    {% if file_records|length>0 %}
+        <a href="{{ url_for('student.task_file_download_zip_source', courseid=courseid, taskid=taskid) }}" class="btn btn-primary">打包下载</a>
+    {% endif %}
+
+    <table class="table">
+        {% if file_records|length>0 %}
+        <thead>
+        <td>文件名</td>
+        <td>操作</td>
+        </thead>
+    {% else %}
+    <p>文件列表为空</p>
+    {% endif %}
+        {% for file_record in file_records %}
+        <tr>
+            <td>
+                {{ file_record.name }}
+            </td>
+            <td>
+                <a class="btn btn-primary" href="{{ url_for('student.source_download', courseid=courseid, taskid=taskid, fileid=file_record.id) }}">下载</a>
+                {% if flag == 1 %}
+                     <a class="btn btn-danger" href="{{ url_for('student.source_delete', courseid=courseid, taskid=taskid, fileid=file_record.id) }}">删除</a>
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+
+        <br><br>
+    {% if flag == 1 %}
+        <form action="" method="post" class="form" enctype="multipart/form-data" role="form">
+
+            <div class="form-group  has-error required"><label class="control-label" for="file">作业上传</label>
+
+          <input id="file" name="file" required="" type="file" multiple="multiple">
+
+            <p class="help-block">请选择文件</p>
+             </div>
+
+            <input class="btn btn-default" id="submit" name="submit" type="submit" value="上传">
+
+        </form>
+    {% endif %}
+    </div>
+{% endblock %}

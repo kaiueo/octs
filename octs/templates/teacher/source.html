@@ -1,20 +1,20 @@
 {% extends "teacher/index.html" %}
-{% import "bootstrap/wtf.html" as wtf  %}
 
 {% block teacherContent %}
-    <div class="box-header">
-    <h3>文件管理</h3>
+        <div class="box-header">
+    <h3>课程资源管理</h3>
     </div>
     <div class="box-body">
 
     {% if file_records|length>0 %}
-        <a href="{{ url_for('teacher.task_file_download_zip', courseid=courseid, taskid=taskid) }}" class="btn btn-primary">打包下载</a>
+        <a href="{{ url_for('teacher.source_file_download_zip', courseid=courseid) }}" class="btn btn-primary">打包下载</a>
     {% endif %}
+
 
     <table class="table">
         {% if file_records|length>0 %}
         <thead>
-        <td>文件名</td>
+        <td>资源名</td>
         <td>操作</td>
         </thead>
     {% else %}
@@ -26,8 +26,8 @@
                 {{ file_record.name }}
             </td>
             <td>
-                <a class="btn btn-primary" href="{{ url_for('teacher.task_file_download', courseid=courseid, taskid=taskid, fileid=file_record.id) }}">下载</a>
-                <a class="btn btn-danger" href="{{ url_for('teacher.task_file_delete', courseid=courseid, taskid=taskid, fileid=file_record.id,userid = current_user.id) }}">删除</a>
+                <a class="btn btn-primary" href="{{ url_for('teacher.source_download', courseid=courseid,fileid=file_record.id) }}">下载</a>
+                <a class="btn btn-danger" href="{{ url_for('teacher.source_delete', courseid=courseid,fileid=file_record.id) }}">删除</a>
             </td>
         </tr>
         {% endfor %}
@@ -44,9 +44,12 @@
             <p class="help-block">请选择文件</p>
   </div>
 
-    <input class="btn btn-default" id="submit" name="submit" type="submit" value="上传">
-        <br><br>
+    <input class="btn btn-primary" id="submit" name="submit" type="submit" value="上传">
+
 </form>
-    <a class="btn btn-primary" href="{{ url_for('teacher.task_edit', courseid=courseid,id=taskid) }}">返回上一页</a>
+     <br>
+     <a class="btn btn-primary" href="{{ url_for('teacher.course',teacherid = current_user.id) }}">返回</a>
+
     </div>
+
 {% endblock %}

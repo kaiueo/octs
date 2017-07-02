@@ -149,6 +149,7 @@ class Course(SurrogatePK, Model):
     course_introduction = Column(db.String())
     course_outline = Column(db.String())
     term_id = reference_col('terms')
+    teams = relationship('Team', backref='course', lazy='dynamic')
     tasks = relationship('Task', backref='course', lazy='dynamic')
     users = relationship('User', secondary=course_user_relation, backref='courses', lazy='dynamic')
 
@@ -191,6 +192,7 @@ class Team(SurrogatePK, Model):
     __tablename__ = 'teams'
     name = Column(db.String(1000))
     status = Column(db.Integer)
+    course_id = reference_col('courses', nullable=False)
 
 class Task(SurrogatePK, Model):
     __tablename__ = 'tasks'
@@ -200,6 +202,12 @@ class Task(SurrogatePK, Model):
     end_time = Column(db.DateTime, nullable=False, default=dt.datetime.utcnow)
     teacher = Column(db.String(1000), nullable=False, default='x老师')
     course_id = reference_col('courses', nullable=False)
+
+class Source(SurrogatePK,Model):
+    __tablename__ = 'source'
+    name = Column(db.String(1000))
+    teacher = Column(db.String(1000),nullable=False,default='老师')
+    course_id = reference_col('courses',nullable=False)
 
 
 class Message(SurrogatePK, Model):

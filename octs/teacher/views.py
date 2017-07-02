@@ -111,8 +111,7 @@ def team():
         TeamUserRelation.team_id == Team.id).filter(TeamUserRelation.is_master == True).join(
         User, TeamUserRelation.user_id == User.id).filter(TeamUserRelation.user_id == User.id).add_columns(
         Team.name, User.username, Team.status, Team.id, User.user_id, User.in_team)
-    session['user']=[]
-    return render_template('teacher/team.html',list=teamlist,adlist=session['user'])
+    return render_template('teacher/team.html',list=teamlist)
 
 @blueprint.route('/team/permit/<teacherid>/<teamid>')
 def permit(teacherid,teamid):

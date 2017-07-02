@@ -355,7 +355,7 @@ def student_task_file_download_zip(courseid, taskid):
 
 @blueprint.route('/source/<courseid>/files/download')
 def source_file_download_zip(courseid):
-    foldername = data_uploader.path('',folder='course'+str(courseid)+'/teacher/source')
+    foldername = data_uploader.path('',folder='course/'+str(courseid)+'/teacher/source')
     filename = os.path.join(data_uploader.path('',folder='tmp'),'sourcefiles.zip')
     zip_download = zipfolder(foldername,filename)
     return send_file(filename,as_attachment=True)

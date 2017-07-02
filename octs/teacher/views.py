@@ -1,6 +1,6 @@
 from flask import Blueprint, flash, redirect, render_template, request, url_for,send_from_directory, abort, make_response, send_file, session
 from octs.user.models import Course,Task, User, Message, Team,TeamUserRelation, File,Source,Term,TaskTeamRelation
-from .forms import CourseForm,TaskForm, FileForm
+from .forms import CourseForm,TaskForm, FileForm,TaskScoreForm
 from octs.database import db
 from flask_login import current_user
 from octs.extensions import data_uploader
@@ -336,10 +336,26 @@ def task_give_score(courseid,taskid):
     tasklist=Task.query.filter(Task.id==taskid).first()
     if time.strftime('%Y-%m-%d %H:%M:%S',time.localtime(time.time()))<str(tasklist.end_time):
         flash('这项作业还未截止！暂时不能批改')
-        return render_template('teacher/task_score.html')
+        return render_template('teacher/task_score.html',flag=False)
     else:
         task_team_list=TaskTeamRelation.query.join(Task,Task.id==TaskTeamRelation.task_id).join(Team,Team.id==TaskTeamRelation.team_id
-            ).filter(TaskTeamRelation.task_id==taskid).add_columns(Task.name,Team.name,TaskTeamRelation.task_id,TaskTeamRelation.team_id).all()
+            ).filter(TaskTeamRelation.task_id==taskid).add_columns(Team.name,TaskTeamRelation.task_id,TaskTeamRelation.team_id,TaskTeamRelation.score,Task.weight).all()
+        task_name=Task.query.filter(Task.id==taskid).first()
+        return render_template('teacher/task_score.html', flag=True,list=task_team_list,name=task_name,courseid=courseid)
+
+@blueprint.route('/<courseid>/task/<taskid>/givescore/<teamid>',methods=['GET', 'POST'])
+def task_edit_score(courseid,taskid,teamid):
+    taskscore=TaskTeamRelation.query.filter(TaskTeamRelation.task_id==taskid).filter(TaskTeamRelation.team_id==teamid).first()
+    form = TaskScoreForm()
+    if form.validate_on_submit():
+        taskscore.score=form.task_score.data
+        db.session.add(taskscore)
+        db.session.commit()
+        flash('已经提交分数！')
+        return redirect(url_for('teacher.task_give_score',courseid=courseid,taskid=taskid))
+
+    form.task_score.data=taskscore.score
+    return render_template('teacher/set_score.html',form=form,courseid=courseid,taskid=taskid,teamid=teamid)
 
 @blueprint.route('/<courseid>/task/<taskid>/files',methods = ['GET','POST'])
 def student_task(courseid,taskid):

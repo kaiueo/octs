@@ -1,0 +1,23 @@
+{% extends "teacher/index.html" %}
+
+{% block teacherContent %}
+    <div class="box-header"><h3><strong>作业批改</strong></h3></div>
+    <div class="box-body">
+
+    <table class="table table-bordered table-hover definewidth m10">
+    <thead>
+    <tr>
+        <th>作业名称</th>
+        <th>小组名称</th>
+        <th>作业分数</th>
+        <th>所占权重</th>
+        <th>编辑</th>
+    </tr>
+    </thead>
+
+
+    </table>
+    <br><br>
+    <a class="btn btn-primary" href="{{ url_for('teacher.course', teacherid=current_user.id) }}">返回列表</a>
+    </div>
+{% endblock %}

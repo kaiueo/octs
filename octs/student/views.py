@@ -140,6 +140,7 @@ def team_apply(userid, id):
         db.session.delete(tur[0])
         user.in_team = False
         Message.sendMessage(11, user.id, '你的团队加入申请已被拒绝')
+        flash('已拒绝该同学的申请！')
         db.session.add(user)
     team.status = 1
     db.session.add(team)
@@ -154,7 +155,7 @@ def permit(id,userid):
     db.session.add(stuPermit)
     db.session.commit()
     Message.sendMessage(id, userid, '你的团队加入申请已被接受！')
-    flash('已同意该同学申请！')
+    flash('已同意该同学的申请！')
     return redirect(url_for('student.my_team',id=id))
 
 @blueprint.route('/team/reject/<id>/<userid>')
@@ -165,7 +166,7 @@ def reject(id,userid):
     stu.in_team=False
     db.session.add(stu)
     db.session.commit()
-    flash('                                              已拒绝该同学')
+    flash('已拒绝该同学')
     Message.sendMessage(id,userid,'你的团队加入申请被拒绝！另请高明吧！')
     return redirect(url_for('student.my_team',id=id))
 
@@ -290,6 +291,13 @@ def source(courseid, taskid):
             time_flag = 1
         else:
             time_flag = 0
+
+        sub_flag = 0
+        if (submit_time-submitted_time>0):
+            sub_flag = 1
+        else:
+            sub_flag = 0
+
         file_records = File.query.filter(File.task_id==taskid).filter(File.user_id==masterid ).all()
         if form.validate_on_submit():
             for file in request.files.getlist('file'):
@@ -317,9 +325,16 @@ def source(courseid, taskid):
                 db.session.add(file_record)
                 db.session.commit()
 
+                taskteamrelation = TaskTeamRelation.query.filter(TaskTeamRelation.task_id==taskid).filter(TaskTeamRelation.team_id==teamid).first()
+                # taskteamrelation.team_id = teamid
+                # taskteamrelation.task_id = taskid
+                taskteamrelation.submit_num = ttr.submit_num + 1
+                db.session.add(taskteamrelation)
+                db.session.commit()
+
             return redirect(url_for('student.source', courseid=courseid, taskid=taskid))
         return render_template('student/course/task_file_manage.html', form=form, file_records=file_records, courseid=courseid,
-                                   taskid=taskid,flag=flag,resttime=rest_time,timeflag=time_flag)
+                                   taskid=taskid,flag=flag,resttime=rest_time,timeflag=time_flag,sub_flag=sub_flag)
 
 
 

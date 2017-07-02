@@ -7,7 +7,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- 上述3个meta标签*必须*放在最前面，任何其他内容都*必须*跟随其后！ -->
 
-    <title>登录</title>
 
     <!--stylesheet-->
     <link rel="stylesheet" href="/static/css/bootstrap.min.css" />
@@ -29,18 +28,21 @@
 </head>
 
 
-<body style="background-image: url(/static/img/login_back.jpg)">
+<body>
+
 {% for message in get_flashed_messages() %}
     <div class="alert alert-warning">
         <button type="button" class="close" data-dismiss="alert">&times;</button>
         {{ message }}
     </div>
     {% endfor %}
-  <div class="container login-container">
+
+
+  <div class="container login-container" style="position:absolute;top:0px;right:200px">
     <div class="row">
       <div class="col-sm-2 col-md-7 col-lg-8"></div>
       <div class="col-sm-8 col-md-5 col-lg-4">
-        <form class="form-horizontal login-form" method="post" class="login" style="max-height:220px">
+        <form class="form-horizontal login-form" method="post" class="login">
                 <div class="form-group">
                     <label class="control-label col-sm-2 col-md-2 col-lg-3" for="inputId" style="font-size: 15px">账号</label>
                     <div class="col-sm-9 col-md-9 col-lg-8">
@@ -85,5 +87,13 @@
 
 
 </body>
+<!-- JavaScript at the bottom for fast page loading -->
+{% assets "js_all" %}
+    <script type="text/javascript" src="{{ ASSET_URL }}"></script>
+{% endassets %}
+{% block js %}
+    {{ moment.include_moment() }}
+{% endblock %}
+<!-- end scripts -->
 
 </html>

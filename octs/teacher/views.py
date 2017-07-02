@@ -341,6 +341,16 @@ def task_give_score(courseid,taskid):
         task_team_list=TaskTeamRelation.query.join(Task,Task.id==TaskTeamRelation.task_id).join(Team,Team.id==TaskTeamRelation.team_id
             ).filter(TaskTeamRelation.task_id==taskid).add_columns(Task.name,Team.name,TaskTeamRelation.task_id,TaskTeamRelation.team_id).all()
 
+@blueprint.route('/<courseid>/task<taskid>/scores')
+def task_score(courseid,taskid):
+    teamidList = TaskTeamRelation.query.filter_by(task_id=taskid).all()
+    teams = []
+    for teamid in teamidList:
+        team = Team.query.filter_by(id=teamid.team_id)
+        teams.append(team)
+    task = Task.query.filter_by(id=taskid).first()
+    return render_template('teacher/task_one_score.html',teams=teams,task=task,courseid=courseid)
+
 @blueprint.route('/<courseid>/task/<taskid>/files',methods = ['GET','POST'])
 def student_task(courseid,taskid):
     form = FileForm()

@@ -8,8 +8,8 @@ class CourseForm(Form):
     credit = FloatField('学分')
     location = StringField('地点')
     start_time = DateField('开始时间')
-    course_introduction = StringField('课程介绍')
-    course_outline = StringField("课程大纲")
+    course_introduction = TextAreaField('课程介绍')
+    course_outline = TextAreaField("课程大纲")
     submit = SubmitField('提交')
 
 class TaskForm(Form):

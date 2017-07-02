@@ -1,5 +1,5 @@
 from flask import Blueprint, flash, redirect, render_template, request, url_for,send_from_directory, abort, make_response, send_file, session
-from octs.user.models import Course,Task, User, Message, Team,TeamUserRelation, File,Source,Term
+from octs.user.models import Course,Task, User, Message, Team,TeamUserRelation, File,Source,Term, TaskTeamRelation
 from .forms import CourseForm,TaskForm, FileForm
 from octs.database import db
 from flask_login import current_user
@@ -77,10 +77,15 @@ def add(courseid):
         task.end_time = form.endtime.data
         task.submit_num = form.subnum.data
         task.teacher = current_user.name
-        ##task.course_id = form.content.data
         task.content = form.content.data
         course = Course.query.filter_by(id=courseid).first()
         course.tasks.append(task)
+        teams = course.teams
+        for team in teams:
+            ttr = TaskTeamRelation()
+            ttr.team = team
+            ttr.task = task
+            db.session.add(ttr)
         db.session.add(task)
         db.session.add(course)
         db.session.commit()

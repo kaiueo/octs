@@ -9,6 +9,7 @@ from octs.user.forms import RegisterForm
 from octs.user.models import User
 from octs.utils import flash_errors
 
+
 blueprint = Blueprint('auth', __name__, url_prefix='/auth',static_folder='../static')
 
 
@@ -31,8 +32,8 @@ def login():
                 flash('您已成功登陆', 'success')
                 redirect_url = url_for('public.home')
                 return redirect(redirect_url)
-        else:
-            flash_errors(form)
+            else:
+                flash('请输入正确的账号和密码', 'failed')
     return render_template('login.html', form=form)
 
 

@@ -31,8 +31,7 @@
 
             </table>
             {% if myteam.status==0 %}
-            &nbsp &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
-                <a href="{{ url_for('student.team_apply', userid=userid,id=myteam.id) }}" class="btn btn-primary">提交申请</a>
+                <a href="{{ url_for('student.team_apply', userid=userid,id=myteam.id) }}" class="btn btn-primary" style="margin-left: 70px">完成团队组建并向老师提交组队申请</a>
             {% endif %}
             <br><br>
             <h4><strong>团队成员名单：</strong></h4>
@@ -88,11 +87,9 @@
                 {% else %}
                     <td>女</td>
                 {% endif %}
-                <td>{{ student.user_id }}&nbsp &nbsp</td>
-        <td> &nbsp &nbsp &nbsp &nbsp &nbsp<a href="{{ url_for('student.permit',id=current_user.id,userid=student.id) }}" class="btn btn-primary">同意申请</a>
-            &nbsp
-         <a href="{{ url_for('student.reject',id=current_user.id,userid=student.id) }}" class="btn btn-primary">拒绝申请</a></td>
-
+                <td>{{ student.user_id }}</td>
+        <td> <a href="{{ url_for('student.permit',id=current_user.id,userid=student.id) }}" class="btn btn-primary">同意申请</a>
+         <a href="{{ url_for('student.reject',id=current_user.id,userid=student.id) }}" class="btn btn-danger">拒绝申请</a></td>
         </tr>
 
     {% endfor %}
@@ -100,7 +97,7 @@
 
         {% endif %}
     <br><br>
-    <th><a  class="btn btn-primary" href="{{ url_for('student.team') }}">返回上一页</a> </th>
+    <th><a  class="btn btn-primary" href="{{ url_for('student.team') }}">返回</a> </th>
 
     </div>
 

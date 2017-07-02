@@ -1,30 +1,24 @@
 {% extends "layout.html" %}
-<title>{% block page_title %}
-  
-    教师首页
-  
-    {% endblock %}
-  </title>
-
 
 
 {% block content %}
 
-<aside class="main-sidebar">
+<aside class="main-sidebar" style="min-height: 800px">
   <section class="sidebar">
   <ul class="sidebar-menu">
   <li class="nav-header">
                         {% block navTeHomepage %}
-                            <a class="ajax-link" href="{{ url_for('teacher.mainpage') }}">
+                            <a class="ajax-link" href="{{ url_for('teacher.home') }}">
                                 <i class="glyphicon glyphicon-home"></i><span>我的主页</span>
                             </a>
                         {% endblock %}
                     </li>
+
                     <li>
                         {% block navCourseSet %}
                             <a class="ajax-link"
                                href="{{ url_for('teacher.course', teacherid=current_user.id) }}">
-                                <i class="glyphicon glyphicon-list-alt"></i><span>课程信息</span>
+                                <i class="glyphicon glyphicon-list-alt"></i><span>课程管理</span>
                             </a>
                         {% endblock %}
                     </li>
@@ -47,7 +41,7 @@
   </aside>
     <div class="content-wrapper">
     <section class="content">
-<div class="box">
+<div class="box" style="min-height: 735px">
                 {% block teacherContent %}
                 {% endblock %}
     </div>

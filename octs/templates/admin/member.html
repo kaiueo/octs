@@ -6,12 +6,9 @@
         <h3><strong>成员管理</strong></h3>
     </div>
     <div class="box-body">
-    <a  class="btn btn-primary" href="{{ url_for('admin.course') }}">返回列表</a>
-    <br><br>
-     <a class="btn btn-primary" href="{{ url_for('admin.add_member', id=courseid) }}">添加成员</a>
 
-
-
+        <a class="btn btn-primary" href="{{ url_for('admin.add_member', id=courseid) }}">导入成员</a>
+    <br/><br/>
 
     <table class="table table-bordered table-hover definewidth m10">
     <thead>
@@ -22,7 +19,6 @@
         <th>身份</th>
         <th>操作</th>
 
-        &nbsp;&nbsp
 
     </tr>
 
@@ -67,7 +63,8 @@
         {% endif %}
     {% endfor %}
 </table>
-
+    <br/>
+<a  class="btn btn-primary" href="{{ url_for('admin.course') }}">返回</a>
     </div>
 
 {% endblock %}

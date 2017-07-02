@@ -3,7 +3,7 @@
     <div class="box-header"><h3><strong>作业栏</strong></h3></div>
     <div class="box-body">
     <form class="form-inline definewidth m20" action="#" method="get">
-        <a class="btn btn-primary" href={{ url_for('teacher.add', courseid=courseid) }}>添加</a>
+        <a class="btn btn-primary" href={{ url_for('teacher.add', courseid=courseid) }}>添加新作业</a>
         <a class="btn btn-primary" href={{ url_for('teacher.multi_check', courseid=courseid) }}>查看所有作业情况</a>
     </form>
 
@@ -27,9 +27,10 @@
                 <td>
                 <a class="btn btn-primary" href="{{ url_for('teacher.task_detail',courseid=courseid,taskid=task.id) }}">查看作业信息</a>
                 <a class="btn btn-primary" href="{{ url_for('teacher.task_edit',courseid=courseid,id=task.id) }}">编辑</a>
-                    <a class="btn btn-primary" href="{{ url_for('teacher.delete',courseid=courseid,taskid =task.id) }}">删除</a>
                     <a class="btn btn-primary" href="{{ url_for('teacher.student_task',courseid=courseid,taskid =task.id) }}">查看学生作业</a>
                     <a class="btn btn-primary" href="{{ url_for('teacher.task_give_score',courseid=courseid,taskid =task.id) }}">批改作业</a>
+                    <a class="btn btn-primary" href="{{ url_for('teacher.task_score',courseid=courseid,taskid =task.id) }}">查看作业给分</a>
+                    <a class="btn btn-danger" href="{{ url_for('teacher.delete',courseid=courseid,taskid =task.id) }}">删除</a>
                 </td>
 
 

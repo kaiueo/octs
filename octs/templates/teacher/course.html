@@ -21,15 +21,15 @@
     </thead>
     {% for course in list %}
         <tr>
-                <td>{{ course.name }}</td>
-                <td>{{ course.credit }}</td>
-                <td>{{ course.start_time }}</td>
-                <td>{{ course.location }}</td>
-                <td>{{ course.course_introduction }}</td>
-                <td>{{ course.course_outline }}</td>
-                <td>{{ course.term_id }}</td>
-                <td> <a href="{{ url_for('teacher.student',id=course.id) }}" class="btn btn-primary">查看</a></td>
-                <td> <a href="{{ url_for('teacher.course_edit',teacherid=current_user.id,id=course.id) }}" class="btn btn-primary">编辑课程</a>
+                <td style="width: 12%">{{ course.name }}</td>
+                <td style="width: 4%">{{ course.credit }}</td>
+                <td style="width: 7%">{{ course.start_time }}</td>
+                <td style="width: 6%">{{ course.location }}</td>
+                <td style="width: 15%">{{ course.course_introduction }}</td>
+                <td style="width: 15%">{{ course.course_outline }}</td>
+                <td style="width: 8%">{{ course.term_id }}</td>
+                <td style="width: 7%"> <a href="{{ url_for('teacher.student',id=course.id) }}" class="btn btn-primary">查看</a></td>
+                <td style="width: 25%"> <a href="{{ url_for('teacher.course_edit',teacherid=current_user.id,id=course.id) }}" class="btn btn-primary">编辑课程</a>
                     <a href="{{ url_for('teacher.task',courseid=course.id) }}" class="btn btn-primary">作业管理</a>
                     <a href="{{ url_for('teacher.source',courseid=course.id) }}" class="btn btn-primary">资源管理</a>
                 </td>

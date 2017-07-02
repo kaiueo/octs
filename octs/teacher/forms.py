@@ -16,6 +16,7 @@ class TaskForm(Form):
     taskname = StringField('名称')
     starttime = DateTimeField('开始时间')
     endtime = DateTimeField('结束时间')
+    subnum = FloatField('可提交次数')
     content = TextAreaField('内容')
     submit = SubmitField('提交')
 

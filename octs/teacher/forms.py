@@ -16,12 +16,11 @@ class TaskForm(Form):
     taskname = StringField('名称')
     starttime = DateTimeField('开始时间')
     endtime = DateTimeField('结束时间')
+    subnum = FloatField('可提交次数')
     content = TextAreaField('内容')
+    weight = FloatField('作业权重')
     submit = SubmitField('提交')
 
 class FileForm(Form):
-    file = FileField('文件', validators=[DataRequired('请选择文件')])
+    file = FileField('图片上传', validators=[DataRequired('请选择文件')])
     submit = SubmitField('上传')
-
-
-

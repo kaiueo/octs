@@ -1,0 +1,61 @@
+{% extends 'teacher/index.html'%}
+
+{% block teacherContent %}
+            <td><a class="btn btn-primary" href="{{ url_for('teacher.to_adjust',teacherid=current_user.id) }}">返回</a></td>
+            <h3><strong>团队成员名单：</strong></h3>
+            <table class="table table-condensed">
+            <thead>
+            <tr>
+                <th>姓名</th>
+                <th>性别</th>
+                <th>学号</th>
+                <th>操作</th>
+        &nbsp;      &nbsp
+             </tr>
+            </thead>
+            {% set tmp=list[0].id %}
+            {% for user in list %}
+                <tr>
+                <td>{{ user.name }}</td>
+                    {% if user.gender== False %}
+                    <td>男</td>
+                {% else %}
+                    <td>女</td>
+                {% endif %}
+                <td>{{ user.user_id }}</td>
+
+                    <td><a class="btn btn-primary"  href="{{ url_for('teacher.adjust_trans',teacherid=current_user.id,userid=user.user_id,teamid=user.id) }}">移出该队</a></td>
+                </tr>
+
+            {% endfor %}
+            </table>
+    <h3><strong>待调整成员名单：</strong></h3>
+    {% if translist|length>0 %}
+            <table class="table table-condensed">
+            <thead>
+            <tr>
+                <th>姓名</th>
+                <th>性别</th>
+                <th>学号</th>
+                <th>操作</th>
+        &nbsp;      &nbsp
+             </tr>
+            </thead>
+            {% for user in translist %}
+                <tr>
+                <td>{{ user['name'] }}</td>
+                    {% if user['gender']== False %}
+                    <td>男</td>
+                {% else %}
+                    <td>女</td>
+                {% endif %}
+                <td>{{ user['id'] }}</td>
+                    <td><a class="btn btn-primary" href="{{ url_for('teacher.adjust_add',teacherid=current_user.id,userid=user['id'],teamid=tmp) }}">移至该队</a></td>
+                </tr>
+
+            {% endfor %}
+            </table>
+    {% else %}
+    <th>暂无需调整的学生</th>
+    {% endif %}
+{% endblock %}

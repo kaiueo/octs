@@ -1,0 +1,51 @@
+{% extends "teacher/index.html" %}
+{% import "bootstrap/wtf.html" as wtf  %}
+
+{% block teacherContent %}
+    <div class="box-header">
+    <h3>学生作业管理</h3>
+    </div>
+    <div class="box-body">
+
+    {% if file_records|length>0 %}
+        <a href="{{ url_for('teacher.student_task_file_download_zip', courseid=courseid, taskid=taskid) }}" class="btn btn-primary">打包下载</a>
+    {% endif %}
+
+    <table class="table">
+        {% if file_records|length>0 %}
+        <thead>
+        <td>队名</td>
+        <td>文件名</td>
+        <td>操作</td>
+        </thead>
+    {% else %}
+    <p>文件列表为空</p>
+    {% endif %}
+
+        {% for file_record in file_records %}
+            {% for item in file_record[1] %}
+                <tr>
+                    <td>
+                        {{ file_record[0] }}
+                    </td>
+                    <td>
+                        {{ item.name }}
+                    </td>
+
+
+                    <td>
+                        <a class="btn btn-primary" href="{{ url_for('teacher.task_file_download', courseid=courseid, taskid=taskid, fileid=item.id) }}">下载</a>
+                        <a class="btn btn-danger" href="{{ url_for('teacher.student_task_file_delete', courseid=courseid, taskid=taskid, fileid=item.id) }}">删除</a>
+                    </td>
+                </tr>
+            {% endfor %}
+
+        {% endfor %}
+    </table>
+
+        <br><br>
+
+
+    <a class="btn btn-primary" href="{{ url_for('teacher.task', courseid=courseid) }}">返回上一页</a>
+    </div>
+{% endblock %}

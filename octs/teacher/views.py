@@ -1,5 +1,5 @@
-from flask import Blueprint, flash, redirect, render_template, request, url_for,send_from_directory, abort, make_response, send_file
-from octs.user.models import Course,Task, User, Message, Team,TeamUserRelation, File,Source,Term
+from flask import Blueprint, flash, redirect, render_template, request, url_for,send_from_directory, abort, make_response, send_file, session
+from octs.user.models import Course,Task, User, Message, Team,TeamUserRelation, File,Source,Term,TaskTeamRelation
 from .forms import CourseForm,TaskForm, FileForm
 from octs.database import db
 from flask_login import current_user
@@ -8,24 +8,20 @@ import time
 import os,zipfile
 from pypinyin import lazy_pinyin
 import xlwt
-import datetime
 
 blueprint = Blueprint('teacher', __name__, url_prefix='/teacher',static_folder='../static')
 
+@blueprint.route('/')
+def home():
+    return render_template('teacher/index.html')
 
-
-@blueprint.route('/checkterm/')
-def checkterm():
-    termList = Term.query.order_by(Term.start_time).all()
-    termList = list(reversed(termList))
-    time_now = datetime.date.fromtimestamp(time.time())
-    return render_template('teacher/checkterm.html', list=termList,endtime=termList[0],nowtime=time_now)
 
 @blueprint.route('/<teacherid>/course/')
 def course(teacherid):
     teacher = User.query.filter_by(id=teacherid).first()
     courseList = teacher.courses
-    return render_template('teacher/course.html', list=courseList)
+    term = Term.query.order_by(Term.id.desc()).first()
+    return render_template('teacher/course.html', list=courseList,termid=term.id)
 
 @blueprint.route('/<courseid>/task/<taskid>')
 def task_detail(courseid,taskid):
@@ -80,11 +76,18 @@ def add(courseid):
         task.name = form.taskname.data
         task.start_time = form.starttime.data
         task.end_time = form.endtime.data
+        task.submit_num = form.subnum.data
+        task.weight = form.weight.data
         task.teacher = current_user.name
-        ##task.course_id = form.content.data
         task.content = form.content.data
         course = Course.query.filter_by(id=courseid).first()
         course.tasks.append(task)
+        teams = course.teams
+        for team in teams:
+            ttr = TaskTeamRelation()
+            ttr.team = team
+            ttr.task = task
+            db.session.add(ttr)
         db.session.add(task)
         db.session.add(course)
         db.session.commit()
@@ -100,6 +103,8 @@ def task_edit(courseid, id):
         task.start_time = form.starttime.data
         task.end_time = form.endtime.data
         task.content = form.content.data
+        task.submit_num = form.subnum.data
+        task.weight = form.weight.data
         db.session.add(task)
         db.session.commit()
         return redirect(url_for('teacher.task', courseid=courseid))
@@ -108,6 +113,8 @@ def task_edit(courseid, id):
     form.starttime.data = task.start_time
     form.endtime.data = task.end_time
     form.content.data = task.content
+    form.subnum.data = task.submit_num
+    form.weight.data = task.weight
     return render_template('teacher/edit.html',form = form, courseid=courseid, taskid=id)
 
 @blueprint.route('/<courseid>/task/delete/<taskid>',methods=['GET','POST'])
@@ -201,21 +208,79 @@ def team_detail(teamid):
         User,User.id==TeamUserRelation.user_id).add_columns(User.name,User.gender,User.user_id).all()
     return render_template('teacher/teamdetail.html',list=teamlist)
 
-@blueprint.route('team/adjust/<teacherid>')
+@blueprint.route('/team/adjustion/<teacherid>')
 def to_adjust(teacherid):
     teamlist1=Team.query.join(TeamUserRelation,TeamUserRelation.team_id==Team.id).filter(Team.status==1).filter(
         TeamUserRelation.is_master==True).join(User,User.id==TeamUserRelation.user_id).add_columns(
-        Team.name,Team.status,User.username).all()
+        Team.name,Team.status,User.username,Team.id).all()
     teamlist2 = Team.query.join(TeamUserRelation,TeamUserRelation.team_id==Team.id).filter(Team.status==3).filter(
         TeamUserRelation.is_master==True).join(User,User.id==TeamUserRelation.user_id).add_columns(
         Team.name,Team.status,User.username).all()
     teamlist=teamlist1+teamlist2
     return render_template('teacher/adjust.html',teacher_id=teacherid,list=teamlist)
 
-@blueprint.route('/<courseid>/task/<taskid>/files/<userid>', methods=['GET', 'POST'])
-def task_files(courseid,taskid,userid):
+@blueprint.route('/team/adjustion/<teacherid>/adjust/<teamid>',methods=['GET', 'POST'])
+def team_adjust(teacherid,teamid):
+    teamlist = Team.query.filter(Team.id == teamid).join(TeamUserRelation, TeamUserRelation.team_id == Team.id).join(
+        User, User.id == TeamUserRelation.user_id).add_columns(User.name, User.gender, User.user_id,TeamUserRelation.user_id,Team.id).all()
+    otherteam=Team.query.filter(Team.id!=teamid).filter(Team.status==1).all()
+    if session.get('deleted_stu') is None:
+        session['deleted_stu'] = []
+    translist = session['deleted_stu']
+    return render_template('teacher/team_adjust.html',list=teamlist,other_team=otherteam,translist=translist)
+
+@blueprint.route('/team/adjustion/<teacherid>/adjust/<teamid>/<userid>',methods=['GET', 'POST'])
+def adjust_trans(teacherid,userid,teamid):
+    teamlist = Team.query.filter(Team.id == teamid).join(TeamUserRelation, TeamUserRelation.team_id == Team.id).join(
+        User, User.id == TeamUserRelation.user_id).add_columns(User.name, User.gender, User.user_id,
+                                                               TeamUserRelation.user_id, Team.id).all()
+    user=User.query.join(TeamUserRelation,TeamUserRelation.user_id==userid).filter(User.id==userid).add_columns(
+        User.id,User.name,User.gender,TeamUserRelation.is_master).first()
+    user_dict = {'id':user.id,'name':user.name,'gender':user.gender}
+    if session.get('deleted_stu') is None:
+        session['deleted_stu'] = []
+    translist = session['deleted_stu']
+    flag=True
+    for ad_stu in translist:
+        if(ad_stu['id']==user.id):
+            flag=False
+            flash('该学生已在调整名单中！')
+    if user.is_master==True:
+        flag=False
+        flash('该学生是本队组长！不能调整！')
+    if flag:
+        userlist=TeamUserRelation.query.filter(TeamUserRelation.user_id==user.id).first()
+        userlist.is_adjust=True
+        db.session.add(userlist)
+        db.session.commit()
+        translist.append(user_dict)
+    session['deleted_stu'] = translist
+
+    return redirect(url_for('teacher.team_adjust', teacherid=teacherid, teamid=teamid))
+
+@blueprint.route('/team/adjustion/<teacherid>/adjust/<teamid>/add/<userid>',methods=['GET', 'POST'])
+def adjust_add(teacherid,userid,teamid):
+    userlist=TeamUserRelation.query.filter(TeamUserRelation.user_id==userid).first()
+    if(int(teamid)==int(userlist.team_id)):
+        flash('该生已在本团队了！')
+    else:
+        userlist.team_id=teamid
+        userlist.is_adjust=False
+        db.session.add(userlist)
+        db.session.commit()
+        Message.sendMessage(teacherid,userid,'你已经被老师调整至其他组！请注意查看')
+        flash('已将该学生调整到该团队！')
+        translist=session['deleted_stu']
+        for user in translist:
+            if user['id'] == int(userid):
+                translist.remove(user)
+        session['deleted_stu']=translist
+    return redirect(url_for('teacher.team_adjust', teacherid=teacherid, teamid=teamid))
+
+@blueprint.route('/<courseid>/task/<taskid>/files', methods=['GET', 'POST'])
+def task_files(courseid, taskid):
     form = FileForm()
-    file_records = File.query.filter(File.task_id==taskid).filter(File.user_id == userid).all()
+    file_records = File.query.filter_by(task_id=taskid).all()
     if form.validate_on_submit():
         for file in request.files.getlist('file'):
             file_record = File()
@@ -238,7 +303,7 @@ def task_files(courseid,taskid,userid):
 
             db.session.add(file_record)
         db.session.commit()
-        return redirect(url_for('teacher.task_files', courseid=courseid, taskid=taskid,userid = userid))
+        return redirect(url_for('teacher.task_files', courseid=courseid, taskid=taskid))
     return render_template('teacher/file_manage.html',form=form, file_records=file_records, courseid=courseid, taskid=taskid)
 
 @blueprint.route('/<courseid>/task/<taskid>/files/delete/<fileid>/<userid>', methods=['GET', 'POST'])
@@ -265,6 +330,26 @@ def task_file_download(courseid, taskid, fileid):
     if os.path.isfile(file_record.path):
         return send_from_directory(file_record.directory, file_record.real_name, as_attachment=True, attachment_filename='_'.join(lazy_pinyin(file_record.name)))
     abort(404)
+
+@blueprint.route('/<courseid>/task/<taskid>/scores')
+def task_give_score(courseid,taskid):
+    tasklist=Task.query.filter(Task.id==taskid).first()
+    if time.strftime('%Y-%m-%d %H:%M:%S',time.localtime(time.time()))<str(tasklist.end_time):
+        flash('这项作业还未截止！暂时不能批改')
+        return render_template('teacher/task_score.html')
+    else:
+        task_team_list=TaskTeamRelation.query.join(Task,Task.id==TaskTeamRelation.task_id).join(Team,Team.id==TaskTeamRelation.team_id
+            ).filter(TaskTeamRelation.task_id==taskid).add_columns(Task.name,Team.name,TaskTeamRelation.task_id,TaskTeamRelation.team_id).all()
+
+@blueprint.route('/<courseid>/task<taskid>/scores')
+def task_score(courseid,taskid):
+    teamidList = TaskTeamRelation.query.filter_by(task_id=taskid).all()
+    teams = []
+    for teamid in teamidList:
+        team = Team.query.filter_by(id=teamid.team_id)
+        teams.append(team)
+    task = Task.query.filter_by(id=taskid).first()
+    return render_template('teacher/task_one_score.html',teams=teams,task=task,courseid=courseid)
 
 @blueprint.route('/<courseid>/task/<taskid>/files',methods = ['GET','POST'])
 def student_task(courseid,taskid):
@@ -360,10 +445,17 @@ def student_task_file_download_zip(courseid, taskid):
 
 @blueprint.route('/source/<courseid>/files/download')
 def source_file_download_zip(courseid):
-    foldername = data_uploader.path('',folder='course'+str(courseid)+'/teacher/source')
+    foldername = data_uploader.path('',folder='course/'+str(courseid)+'/teacher/source')
     filename = os.path.join(data_uploader.path('',folder='tmp'),'sourcefiles.zip')
     zip_download = zipfolder(foldername,filename)
     return send_file(filename,as_attachment=True)
+
+@blueprint.route('/<courseid>/files/download')
+def former_task_file_download_zip(courseid):
+    foldername = data_uploader.path('', folder='course/'+str(courseid)+'/student')
+    filename = os.path.join(data_uploader.path('', folder='tmp'), 'taskfiles.zip')
+    zip_download = zipfolder(foldername, filename)
+    return send_file(filename, as_attachment=True)
 
 
 

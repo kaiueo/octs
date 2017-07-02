@@ -1,8 +1,49 @@
 {% extends "teacher/index.html" %}
 
 {% block teacherContent %}
-    <div class="box-header"><h3><strong>课程管理</strong></h3></div>
-    <div class="box-body">
+    <div class="box-header"><h3><strong>课程信息</strong></h3></div>
+    <div class="box-header"><h4><strong>当前学期课程</strong></h4></div>
+    <div class="box-body"><table class="table table-bordered table-hover definewidth m10">
+    <thead>
+    <tr>
+        <th>课程名称</th>
+        <th>学分</th>
+        <th>开始时间</th>
+        <th>上课地点</th>
+        <th>课程介绍</th>
+        <th>课程大纲</th>
+        <th>所属学期</th>
+        <th>学生列表</th>
+        <th>管理</th>
+
+
+    </tr>
+    </thead>
+    {% for course in list %}
+        <tr>
+        {% if course.term_id == termid %}
+                <td style="width: 12%">{{ course.name }}</td>
+                <td style="width: 4%">{{ course.credit }}</td>
+                <td style="width: 7%">{{ course.start_time }}</td>
+                <td style="width: 6%">{{ course.location }}</td>
+                <td style="width: 15%">{{ course.course_introduction }}</td>
+                <td style="width: 15%">{{ course.course_outline }}</td>
+                <td style="width: 8%">{{ course.term.name }}</td>
+            <td  style="width: 7%"> <a href="{{ url_for('teacher.student',id=course.id) }}" class="btn btn-primary">查看</a></td>
+            <td  style="width: 25%"> <a href="{{ url_for('teacher.course_edit',teacherid=current_user.id,id=course.id) }}" class="btn btn-primary">编辑课程</a>
+                                <a href="{{ url_for('teacher.task',courseid=course.id) }}" class="btn btn-primary">作业管理</a>
+                                <a href="{{ url_for('teacher.source',courseid=course.id) }}" class="btn btn-primary">资源管理</a>
+                        </td>
+
+        {% endif %}
+
+        </tr>
+    {% endfor %}
+
+
+       </table>
+
+    <div class="box-header"><h4><strong>以往学期课程</strong></h4></div>
     <table class="table table-bordered table-hover definewidth m10">
     <thead>
     <tr>
@@ -21,18 +62,20 @@
     </thead>
     {% for course in list %}
         <tr>
-                <td style="width: 12%">{{ course.name }}</td>
-                <td style="width: 4%">{{ course.credit }}</td>
-                <td style="width: 7%">{{ course.start_time }}</td>
-                <td style="width: 6%">{{ course.location }}</td>
-                <td style="width: 15%">{{ course.course_introduction }}</td>
-                <td style="width: 15%">{{ course.course_outline }}</td>
-                <td style="width: 8%">{{ course.term_id }}</td>
-                <td style="width: 7%"> <a href="{{ url_for('teacher.student',id=course.id) }}" class="btn btn-primary">查看</a></td>
-                <td style="width: 25%"> <a href="{{ url_for('teacher.course_edit',teacherid=current_user.id,id=course.id) }}" class="btn btn-primary">编辑课程</a>
-                    <a href="{{ url_for('teacher.task',courseid=course.id) }}" class="btn btn-info">作业管理</a>
-                    <a href="{{ url_for('teacher.source',courseid=course.id) }}" class="btn btn-default">资源管理</a>
-                </td>
+        {% if course.term_id < termid %}
+                        <td  style="width: 12%">{{ course.name }}</td>
+                        <td style="width: 4%">{{ course.credit }}</td>
+                        <td style="width: 7%">{{ course.start_time }}</td>
+                        <td style="width: 6%">{{ course.location }}</td>
+                        <td style="width: 15%">{{ course.course_introduction }}</td>
+                        <td style="width: 15%">{{ course.course_outline }}</td>
+                        <td style="width: 8%">{{ course.term.name }}</td>
+
+                        <td style="width: 7%"> <a href="{{ url_for('teacher.student',id=course.id) }}" class="btn btn-primary">查看</a></td>
+                        <td  style="width: 25%"> <a href="{{ url_for('teacher.former_task_file_download_zip',courseid = course.id) }}" class="btn btn-primary">下载课程作业</a>
+                        </td>
+        {% endif %}
+
         </tr>
     {% endfor %}
 

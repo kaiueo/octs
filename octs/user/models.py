@@ -183,6 +183,7 @@ class TeamUserRelation(Model):
     team_id = Column(db.Integer, db.ForeignKey('teams.id'), primary_key=True)
     is_master = Column(db.Boolean, default=False)
     is_accepted = Column(db.Boolean, default=False)
+    is_adjust=Column(db.Boolean,default=False)
     user = relationship('User', backref='teams')
     team = relationship('Team', backref='users')
 
@@ -192,6 +193,7 @@ class Team(SurrogatePK, Model):
     name = Column(db.String(1000))
     status = Column(db.Integer)
     course_id = reference_col('courses', nullable=False)
+    score = Column(db.Integer, nullable=False, default=0)
 
 class Task(SurrogatePK, Model):
     __tablename__ = 'tasks'
@@ -201,6 +203,8 @@ class Task(SurrogatePK, Model):
     end_time = Column(db.DateTime, nullable=False, default=dt.datetime.utcnow)
     teacher = Column(db.String(1000), nullable=False, default='x老师')
     course_id = reference_col('courses', nullable=False)
+    submit_num = Column(db.Integer, nullable=False, default=3)
+    weight = Column(db.Float, nullable=False, default=1.0)
 
 class Source(SurrogatePK,Model):
     __tablename__ = 'source'
@@ -242,6 +246,21 @@ class File(SurrogatePK, Model):
     task_id = Column(db.Integer())
     course_id = Column(db.Integer())
     create_time = Column(db.DateTime, nullable=False, default=dt.datetime.utcnow)
+
+class TaskTeamRelation(Model):
+    __tablename__ = 'task_team_relation'
+    task_id = Column(db.Integer, db.ForeignKey('tasks.id'), primary_key=True)
+    team_id = Column(db.Integer, db.ForeignKey('teams.id'), primary_key=True)
+    submit_num = Column(db.Integer, nullable=False, default=0)
+    score = Column(db.Integer, nullable=False, default=0)
+    task = relationship('Task', backref='teams')
+    team = relationship('Team', backref='tasks')
+
+class UserScore(SurrogatePK, Model):
+    __tablename__ = 'user_scores'
+    user_id = Column(db.Integer, nullable=False)
+    grade = Column(db.Float, nullable=False, default=1.0)
+    score = Column(db.Integer, default=0)
 
 
 

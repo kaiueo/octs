@@ -333,7 +333,7 @@ def source(courseid, taskid):
 
             return redirect(url_for('student.source', courseid=courseid, taskid=taskid))
         return render_template('student/course/task_file_manage.html', form=form, file_records=file_records, courseid=courseid,
-                                   taskid=taskid,flag=flag,resttime=rest_time,timeflag=time_flag)
+                                   taskid=taskid,flag=flag,resttime=rest_time,timeflag=time_flag,sub_flag=sub_flag)
 
 
 

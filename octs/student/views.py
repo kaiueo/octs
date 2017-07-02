@@ -166,7 +166,8 @@ def task(taskid):
     taskid = taskid
     flag = 0
     tur = TeamUserRelation.query.filter_by(user_id=current_user.id).first()
-    if(tur == None or tur.is_accepted == False):
+    team = Team.query.filter_by(id=tur.team_id).first()
+    if(tur == None or tur.is_accepted == False or team.status!=2):
         flag = 0
     else:
         flag = 1

@@ -1,4 +1,4 @@
-from flask import Blueprint, flash, redirect, render_template, request, url_for,send_from_directory, abort, make_response, send_file
+from flask import Blueprint, flash, redirect, render_template, request, url_for,send_from_directory, abort, make_response, send_file, session
 from octs.user.models import Course,Task, User, Message, Team,TeamUserRelation, File,Source,Term
 from .forms import CourseForm,TaskForm, FileForm
 from octs.database import db
@@ -20,7 +20,6 @@ def home():
 def course(teacherid):
     teacher = User.query.filter_by(id=teacherid).first()
     courseList = teacher.courses
-
     return render_template('teacher/course.html', list=courseList)
 
 @blueprint.route('/<courseid>/task/<taskid>')
@@ -197,21 +196,74 @@ def team_detail(teamid):
         User,User.id==TeamUserRelation.user_id).add_columns(User.name,User.gender,User.user_id).all()
     return render_template('teacher/teamdetail.html',list=teamlist)
 
-@blueprint.route('team/adjust/<teacherid>')
+@blueprint.route('/team/adjustion/<teacherid>')
 def to_adjust(teacherid):
     teamlist1=Team.query.join(TeamUserRelation,TeamUserRelation.team_id==Team.id).filter(Team.status==1).filter(
         TeamUserRelation.is_master==True).join(User,User.id==TeamUserRelation.user_id).add_columns(
-        Team.name,Team.status,User.username).all()
+        Team.name,Team.status,User.username,Team.id).all()
     teamlist2 = Team.query.join(TeamUserRelation,TeamUserRelation.team_id==Team.id).filter(Team.status==3).filter(
         TeamUserRelation.is_master==True).join(User,User.id==TeamUserRelation.user_id).add_columns(
         Team.name,Team.status,User.username).all()
     teamlist=teamlist1+teamlist2
     return render_template('teacher/adjust.html',teacher_id=teacherid,list=teamlist)
 
-@blueprint.route('/<courseid>/task/<taskid>/files/<userid>', methods=['GET', 'POST'])
-def task_files(courseid,taskid,userid):
+@blueprint.route('/team/adjustion/<teacherid>/adjust/<teamid>',methods=['GET', 'POST'])
+def team_adjust(teacherid,teamid):
+    teamlist = Team.query.filter(Team.id == teamid).join(TeamUserRelation, TeamUserRelation.team_id == Team.id).join(
+        User, User.id == TeamUserRelation.user_id).add_columns(User.name, User.gender, User.user_id,TeamUserRelation.user_id,Team.id).all()
+    otherteam=Team.query.filter(Team.id!=teamid).filter(Team.status==1).all()
+    if session.get('deleted_stu') is None:
+        session['deleted_stu'] = []
+    translist = session['deleted_stu']
+    return render_template('teacher/team_adjust.html',list=teamlist,other_team=otherteam,translist=translist)
+
+@blueprint.route('/team/adjustion/<teacherid>/adjust/<teamid>/<userid>',methods=['GET', 'POST'])
+def adjust_trans(teacherid,userid,teamid):
+    teamlist = Team.query.filter(Team.id == teamid).join(TeamUserRelation, TeamUserRelation.team_id == Team.id).join(
+        User, User.id == TeamUserRelation.user_id).add_columns(User.name, User.gender, User.user_id,
+                                                               TeamUserRelation.user_id, Team.id).all()
+    user=User.query.join(TeamUserRelation,TeamUserRelation.user_id==userid).filter(User.id==userid).add_columns(
+        User.id,User.name,User.gender,TeamUserRelation.is_master).first()
+    user_dict = {'id':user.id,'name':user.name,'gender':user.gender}
+    if session.get('deleted_stu') is None:
+        session['deleted_stu'] = []
+    translist = session['deleted_stu']
+    flag=True
+    for ad_stu in translist:
+        if(ad_stu['id']==user.id):
+            flag=False
+            flash('该学生已在调整名单中！')
+    if user.is_master==True:
+        flag=False
+        flash('该学生是本队组长！不能调整！')
+    if flag:
+        userlist=TeamUserRelation.query.filter(TeamUserRelation.user_id==user.id).first()
+        userlist.is_adjust=True
+        db.session.add(userlist)
+        db.session.commit()
+        translist.append(user_dict)
+    session['deleted_stu'] = translist
+
+    return redirect(url_for('teacher.team_adjust', teacherid=teacherid, teamid=teamid))
+
+@blueprint.route('/team/adjustion/<teacherid>/adjust/<teamid>/add/<userid>',methods=['GET', 'POST'])
+def adjust_add(teacherid,userid,teamid):
+    userlist=TeamUserRelation.query.filter(TeamUserRelation.user_id==userid).first()
+    if(int(teamid)==int(userlist.team_id)):
+        flash('该生已在本团队了！')
+    else:
+        userlist.team_id=teamid
+        userlist.is_adjust=False
+        db.session.add(userlist)
+        db.session.commit()
+        Message.sendMessage(teacherid,userid,'你已经被老师调整至其他组！请注意查看')
+        flash('已将该学生调整到该团队！')
+    return redirect(url_for('teacher.team_adjust', teacherid=teacherid, teamid=teamid))
+
+@blueprint.route('/<courseid>/task/<taskid>/files', methods=['GET', 'POST'])
+def task_files(courseid, taskid):
     form = FileForm()
-    file_records = File.query.filter(File.task_id==taskid).filter(File.user_id == userid).all()
+    file_records = File.query.filter_by(task_id=taskid).all()
     if form.validate_on_submit():
         for file in request.files.getlist('file'):
             file_record = File()
@@ -234,7 +286,7 @@ def task_files(courseid,taskid,userid):
 
             db.session.add(file_record)
         db.session.commit()
-        return redirect(url_for('teacher.task_files', courseid=courseid, taskid=taskid,userid = userid))
+        return redirect(url_for('teacher.task_files', courseid=courseid, taskid=taskid))
     return render_template('teacher/file_manage.html',form=form, file_records=file_records, courseid=courseid, taskid=taskid)
 
 @blueprint.route('/<courseid>/task/<taskid>/files/delete/<fileid>/<userid>', methods=['GET', 'POST'])

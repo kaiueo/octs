@@ -24,3 +24,7 @@ class TaskForm(Form):
 class FileForm(Form):
     file = FileField('图片上传', validators=[DataRequired('请选择文件')])
     submit = SubmitField('上传')
+
+class TaskScoreForm(Form):
+    task_score=FloatField('分数')
+    submit = SubmitField('提交')

@@ -1,0 +1,35 @@
+{% extends "teacher/index.html" %}
+
+{% block teacherContent %}
+
+    <div class="box-header"><h3><strong>作业给分情况</strong></h3></div>
+    <div class="box-body">
+    <table class="table table-bordered table-hover definewidth m10">
+    <thead>
+    <tr>
+        <th>小组ID</th>
+        <th>小组名称</th>
+        <th>本次作业得分（{{ task.name }}）</th>
+
+
+    </tr>
+    </thead>
+        {% for team in teams %}
+        <tr>
+                <td>{{ team.id}}</td>
+                <td>{{ team.name }}</td>
+                <td>{{ team.score}}</td>
+
+
+
+        </tr>
+
+{% endfor %}
+       </table>
+    <br><br>
+    <a class="btn btn-primary" href="{{ url_for('teacher.score_download',taskid=taskid) }}">导出成绩信息</a>
+<br><br>
+    <a class="btn btn-primary" href="{{ url_for('teacher.task', courseid=courseid) }}">返回上一页</a>
+</div>
+
+{% endblock %}

@@ -1,0 +1,27 @@
+{% extends "teacher/index.html" %}
+{% import "bootstrap/wtf.html" as wtf  %}
+
+{% block teacherContent %}
+    <div class="box-header"><h3><strong>设置分数</strong></h3></div>
+    <div class="box-body">
+    <form method="POST">
+    <table class="table table-bordered table-hover definewidth m10" style="margin-left:3%;margin-top:2%;">
+    <tr>
+        <td width="10%" class="tableleft">分数</td>
+         <td>{{ form.task_score() }}</td>
+    </tr>
+
+    <tr>
+        <td class="tableleft"></td>
+        <td>
+           {{ form.submit(class="btn btn-primary")}}&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
+             <a href="{{ url_for('teacher.task',courseid=courseid) }}" class="btn btn-primary">返回列表</a>
+        </td>
+    </tr>
+</table>
+    </form>
+
+
+
+
+{% endblock %}

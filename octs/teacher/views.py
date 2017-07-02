@@ -1,6 +1,6 @@
 from flask import Blueprint, flash, redirect, render_template, request, url_for,send_from_directory, abort, make_response, send_file, session
-from octs.user.models import Course,Task, User, Message, Team,TeamUserRelation, File,Source,Term,TaskTeamRelation, Tag
-from .forms import CourseForm,TaskForm, FileForm
+from octs.user.models import Course,Task, User, Message, Team,TeamUserRelation, File,Source,Term,TaskTeamRelation, Tag,UserScore
+from .forms import CourseForm,TaskForm, FileForm,TaskScoreForm
 from octs.database import db
 from flask_login import current_user
 from octs.extensions import data_uploader
@@ -10,11 +10,6 @@ from pypinyin import lazy_pinyin
 import xlwt
 
 blueprint = Blueprint('teacher', __name__, url_prefix='/teacher',static_folder='../static')
-
-@blueprint.route('/')
-def home():
-    return render_template('teacher/index.html')
-
 
 @blueprint.route('/<teacherid>/course/')
 def course(teacherid):
@@ -60,7 +55,7 @@ def student(id):
     return render_template('teacher/student.html',list=studentList)
 
 @blueprint.route('/mainpage/')
-def mainpage():
+def home():
     return render_template('teacher/mainpage.html')
 
 @blueprint.route('/<courseid>/task')
@@ -125,6 +120,9 @@ def delete(courseid, taskid):
         db.session.delete(file_record)
 
     task = Task.query.filter_by(id=taskid).first()
+    ttrs = TaskTeamRelation.query.filter_by(task_id=task.id).all()
+    for ttr in ttrs:
+        db.session.delete(ttr)
     db.session.delete(task)
     db.session.commit()
     flash('删除成功')
@@ -137,6 +135,36 @@ def team():
         User, TeamUserRelation.user_id == User.id).filter(TeamUserRelation.user_id == User.id).add_columns(
         Team.name, User.username, Team.status, Team.id, User.user_id, User.in_team)
     return render_template('teacher/team.html',list=teamlist)
+
+@blueprint.route('/task/score<taskid>/download')
+def score_download(taskid):
+    teamidList = TaskTeamRelation.query.filter_by(task_id=taskid).all()
+    teams = []
+    for teamid in teamidList:
+        team = Team.query.filter_by(id=teamid.team_id).first()
+        teams.append(team)
+    task = Task.query.filter_by(id=taskid).first()
+
+    book = xlwt.Workbook()
+
+    alignment = xlwt.Alignment()  # Create Alignment
+    alignment.horz = xlwt.Alignment.HORZ_CENTER  # May be: HORZ_GENERAL, HORZ_LEFT, HORZ_CENTER, HORZ_RIGHT, HORZ_FILLED, HORZ_JUSTIFIED, HORZ_CENTER_ACROSS_SEL, HORZ_DISTRIBUTED
+    alignment.vert = xlwt.Alignment.VERT_CENTER  # May be: VERT_TOP, VERT_CENTER, VERT_BOTTOM, VERT_JUSTIFIED, VERT_DISTRIBUTED
+    style = xlwt.XFStyle()  # Create Style
+    style.alignment = alignment  # Add Alignment to Style
+
+    sheet1 = book.add_sheet('本次作业信息('+task.name+')',cell_overwrite_ok=True)
+    row0 = ['团队id','团队名称','作业得分']
+    for i in range(0,len(row0)):
+        sheet1.write(0,i,row0[i], style)
+    row_num =1
+    for team in teams:
+        sheet1.write(row_num,0,team.id,style)
+        sheet1.write(row_num,1,team.name,style)
+        sheet1.write(row_num,2,team.score,style)
+    filename = 'score_table_'+ str(time.time()) + '.xls'
+    book.save(os.path.join(data_uploader.path('',folder='tmp'),filename))
+    return send_from_directory(data_uploader.path('', folder='tmp'), filename, as_attachment=True)
 
 @blueprint.route('/team/download')
 def team_download():
@@ -336,10 +364,36 @@ def task_give_score(courseid,taskid):
     tasklist=Task.query.filter(Task.id==taskid).first()
     if time.strftime('%Y-%m-%d %H:%M:%S',time.localtime(time.time()))<str(tasklist.end_time):
         flash('这项作业还未截止！暂时不能批改')
-        return render_template('teacher/task_score.html')
+        return render_template('teacher/task_score.html',flag=False)
     else:
         task_team_list=TaskTeamRelation.query.join(Task,Task.id==TaskTeamRelation.task_id).join(Team,Team.id==TaskTeamRelation.team_id
-            ).filter(TaskTeamRelation.task_id==taskid).add_columns(Task.name,Team.name,TaskTeamRelation.task_id,TaskTeamRelation.team_id).all()
+            ).filter(TaskTeamRelation.task_id==taskid).add_columns(Team.name,TaskTeamRelation.task_id,TaskTeamRelation.team_id,TaskTeamRelation.score,Task.weight).all()
+        task_name=Task.query.filter(Task.id==taskid).first()
+        return render_template('teacher/task_score.html', flag=True,list=task_team_list,name=task_name,courseid=courseid)
+
+@blueprint.route('/<courseid>/task/<taskid>/givescore/<teamid>',methods=['GET', 'POST'])
+def task_edit_score(courseid,taskid,teamid):
+    taskscore=TaskTeamRelation.query.filter(TaskTeamRelation.task_id==taskid).filter(TaskTeamRelation.team_id==teamid).first()
+    form = TaskScoreForm()
+    if form.validate_on_submit():
+        taskscore.score=form.task_score.data
+        db.session.add(taskscore)
+        db.session.commit()
+        flash('已经提交分数！')
+        return redirect(url_for('teacher.task_give_score',courseid=courseid,taskid=taskid))
+
+    form.task_score.data=taskscore.score
+    return render_template('teacher/set_score.html',form=form,courseid=courseid,taskid=taskid,teamid=teamid)
+
+@blueprint.route('/<courseid>/task<taskid>/scores')
+def task_score(courseid,taskid):
+    teamidList = TaskTeamRelation.query.filter_by(task_id=taskid).all()
+    teams = []
+    for teamid in teamidList:
+        team = Team.query.filter_by(id=teamid.team_id).first()
+        teams.append(team)
+    task = Task.query.filter_by(id=taskid).first()
+    return render_template('teacher/task_one_score.html',teams=teams,task=task,courseid=courseid,taskid=taskid)
 
 @blueprint.route('/<courseid>/task/<taskid>/files',methods = ['GET','POST'])
 def student_task(courseid,taskid):
@@ -481,9 +535,141 @@ def former_task_file_download_zip(courseid):
     zip_download = zipfolder(foldername, filename)
     return send_file(filename, as_attachment=True)
 
+@blueprint.route('/<courseid>/task/submit')
+def multi_check(courseid):
+    tasks = Task.query.filter_by(course_id = courseid).all()
+    ttrs_all = []
+    for task in tasks:
+        ##team = Team.query.filter_by(course_id = task.course_id).first()
+        ttrs = TaskTeamRelation.query.filter_by(task_id = task.id).all()
+        if ttrs is not None:
+            ttrs_all.extend(ttrs)
+
+    teams = Team.query.filter_by(course_id = courseid).all()
+    return render_template('teacher/multi_check.html',ttrs_all = ttrs_all,courseid = courseid,tasks = tasks,teams = teams)
+@blueprint.route('/course/calcu_score')
+def calcu_score():
+    teams = Team.query.filter_by(status=3).all()
+    team_num = len(teams)
+    for i in range(0, team_num):
+        teamtask = TaskTeamRelation.query.filter_by(team_id=teams[i].id).all()
+        sum = 0
+        for task in teamtask:
+            weight = Task.query.filter_by(id=task.task_id).first()
+            sum += weight.weight * task.score
+
+        team_for_score = Team.query.filter_by(id=teams[i].id).first()
+        team_for_score.score = sum
+        db.session.add(team_for_score)
+        db.session.commit()
+
+        userList = TeamUserRelation.query.filter_by(team_id=teams[i].id).all()
+        for user in userList:
+            print(user.user_id)
+            user_for_score = UserScore.query.filter_by(user_id=user.user_id).first()
+            user_for_score.score = sum * user_for_score.grade
+            db.session.add(user_for_score)
+            db.session.commit()
+    flash('计算成功！')
+    return redirect(url_for('teacher.course',teacherid=current_user.id))
 
 
+@blueprint.route('/course/grade_download')
+def grade_download():
+    teams = Team.query.filter_by(status=3).all()
+    book = xlwt.Workbook()
 
+    alignment = xlwt.Alignment()  # Create Alignment
+    alignment.horz = xlwt.Alignment.HORZ_CENTER  # May be: HORZ_GENERAL, HORZ_LEFT, HORZ_CENTER, HORZ_RIGHT, HORZ_FILLED, HORZ_JUSTIFIED, HORZ_CENTER_ACROSS_SEL, HORZ_DISTRIBUTED
+    alignment.vert = xlwt.Alignment.VERT_CENTER  # May be: VERT_TOP, VERT_CENTER, VERT_BOTTOM, VERT_JUSTIFIED, VERT_DISTRIBUTED
+    style = xlwt.XFStyle()  # Create Style
+    style.alignment = alignment  # Add Alignment to Style
 
+    sheet1 = book.add_sheet('团队成绩', cell_overwrite_ok=True)
+    row0 = ['团队id', '团队名称','成绩']
+    for i in range(0, len(row0)):
+        sheet1.write(0, i, row0[i])
+
+    row_num = 1
+    team_num = len(teams)
+    for i in range(0,team_num):
+        sheet1.write(i + 1, 0, teams[i].id)
+        sheet1.write(i+1,1,teams[i].name)
+        sheet1.write(i+1,2,teams[i].score)
+    filename = 'team_grade_table_' + str(time.time()) + '.xls'
+    book.save(os.path.join(data_uploader.path('', folder='tmp'), filename))
+    return send_from_directory(data_uploader.path('', folder='tmp'), filename, as_attachment=True)
+
+@blueprint.route('/course/grade_download_stu')
+def grade_download_stu():
+    students = UserScore.query.all()
+    book = xlwt.Workbook()
+
+    alignment = xlwt.Alignment()  # Create Alignment
+    alignment.horz = xlwt.Alignment.HORZ_CENTER  # May be: HORZ_GENERAL, HORZ_LEFT, HORZ_CENTER, HORZ_RIGHT, HORZ_FILLED, HORZ_JUSTIFIED, HORZ_CENTER_ACROSS_SEL, HORZ_DISTRIBUTED
+    alignment.vert = xlwt.Alignment.VERT_CENTER  # May be: VERT_TOP, VERT_CENTER, VERT_BOTTOM, VERT_JUSTIFIED, VERT_DISTRIBUTED
+    style = xlwt.XFStyle()  # Create Style
+    style.alignment = alignment  # Add Alignment to Style
+
+    sheet1 = book.add_sheet('个人成绩', cell_overwrite_ok=True)
+    row0 = ['学生id', '姓名','个人成绩']
+    for i in range(0, len(row0)):
+        sheet1.write(0, i, row0[i])
+
+    row_num = 1
+    stu_num = len(students)
+    for i in range(0,stu_num):
+        username = User.query.filter_by(id=students[i].user_id).first()
+        print(username)
+        sheet1.write(i+1,0,students[i].id)
+        sheet1.write(i+1,1,username.name)
+        sheet1.write(i+1,2,students[i].score)
+    filename = 'student_grade_table_' + str(time.time()) + '.xls'
+    book.save(os.path.join(data_uploader.path('', folder='tmp'), filename))
+    return send_from_directory(data_uploader.path('', folder='tmp'), filename, as_attachment=True)
+
+@blueprint.route('/<courseid>/task/submit/download')
+def task_check_download(courseid):
+    book = xlwt.Workbook()
+    tasklist = Task.query.filter_by(course_id=courseid).all()
+
+    ttrs_all = []
+    for task in tasklist:
+        ttrs = TaskTeamRelation.query.filter_by(task_id = task.id).all()
+        if ttrs is not None:
+            ttrs_all.extend(ttrs)
+    teamlist = Team.query.filter_by(course_id = courseid).all()
+    ##tasks = Task.query.filter_by(course_id=courseid).all()
+    alignment = xlwt.Alignment()  # Create Alignment
+    alignment.horz = xlwt.Alignment.HORZ_CENTER  # May be: HORZ_GENERAL, HORZ_LEFT, HORZ_CENTER, HORZ_RIGHT, HORZ_FILLED, HORZ_JUSTIFIED, HORZ_CENTER_ACROSS_SEL, HORZ_DISTRIBUTED
+    alignment.vert = xlwt.Alignment.VERT_CENTER  # May be: VERT_TOP, VERT_CENTER, VERT_BOTTOM, VERT_JUSTIFIED, VERT_DISTRIBUTED
+    style = xlwt.XFStyle()  # Create Style
+    style.alignment = alignment  # Add Alignment to Style
+
+    sheet1 = book.add_sheet('作业信息', cell_overwrite_ok=True)
+    row0 = ['团队id', '团队名称']
+    for task in tasklist:
+        row0.append(task.name)
+
+    for i in range(0, len(row0)):
+        sheet1.write(0, i, row0[i])
+
+    row_num = 1
+
+    for team in teamlist:
+        ##turs = TeamUserRelation.query.filter_by(team_id=team.id).all()
+        i = 2
+        sheet1.write(row_num, 0 , team.id)
+        sheet1.write(row_num, 1, team.name)
+        for ttrs in ttrs_all:
+            if ttrs.team_id == team.id:
+                sheet1.write(row_num, i , ttrs.score)
+                i = i+1
+        ##row_num = row_num + turs_length
+        row_num = row_num + 1
+
+    filename = 'task_check_table_' + str(time.time()) + '.xls'
+    book.save(os.path.join(data_uploader.path('', folder='tmp'), filename))
+    return send_from_directory(data_uploader.path('', folder='tmp'), filename, as_attachment=True)
 
 

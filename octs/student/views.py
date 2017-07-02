@@ -1,6 +1,6 @@
 from flask import Blueprint, flash, redirect, render_template, request, send_from_directory,url_for,abort,send_file
 from octs.user.models import Course,Term,Team,TeamUserRelation,User,Task,File,Source,TaskTeamRelation
-from octs.user.models import Course,Term,Team,TeamUserRelation,User, Message, Tag
+from octs.user.models import Course,Term,Team,TeamUserRelation,User, Message，Tag, UserScore
 from .forms import TeamForm
 from .forms import CourseForm,FileForm
 from octs.database import db
@@ -11,6 +11,9 @@ import datetime
 import os, zipfile,xlwt
 from octs.student.forms import TeamRequireForm
 from pypinyin import lazy_pinyin
+from flask_wtf import Form
+from wtforms import PasswordField, StringField,SubmitField,FloatField,DateField,FileField, FieldList
+from wtforms.validators import DataRequired, Email, EqualTo, Length
 
 
 blueprint = Blueprint('student', __name__, url_prefix='/student',static_folder='../static')
@@ -18,7 +21,18 @@ blueprint = Blueprint('student', __name__, url_prefix='/student',static_folder='
 @blueprint.route('/course/')
 def course():
     courseList = current_user.courses
-    return render_template('student/course/course.html', list=courseList)
+    userid = current_user.id
+    flag = 0
+    team = TeamUserRelation.query.filter_by(user_id=userid).first()
+    if(team == None ):
+        flag = 1
+    else:
+        if(team.is_master == False):
+            flag = 1
+        else:
+            flag = 0
+
+    return render_template('student/course/course.html', list=courseList,flag=flag)
 
 
 @blueprint.route('/checkterm/')
@@ -140,7 +154,7 @@ def permit(id,userid):
     db.session.add(stuPermit)
     db.session.commit()
     Message.sendMessage(id, userid, '你的团队加入申请已被接受！')
-    flash('已同意该同学申请！')
+    flash('已同意该同学的申请！')
     return redirect(url_for('student.my_team',id=id))
 
 @blueprint.route('/team/reject/<id>/<userid>')
@@ -151,7 +165,7 @@ def reject(id,userid):
     stu.in_team=False
     db.session.add(stu)
     db.session.commit()
-    flash('                                              已拒绝该同学')
+    flash('已拒绝该同学')
     Message.sendMessage(id,userid,'你的团队加入申请被拒绝！另请高明吧！')
     return redirect(url_for('student.my_team',id=id))
 
@@ -276,6 +290,13 @@ def source(courseid, taskid):
             time_flag = 1
         else:
             time_flag = 0
+
+        sub_flag = 0
+        if (submit_time-ttr.submit_num>0):
+            sub_flag = 1
+        else:
+            sub_flag = 0
+
         file_records = File.query.filter(File.task_id==taskid).filter(File.user_id==masterid ).all()
         if form.validate_on_submit():
             for file in request.files.getlist('file'):
@@ -303,9 +324,16 @@ def source(courseid, taskid):
                 db.session.add(file_record)
                 db.session.commit()
 
+                taskteamrelation = TaskTeamRelation.query.filter(TaskTeamRelation.task_id==taskid).filter(TaskTeamRelation.team_id==teamid).first()
+                # taskteamrelation.team_id = teamid
+                # taskteamrelation.task_id = taskid
+                taskteamrelation.submit_num = ttr.submit_num + 1
+                db.session.add(taskteamrelation)
+                db.session.commit()
+
             return redirect(url_for('student.source', courseid=courseid, taskid=taskid))
         return render_template('student/course/task_file_manage.html', form=form, file_records=file_records, courseid=courseid,
-                                   taskid=taskid,flag=flag,resttime=rest_time,timeflag=time_flag)
+                                   taskid=taskid,flag=flag,resttime=rest_time,timeflag=time_flag,sub_flag=sub_flag)
 
 
 
@@ -349,6 +377,45 @@ def task_file_download_zip_source(courseid, taskid):
     zip_download = zipfolder(foldername, filename)
     return send_file(filename, as_attachment=True)
 
+@blueprint.route('/course/give_grade', methods=['GET', 'POST'])
+def give_grade():
+    team = TeamUserRelation.query.filter_by(user_id=current_user.id).first()
+    turs = TeamUserRelation.query.filter_by(team_id=team.team_id).all()
+    user_ids = [tur.user_id for tur in turs]
+    for tur in turs:
+        user = UserScore.query.filter_by(user_id=tur.user_id).first()
+        if(user == None):
+            new_user = UserScore()
+            new_user.user_id = tur.user_id
+            db.session.add(new_user)
+            db.session.commit()
+    user_grades = []
+    user_names = []
+    for user_id in user_ids:
+        user = User.query.filter_by(id=user_id).first()
+        user_names.append(user.name)
+        us = UserScore.query.filter_by(user_id=user_id).first()
+        user_grades.append(us)
+
+    user_num = len(turs)
+    class GradeForm(Form):
+        pass
+
+    for i in range(user_num):
+        setattr(GradeForm, 'grade'+str(i), FloatField(user_names[i], validators=[DataRequired()]))
+
+    form = GradeForm()
+    if form.validate_on_submit():
+        for i in range(user_num):
+            user_grades[i].grade = getattr(form, 'grade'+str(i)).data
+            db.session.add(user_grades[i])
+        db.session.commit()
+
+    for i in range(user_num):
+        getattr(form, 'grade'+str(i)).data = user_grades[i].grade
+
+    return render_template("student/course/give_grade.html",form=form, user_num=user_num)
+
 @blueprint.route('/source/<courseid>')
 def course_source(courseid):
     course = Course.query.filter_by(id=courseid).first()
@@ -381,6 +448,3 @@ def course_source_download(courseid,fileid):
         return send_from_directory(file_record.directory, file_record.real_name, as_attachment=True,
                                    attachment_filename='_'.join(lazy_pinyin(file_record.name)))
     abort(404)
-
-
-

@@ -37,10 +37,11 @@
             <label>附件列表</label>
         </div>
         <div class="form-group">
-            <a class="btn btn-primary" href="{{ url_for('teacher.task_files', courseid=courseid, taskid=taskid, userid = current_user.id) }}">附件管理</a>
+            <a class="btn btn-default" href="{{ url_for('teacher.task_files', courseid=courseid, taskid=taskid, userid = current_user.id) }}">附件管理</a>
         </div>
+        <br/>
         <div class="form-group">
-           {{ form.submit(class = 'btn btn-primary') }}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+           {{ form.submit(class = 'btn btn-primary') }}&nbsp;&nbsp;&nbsp;
             <a class="btn btn-primary" href="{{ url_for('teacher.task', courseid=courseid) }}">返回</a>
         </div>
 

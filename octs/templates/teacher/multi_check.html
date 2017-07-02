@@ -1,0 +1,37 @@
+{% extends "teacher/index.html" %}
+
+{% block teacherContent %}
+
+        <div class="box-header"><h3><strong>所有作业给分情况</strong></h3></div>
+    <div class="box-body">
+    <table class="table table-bordered table-hover definewidth m10">
+        <thead>
+            <td>队伍id</td>
+            <td>队伍名称</td>
+            {% for task in tasks %}
+                <td>作业分数({{ task.name }})</td>
+            {% endfor %}
+
+        </thead>
+
+        {% for team in teams %}
+            <tr>
+                <td>{{ team.id }}</td>
+                <td>{{ team.name }}</td>
+                {% for task in tasks %}
+                    {% for ttr in ttrs_all %}
+                        {% if ttr.task_id == task.id %}
+                            {% if ttr.team_id == team.id %}
+                                <td>{{ ttr.score }}</td>
+                            {% endif %}
+                        {% endif %}
+                    {% endfor %}
+                {% endfor %}
+            </tr>
+         {% endfor %}
+
+    </table>
+    <a class="btn btn-primary" href="{{ url_for('teacher.task',courseid=courseid) }}">返回列表</a>
+    <a class="btn btn-primary" href="{{ url_for('teacher.task_check_download',courseid=courseid) }}">生成作业成绩表单</a>
+    </div>
+{% endblock %}

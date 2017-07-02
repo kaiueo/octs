@@ -140,7 +140,6 @@ def team_apply(userid, id):
         db.session.delete(tur[0])
         user.in_team = False
         Message.sendMessage(11, user.id, '你的团队加入申请已被拒绝')
-        flash('已拒绝该同学的申请！')
         db.session.add(user)
     team.status = 1
     db.session.add(team)
@@ -293,7 +292,7 @@ def source(courseid, taskid):
             time_flag = 0
 
         sub_flag = 0
-        if (submit_time-submitted_time>0):
+        if (submit_time-ttr.submit_num>0):
             sub_flag = 1
         else:
             sub_flag = 0
@@ -334,7 +333,7 @@ def source(courseid, taskid):
 
             return redirect(url_for('student.source', courseid=courseid, taskid=taskid))
         return render_template('student/course/task_file_manage.html', form=form, file_records=file_records, courseid=courseid,
-                                   taskid=taskid,flag=flag,resttime=rest_time,timeflag=time_flag,sub_flag=sub_flag)
+                                   taskid=taskid,flag=flag,resttime=rest_time,timeflag=time_flag)
 
 
 

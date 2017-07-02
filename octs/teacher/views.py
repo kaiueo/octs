@@ -256,6 +256,11 @@ def adjust_add(teacherid,userid,teamid):
         db.session.commit()
         Message.sendMessage(teacherid,userid,'你已经被老师调整至其他组！请注意查看')
         flash('已将该学生调整到该团队！')
+        translist=session['deleted_stu']
+        for user in translist:
+            if user['id'] == int(userid):
+                translist.remove(user)
+        session['deleted_stu']=translist
     return redirect(url_for('teacher.team_adjust', teacherid=teacherid, teamid=teamid))
 
 @blueprint.route('/<courseid>/task/<taskid>/files', methods=['GET', 'POST'])

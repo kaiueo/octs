@@ -268,6 +268,14 @@ def source(courseid, taskid):
         else:
             flag = 0
 
+        time_flag = 0
+        task_record = Task.query.filter_by(id=taskid).first()
+        task_endtime = task_record.end_time
+        time_now = datetime.datetime.fromtimestamp(time.time())
+        if (time_now > task_endtime):
+            time_flag = 1
+        else:
+            time_flag = 0
         file_records = File.query.filter(File.task_id==taskid).filter(File.user_id==masterid ).all()
         if form.validate_on_submit():
             for file in request.files.getlist('file'):
@@ -297,7 +305,7 @@ def source(courseid, taskid):
 
             return redirect(url_for('student.source', courseid=courseid, taskid=taskid))
         return render_template('student/course/task_file_manage.html', form=form, file_records=file_records, courseid=courseid,
-                                   taskid=taskid,flag=flag,resttime=rest_time)
+                                   taskid=taskid,flag=flag,resttime=rest_time,timeflag=time_flag)
 
 
 

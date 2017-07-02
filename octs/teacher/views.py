@@ -1,5 +1,5 @@
 from flask import Blueprint, flash, redirect, render_template, request, url_for,send_from_directory, abort, make_response, send_file, session
-from octs.user.models import Course,Task, User, Message, Team,TeamUserRelation, File,Source,Term
+from octs.user.models import Course,Task, User, Message, Team,TeamUserRelation, File,Source,Term,TaskTeamRelation
 from .forms import CourseForm,TaskForm, FileForm
 from octs.database import db
 from flask_login import current_user
@@ -319,6 +319,16 @@ def task_file_download(courseid, taskid, fileid):
     if os.path.isfile(file_record.path):
         return send_from_directory(file_record.directory, file_record.real_name, as_attachment=True, attachment_filename='_'.join(lazy_pinyin(file_record.name)))
     abort(404)
+
+@blueprint.route('/<courseid>/task/<taskid>/scores')
+def task_give_score(courseid,taskid):
+    tasklist=Task.query.filter(Task.id==taskid).first()
+    if time.strftime('%Y-%m-%d %H:%M:%S',time.localtime(time.time()))<str(tasklist.end_time):
+        flash('这项作业还未截止！暂时不能批改')
+        return render_template('teacher/task_score.html')
+    else:
+        task_team_list=TaskTeamRelation.query.join(Task,Task.id==TaskTeamRelation.task_id).join(Team,Team.id==TaskTeamRelation.team_id
+            ).filter(TaskTeamRelation.task_id==taskid).add_columns(Task.name,Team.name,TaskTeamRelation.task_id,TaskTeamRelation.team_id).all()
 
 @blueprint.route('/<courseid>/task/<taskid>/files',methods = ['GET','POST'])
 def student_task(courseid,taskid):

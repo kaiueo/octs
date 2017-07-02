@@ -50,7 +50,7 @@ def insert():
         course.course_introduction = form.course_introduction.data
         course.start_time = form.start_time.data
         term = Term.query.order_by(Term.id.desc()).first()
-        course.term_id = term.id
+        course.term = term
         db.session.add(course)
         db.session.commit()
         return redirect(url_for('admin.course'))

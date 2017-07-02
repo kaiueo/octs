@@ -2,9 +2,8 @@
 
 {% block teacherContent %}
     <div class="box-header"><h3><strong>课程信息</strong></h3></div>
-
-    <div class="box-body"><h1>当前课程</h1><table class="table table-bordered table-hover definewidth m10">
-
+    <div class="box-header"><h4><strong>当前学期课程</strong></h4></div>
+    <div class="box-body"><table class="table table-bordered table-hover definewidth m10">
     <thead>
     <tr>
         <th>课程名称</th>
@@ -22,7 +21,7 @@
     </thead>
     {% for course in list %}
         <tr>
-
+        {% if course.term_id == termid %}
                         <td>{{ course.name }}</td>
                         <td>{{ course.credit }}</td>
                         <td>{{ course.start_time }}</td>
@@ -37,7 +36,7 @@
                                 <a href="{{ url_for('teacher.source',courseid=course.id) }}" class="btn btn-primary">资源管理</a>
                         </td>
 
-
+        {% endif %}
 
         </tr>
     {% endfor %}
@@ -45,45 +44,45 @@
 
        </table>
 
-    </div>
-
-    <div class="box-body">
-    <h2>以往课程</h2>
+    <div class="box-header"><h4><strong>以往学期课程</strong></h4></div>
     <table class="table table-bordered table-hover definewidth m10">
-        <thead>
-        <tr>
+    <thead>
+    <tr>
         <th>课程名称</th>
         <th>学分</th>
         <th>开始时间</th>
         <th>上课地点</th>
         <th>课程介绍</th>
         <th>课程大纲</th>
-        <th>所属学期</th><th>管理</th>
+        <th>所属学期</th>
+        <th>学生列表</th>
+        <th>管理</th>
 
 
-        </tr>
+    </tr>
     </thead>
-        {% for formercourse in list2 %}
+    {% for course in list %}
         <tr>
+        {% if course.term_id < termid %}
+                        <td>{{ course.name }}</td>
+                        <td>{{ course.credit }}</td>
+                        <td>{{ course.start_time }}</td>
+                        <td>{{ course.location }}</td>
+                        <td>{{ course.course_introduction }}</td>
+                        <td>{{ course.course_outline }}</td>
+                        <td>{{ course.term.name }}</td>
 
-                        <td>{{ formercourse.name }}</td>
-                        <td>{{ formercourse.credit }}</td>
-                        <td>{{ formercourse.start_time }}</td>
-                        <td>{{ formercourse.location }}</td>
-                        <td>{{ formercourse.course_introduction }}</td>
-                        <td>{{ formercourse.course_outline }}</td>
-                        <td>{{ formercourse.term.name }}</td>
-
-
-                        <td>
-                                <a href="{{ url_for('teacher.task',courseid=formercourse.id) }}" class="btn btn-primary">作业管理</a>
+                        <td> <a href="{{ url_for('teacher.student',id=course.id) }}" class="btn btn-primary">查看</a></td>
+                        <td> <a href="" class="btn btn-primary">下载课程作业</a>
                         </td>
 
-
+        {% endif %}
 
         </tr>
     {% endfor %}
-    </table>
-    </div>
+
+
+       </table>
+</div>
 
 {% endblock %}

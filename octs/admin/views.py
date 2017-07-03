@@ -145,6 +145,10 @@ def add_member(id):
             user_id = row_user_id
             name = row['name']
             gender = row['gender']
+            if gender=='男':
+                gender=False
+            else:
+                gender=True
             user = User.query.filter_by(user_id=user_id).first()
             if user is None:
                 user = User(username=user_id, permission=Permission.STUDENT, password='111')
@@ -165,6 +169,10 @@ def add_member(id):
             user_id = row_user_id
             name = row['name']
             gender = row['gender']
+            if gender=='男':
+                gender=False
+            else:
+                gender=True
             user = User.query.filter_by(user_id=user_id).first()
             if user is None:
                 user = User(username=user_id, permission=Permission.TEACHER, password='111')

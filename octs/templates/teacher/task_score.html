@@ -1,7 +1,7 @@
 {% extends "teacher/index.html" %}
 
 {% block teacherContent %}
-    <div class="box-header"><h3><strong>作业批改</strong></h3></div>
+    <div class="box-header"><h3><strong>{{ taskname.name }}&nbsp作业批改</strong></h3></div>
     <div class="box-body">
     {% if flag %}
     <table class="table table-bordered table-hover definewidth m10">
@@ -22,7 +22,7 @@
             <td>{{ task.score }}</td>
             {% endif %}
             <td>{{ task.weight }}</td>
-            <td><a class="btn btn-primary" href="{{ url_for('teacher.task_edit_score',courseid=courseid,taskid=name.id,teamid=task.team_id) }}">设置分数</a></td>
+            <td><a class="btn btn-primary" href="{{ url_for('teacher.task_edit_score',courseid=courseid,taskid=taskname.id,teamid=task.team_id) }}">设置分数</a></td>
 
         </tr>
     {% endfor %}
@@ -33,6 +33,6 @@
     {% endif %}
         <br></br>
  <a href="{{ url_for('teacher.task',courseid=courseid) }}" class="btn btn-primary">返回列表</a>
-    <a class="btn btn-primary" href="{{ url_for('teacher.score_download',taskid=taskid) }}">导出成绩信息</a>
+    <a class="btn btn-primary" href="{{ url_for('teacher.score_download',taskid=taskname.id) }}">导出成绩信息</a>
     </div>
 {% endblock %}

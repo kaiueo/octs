@@ -2,6 +2,7 @@
 
 {% block teacherContent %}
     <div class="box-header"><h3><strong>课程信息</strong></h3></div>
+    {% if list|length > 0 %}
     <div class="box-header"><h4><strong>当前学期课程</strong></h4></div>
     <div class="box-body"><table class="table table-bordered table-hover definewidth m10">
     <thead>
@@ -21,7 +22,7 @@
     </thead>
     {% for course in list %}
         <tr>
-        {% if course.term_id == termid %}
+        {% if course.term_id == term.id %}
                 <td>{{ course.name }}</td>
                 <td>{{ course.credit }}</td>
                 <td>{{ course.start_time }}</td>
@@ -33,10 +34,8 @@
                 <td> <a href="{{ url_for('teacher.course_edit',teacherid=current_user.id,id=course.id) }}" class="btn btn-primary">编辑课程</a>
                                 <a href="{{ url_for('teacher.task',courseid=course.id) }}" class="btn btn-primary">作业管理</a>
                                 <a href="{{ url_for('teacher.source',courseid=course.id) }}" class="btn btn-primary">资源管理</a>
-                                <a href="{{ url_for('teacher.calcu_score') }}" class="btn btn-primary">计算总成绩</a>
-                                <a href="{{ url_for('teacher.grade_download') }}" class="btn btn-primary">生成团队成绩报表</a>
-                                <a href="{{ url_for('teacher.grade_download_stu') }}" class="btn btn-primary">生成个人成绩报表</a>
-                        </td>
+                                <a href="{{ url_for('teacher.grade') }}" class="btn btn-primary">查看成绩</a>
+                </td>
 
         {% endif %}
 
@@ -65,7 +64,7 @@
     </thead>
     {% for course in list %}
         <tr>
-        {% if course.term_id < termid %}
+        {% if course.term_id < term.id %}
                         <td>{{ course.name }}</td>
                         <td> {{ course.credit }}</td>
                         <td>{{ course.start_time }}</td>
@@ -86,5 +85,11 @@
        </table>
 
 </div>
+    {% else %}
+    <div class="box-body">
+        <p>当前没有课程</p>
+
+    </div>
+    {% endif %}
 
 {% endblock %}

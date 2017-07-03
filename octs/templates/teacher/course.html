@@ -2,6 +2,7 @@
 
 {% block teacherContent %}
     <div class="box-header"><h3><strong>课程信息</strong></h3></div>
+    {% if list|length > 0 %}
     <div class="box-header"><h4><strong>当前学期课程</strong></h4></div>
     <div class="box-body"><table class="table table-bordered table-hover definewidth m10">
     <thead>
@@ -21,7 +22,7 @@
     </thead>
     {% for course in list %}
         <tr>
-        {% if course.term_id == termid %}
+        {% if course.term_id == term.id %}
                 <td>{{ course.name }}</td>
                 <td>{{ course.credit }}</td>
                 <td>{{ course.start_time }}</td>
@@ -63,7 +64,7 @@
     </thead>
     {% for course in list %}
         <tr>
-        {% if course.term_id < termid %}
+        {% if course.term_id < term.id %}
                         <td>{{ course.name }}</td>
                         <td> {{ course.credit }}</td>
                         <td>{{ course.start_time }}</td>
@@ -84,5 +85,11 @@
        </table>
 
 </div>
+    {% else %}
+    <div class="box-body">
+        <p>当前没有课程</p>
+
+    </div>
+    {% endif %}
 
 {% endblock %}

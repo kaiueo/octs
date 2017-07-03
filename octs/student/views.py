@@ -40,7 +40,7 @@ def checkterm():
     termList = Term.query.order_by(Term.start_time).all()
     termList = list(reversed(termList))
     time_now = datetime.date.fromtimestamp(time.time())
-    return render_template('student/checkterm.html', list=termList,endtime=termList[0],nowtime=time_now)
+    return render_template('student/checkterm.html', list=termList,nowtime=time_now)
 
 @blueprint.route('/mainpage/')
 def home():

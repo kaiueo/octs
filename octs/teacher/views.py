@@ -16,7 +16,7 @@ def course(teacherid):
     teacher = User.query.filter_by(id=teacherid).first()
     courseList = teacher.courses
     term = Term.query.order_by(Term.id.desc()).first()
-    return render_template('teacher/course.html', list=courseList,termid=term.id)
+    return render_template('teacher/course.html', list=courseList,term=term)
 
 @blueprint.route('/<courseid>/task/<taskid>')
 def task_detail(courseid,taskid):
@@ -359,17 +359,18 @@ def task_file_download(courseid, taskid, fileid):
         return send_from_directory(file_record.directory, file_record.real_name, as_attachment=True, attachment_filename='_'.join(lazy_pinyin(file_record.name)))
     abort(404)
 
-@blueprint.route('/<courseid>/task/<taskid>/scores')
+@blueprint.route('/<courseid>/task/<taskid>/scores',methods=['GET', 'POST'])
 def task_give_score(courseid,taskid):
     tasklist=Task.query.filter(Task.id==taskid).first()
+    task_name = Task.query.filter(Task.id == taskid).first()
     if time.strftime('%Y-%m-%d %H:%M:%S',time.localtime(time.time()))<str(tasklist.end_time):
         flash('这项作业还未截止！暂时不能批改')
-        return render_template('teacher/task_score.html',flag=False)
+        return render_template('teacher/task_score.html',flag=False,courseid=courseid,taskname=task_name)
     else:
         task_team_list=TaskTeamRelation.query.join(Task,Task.id==TaskTeamRelation.task_id).join(Team,Team.id==TaskTeamRelation.team_id
             ).filter(TaskTeamRelation.task_id==taskid).add_columns(Team.name,TaskTeamRelation.task_id,TaskTeamRelation.team_id,TaskTeamRelation.score,Task.weight).all()
-        task_name=Task.query.filter(Task.id==taskid).first()
-        return render_template('teacher/task_score.html', flag=True,list=task_team_list,name=task_name,courseid=courseid)
+        #print(task_name.name)
+        return render_template('teacher/task_score.html', flag=True,list=task_team_list,taskname=task_name,courseid=courseid)
 
 @blueprint.route('/<courseid>/task/<taskid>/givescore/<teamid>',methods=['GET', 'POST'])
 def task_edit_score(courseid,taskid,teamid):

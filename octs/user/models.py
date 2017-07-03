@@ -62,6 +62,8 @@ class User(UserMixin, SurrogatePK, Model):
     roleString = Column(db.String(30), nullable=True)
     role_id = reference_col('roles', nullable=False)
     in_team = Column(db.Boolean, nullable=False, default=False)
+    team_min = Column(db.Integer, default=6)
+    team_max = Column(db.Integer, default=8)
 
     def __init__(self, username, permission, password=None, **kwargs):
         """Create instance."""
@@ -145,6 +147,7 @@ class Course(SurrogatePK, Model):
     name = Column(db.String(256))
     credit = Column(db.Integer, nullable=False, default=1)
     start_time = Column(db.Date, nullable=False, default=dt.date.today)
+    end_time = Column(db.Date, nullable=False, default=dt.date.today)
     location = Column(db.String(256))
     course_introduction = Column(db.String())
     course_outline = Column(db.String())
@@ -263,6 +266,7 @@ class UserScore(SurrogatePK, Model):
     user_id = Column(db.Integer, nullable=False)
     grade = Column(db.Float, nullable=False, default=1.0)
     score = Column(db.Integer, default=0)
+    personal_grade = Column(db.Integer, default=0)
 
 class Tag(SurrogatePK, Model):
     __tablename__ = 'tags'

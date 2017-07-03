@@ -1,8 +1,10 @@
 {% extends 'admin/index.html'%}
 {% import "bootstrap/wtf.html" as wtf  %}
 {% block adminContent %}
-
-
+<div class="box-header">
+        <h3><strong>新建学期</strong></h3>
+    </div>
+<div class="box-body">
     <form action="" method="post" class="form" role="form">
 <div class="form-group  required"><label class="control-label" for="termname">名称</label>
           <input class="form-control" id="termname" name="termname" required="" type="text" value="">
@@ -11,12 +13,14 @@
           <input class="form-control" id="week_number" name="week_number" required="" type="text" value="">
   </div>
 <div class="form-group  required"><label class="control-label" for="start_time">开始时间</label>
-          <input class="form-control" id="start_time" name="start_time" required="" type="date" value="">
+          <input class="form-control" id="start_time" name="start_time" required="" type="date" value="" style="width: 150px">
   </div>
 <div class="form-group  required"><label class="control-label" for="end_time">结束时间</label>
-          <input class="form-control" id="end_time" name="end_time" required="" type="date" value="">
+          <input class="form-control" id="end_time" name="end_time" required="" type="date" value=""  style="width: 150px">
   </div>
     <input class="btn btn-default" id="submit" name="submit" type="submit" value="提交">
-</form>
+</form><br>
+<a class="btn btn-primary" href="{{ url_for('admin.term') }}">返回</a>
+</div>
 
 {% endblock %}

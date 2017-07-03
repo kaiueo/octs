@@ -26,12 +26,12 @@
                 <td>{{ task.end_time }}</td>
                 <td>{{ task.teacher }}</td>
                 <td>{{ task.course_id }}</td>
-                <td> <a  class="btn btn-primary" href="{{ url_for('student.task',taskid=task.id )}}">查看作业</a> </td>
+                <td> <a  class="btn btn-primary" href="{{ url_for('student.task',taskid=task.id )}}">查看详情</a> </td>
         </tr>
     {% endfor %}
 </table>
     <br><br>
-    <th><a  class="btn btn-primary" href="{{ url_for('student.course') }}">返回列表</a> </th>
+    <th><a  class="btn btn-primary" href="{{ url_for('student.course') }}">返回</a> </th>
 </div>
 
 {% endblock %}

@@ -6,7 +6,7 @@
         <a class="btn btn-primary" href={{ url_for('teacher.add', courseid=courseid) }}>添加新作业</a>
         <a class="btn btn-primary" href={{ url_for('teacher.multi_check', courseid=courseid) }}>查看所有作业情况</a>
     </form>
-
+<br>
     <table class="table table-bordered table-hover definewidth m10">
     <thead>
     <tr>
@@ -28,6 +28,6 @@
 
        </table>
     <br><br>
-    <a class="btn btn-primary" href="{{ url_for('teacher.course', teacherid=current_user.id) }}">返回列表</a>
+    <a class="btn btn-primary" href="{{ url_for('teacher.course', teacherid=current_user.id) }}">返回</a>
     </div>
 {% endblock %}

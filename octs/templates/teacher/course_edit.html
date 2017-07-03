@@ -26,28 +26,28 @@
     </tr>
     <tr>
         <td width="10%" class="tableleft">课程介绍</td>
-        <td>{{ form.course_introduction() }}</td>
+        <td>{{ form.course_introduction(style="width:95%;height:100px") }}</td>
 
     </tr>
     <tr>
-        <td width="10" class="tableleft">课程大纲</td>
-        <td>{{ form.course_outline() }}</td>
+        <td width="10%" class="tableleft">课程大纲</td>
+        <td>{{ form.course_outline(style="width:95%;height:100px") }}</td>
     </tr>
 
     <tr>
-        <td width="10" class="tableleft">团队下限</td>
+        <td width="10%" class="tableleft">团队下限</td>
         <td>{{ form.low_member() }}</td>
     </tr>
 
     <tr>
-        <td width="10" class="tableleft">团队上限</td>
+        <td width="10%" class="tableleft">团队上限</td>
         <td>{{ form.high_member() }}</td>
     </tr>
     <tr>
         <td class="tableleft"></td>
         <td>
            {{ form.submit(class="btn btn-primary")}}&nbsp;
-            <a type="button"  class="btn btn-primary" href="{{ url_for('teacher.course', teacherid=current_user.id) }}">返回列表</a>
+            <a type="button"  class="btn btn-primary" href="{{ url_for('teacher.course', teacherid=current_user.id) }}">返回</a>
         </td>
     </tr>
 </table>

@@ -5,7 +5,7 @@
 
 
     <div class="box-header">
-        <h3><strong>团队信息：</strong></h3></div>
+        <h3><strong>团队信息</strong></h3></div>
     <div class="box-body">
             <table class="table table-hover">
                 <tr>
@@ -31,10 +31,10 @@
 
             </table>
             {% if myteam.status==0 %}
-                <a href="{{ url_for('student.team_apply', userid=userid,id=myteam.id) }}" class="btn btn-primary" style="margin-left: 70px">提交申请</a>
+                <a href="{{ url_for('student.team_apply', userid=userid,id=myteam.id) }}" class="btn btn-primary" style="margin-left: 70px">结束团队组建并向老师提交组队申请</a>
             {% endif %}
             <br><br>
-            <h4><strong>团队成员名单：</strong></h4>
+            <h4><strong>团队成员名单</strong></h4>
             <table class="table table-condensed table-hover">
             <thead>
             <tr>

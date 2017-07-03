@@ -101,6 +101,7 @@ def task_edit(courseid, id):
     form = TaskForm()
     task = Task.query.filter_by(id = id).first()
     if form.validate_on_submit():
+        flag = True
         task.name = form.taskname.data
         task.start_time = form.starttime.data
         task.end_time = form.endtime.data
@@ -110,7 +111,6 @@ def task_edit(courseid, id):
         db.session.add(task)
         db.session.commit()
         return redirect(url_for('teacher.task', courseid=courseid))
-
     form.taskname.data = task.name
     form.starttime.data = task.start_time
     form.endtime.data = task.end_time

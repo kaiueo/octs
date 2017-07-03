@@ -34,7 +34,7 @@
            {% elif l.status==1 %}
              <td width="25%" class="word_grey" align="center">待审核</td>
                <td align="center"> <a  class="btn btn-primary" href="{{ url_for('teacher.permit',teacherid=current_user.id,teamid=l.id) }}">同意</a>
-               <a class="btn btn-danger" href="{{ url_for('teacher.reject',teacherid=current_user.id,teamid=l.id) }}">拒绝</a></td>
+               <a class="btn btn-danger" href="{{ url_for('teacher.rejectreason',teacherid=current_user.id,teamid=l.id) }}">拒绝</a></td>
            {% elif l.status==2 %}
                  <td width="25%" class="word_grey" align="center">被驳回</td>
                <td align="center"><a  class="btn btn-primary" disabled="disabled" style="background-color: #0f0f0f">已被驳回</a></td>

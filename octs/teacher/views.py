@@ -1,6 +1,6 @@
 from flask import Blueprint, flash, redirect, render_template, request, url_for,send_from_directory, abort, make_response, send_file, session
 from octs.user.models import Course,Task, User, Message, Team,TeamUserRelation, File,Source,Term,TaskTeamRelation, Tag,UserScore
-from .forms import CourseForm,TaskForm, FileForm,TaskScoreForm
+from .forms import CourseForm,TaskForm, FileForm,TaskScoreForm, RejectReasonForm
 from octs.database import db
 from flask_login import current_user
 from octs.extensions import data_uploader
@@ -223,6 +223,19 @@ def permit(teacherid,teamid):
     flash('已通过该团队申请！')
     return redirect(url_for('teacher.team'))
 
+@blueprint.route('/team/rejectreason/<teacherid>/<teamid>',methods=['GET','POST'])
+def rejectreason(teacherid,teamid):
+    form = RejectReasonForm()
+    if form.validate_on_submit():
+        reason = form.content.data
+        teamlist = TeamUserRelation.query.filter(TeamUserRelation.team_id == teamid).filter(TeamUserRelation.is_accepted == True).all()
+        for user in teamlist:
+            Message.sendMessage(teacherid,user.user_id,'团队申请已驳回：'+reason)
+
+        return redirect(url_for('teacher.reject',teacherid = teacherid,teamid = teamid))
+    return render_template('teacher/reject_reason.html',teacherid = teacherid,teamid = teamid,form=form)
+
+
 @blueprint.route('/team/reject/<teacherid>/<teamid>')
 def reject(teacherid,teamid):
     team=Team.query.filter(Team.id==teamid).first()
@@ -232,11 +245,12 @@ def reject(teacherid,teamid):
     for stu in teamuser:
         user=User.query.filter(User.id==stu.user_id).first()
         user.in_team=False
-        Message.sendMessage(teacherid,user.id,'提交申请已被驳回')
+        #Message.sendMessage(teacherid,user.id,'提交申请已被驳回')
         db.session.add(user)
         db.session.delete(stu)
     db.session.commit()
     flash('已驳回该团队申请！')
+
     return redirect(url_for('teacher.team'))
 
 @blueprint.route('team/detail/<teamid>')

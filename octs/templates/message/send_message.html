@@ -1,0 +1,14 @@
+{% extends 'message/base.html'%}
+{% import "bootstrap/wtf.html" as wtf  %}
+{% block messageContent %}
+
+    <div class="box-header">
+    <h3>发送消息</h3>
+    </div>
+    <div class="box-body">
+{{ wtf.quick_form(form) }}
+    </div>
+
+
+
+{% endblock %}

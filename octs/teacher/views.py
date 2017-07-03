@@ -168,7 +168,8 @@ def score_download(taskid):
     for team in teams:
         sheet1.write(row_num,0,team.id,style)
         sheet1.write(row_num,1,team.name,style)
-        sheet1.write(row_num,2,team.score,style)
+        score = TaskTeamRelation.query.filter(TaskTeamRelation.team_id==team.id).filter(TaskTeamRelation.task_id==taskid).first()
+        sheet1.write(row_num,2,score.score,style)
         row_num=row_num+1
     filename = 'score_table_'+ str(time.time()) + '.xls'
     book.save(os.path.join(data_uploader.path('',folder='tmp'),filename))
@@ -684,7 +685,7 @@ def task_check_download(courseid):
     return send_from_directory(data_uploader.path('', folder='tmp'), filename, as_attachment=True)
 
 
-@blueprint.route('course/grade')
+@blueprint.route('/course/grade')
 def grade():
     students = UserScore.query.all()
     stu_num = len(students)

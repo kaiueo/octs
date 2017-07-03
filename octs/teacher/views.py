@@ -377,7 +377,7 @@ def task_give_score(courseid,taskid):
         return render_template('teacher/task_score.html',flag=False,courseid=courseid,taskname=task_name)
     else:
         task_team_list=TaskTeamRelation.query.join(Task,Task.id==TaskTeamRelation.task_id).join(Team,Team.id==TaskTeamRelation.team_id
-            ).filter(TaskTeamRelation.task_id==taskid).add_columns(Team.name,TaskTeamRelation.task_id,TaskTeamRelation.team_id,TaskTeamRelation.score,Task.weight).all()
+            ).filter(TaskTeamRelation.task_id==taskid).add_columns(Team.name,TaskTeamRelation.task_id,TaskTeamRelation.team_id,TaskTeamRelation.score,Task.weight,TaskTeamRelation.submit_num).all()
         #print(task_name.name)
         return render_template('teacher/task_score.html', flag=True,list=task_team_list,taskname=task_name,courseid=courseid)
 

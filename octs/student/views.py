@@ -1,6 +1,6 @@
 from flask import Blueprint, flash, redirect, render_template, request, send_from_directory,url_for,abort,send_file
 from octs.user.models import Course,Term,Team,TeamUserRelation,User,Task,File,Source,TaskTeamRelation
-from octs.user.models import Course,Term,Team,TeamUserRelation,User, Message,UserScore
+from octs.user.models import Course,Term,Team,TeamUserRelation,User, Message, Tag, UserScore
 from .forms import TeamForm
 from .forms import CourseForm,FileForm
 from octs.database import db
@@ -416,4 +416,35 @@ def give_grade():
 
     return render_template("student/course/give_grade.html",form=form, user_num=user_num)
 
+@blueprint.route('/source/<courseid>')
+def course_source(courseid):
+    course = Course.query.filter_by(id=courseid).first()
+    tags = course.tags
+    tag_names = {}
+    file_records = File.query.filter_by(course_id=courseid).all()
+    for file_record in file_records:
+        tag = Tag.query.filter_by(id=file_record.tag_id).first()
+        tag_names[file_record.tag_id] = tag.name
+    return render_template('student/source.html', file_records=file_records, courseid=courseid, tags=tags, tag_names=tag_names)
 
+@blueprint.route('/source/<courseid>/tag/<tagid>')
+def course_source_tag(courseid, tagid):
+    course = Course.query.filter_by(id=courseid).first()
+    tags = course.tags
+    file_records = File.query.filter_by(tag_id=tagid).all()
+    return render_template('student/source_tag.html', file_records=file_records, courseid=courseid, tags=tags, tagid=tagid)
+
+@blueprint.route('/source/<courseid>/files/download')
+def source_file_download_zip(courseid):
+    foldername = data_uploader.path('',folder='course/'+str(courseid)+'/teacher/source')
+    filename = os.path.join(data_uploader.path('',folder='tmp'),'sourcefiles.zip')
+    zip_download = zipfolder(foldername,filename)
+    return send_file(filename,as_attachment=True)
+
+@blueprint.route('<courseid>/source/files/download/<fileid>')
+def course_source_download(courseid,fileid):
+    file_record = File.query.filter_by(id=fileid).first()
+    if os.path.isfile(file_record.path):
+        return send_from_directory(file_record.directory, file_record.real_name, as_attachment=True,
+                                   attachment_filename='_'.join(lazy_pinyin(file_record.name)))
+    abort(404)

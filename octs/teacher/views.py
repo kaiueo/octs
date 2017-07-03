@@ -1,5 +1,5 @@
 from flask import Blueprint, flash, redirect, render_template, request, url_for,send_from_directory, abort, make_response, send_file, session
-from octs.user.models import Course,Task, User, Message, Team,TeamUserRelation, File,Source,Term,TaskTeamRelation,UserScore
+from octs.user.models import Course,Task, User, Message, Team,TeamUserRelation, File,Source,Term,TaskTeamRelation, Tag,UserScore
 from .forms import CourseForm,TaskForm, FileForm,TaskScoreForm
 from octs.database import db
 from flask_login import current_user
@@ -412,12 +412,26 @@ def student_task(courseid,taskid):
     print(file_records)
     return render_template('teacher/task_student.html',form = form,file_records=file_records,courseid = courseid,taskid = taskid)
 
-@blueprint.route('/source/<courseid>',methods=['GET','POST'])
+@blueprint.route('/source/<courseid>')
 def source(courseid):
-    ##sourcelist=Source.query.filter_by(course_id=courseid).all()
-    ##return render_template('teacher/source.html', list=sourcelist, courseid=courseid)
     form = FileForm()
+    course = Course.query.filter_by(id=courseid).first()
+    tags = course.tags
+    tag_names = {}
     file_records = File.query.filter_by(course_id=courseid).all()
+    for file_record in file_records:
+        tag = Tag.query.filter_by(id=file_record.tag_id).first()
+        tag_names[file_record.tag_id] = tag.name
+    return render_template('teacher/source.html', form=form, file_records=file_records, courseid=courseid, tags=tags, tag_names=tag_names)
+
+@blueprint.route('/source/<courseid>/tag/<tagid>',methods=['GET','POST'])
+def source_tag(courseid, tagid):
+    form = FileForm()
+    course = Course.query.filter_by(id=courseid).first()
+    tags = course.tags
+
+    file_records = File.query.filter_by(tag_id=tagid).all()
+
     if form.validate_on_submit():
         for file in request.files.getlist('file'):
             file_record = File()
@@ -438,10 +452,30 @@ def source(courseid):
 
             data_uploader.save(file, folder='course/'+str(courseid)+'/teacher/source')
 
+            file_record.tag_id = tagid
             db.session.add(file_record)
         db.session.commit()
-        return redirect(url_for('teacher.source', courseid=courseid))
-    return render_template('teacher/source.html', form=form, file_records=file_records, courseid=courseid)
+        return redirect(url_for('teacher.source_tag', courseid=courseid, tagid=tagid))
+    return render_template('teacher/source_tag.html', form=form, file_records=file_records, courseid=courseid, tags=tags, tagid=tagid)
+
+@blueprint.route('/source/<courseid>/tag/add/<tagname>',methods=['GET','POST'])
+def tag_add(courseid, tagname):
+    course = Course.query.filter_by(id=courseid).first()
+    tags = course.tags
+    for tag in tags:
+        if tag.name==tagname:
+            flash('标签已存在')
+            return redirect(url_for('teacher.source', courseid=courseid))
+    tag = Tag()
+    tag.name = tagname
+    course = Course.query.filter_by(id=courseid).first()
+    course.tags.append(tag)
+    db.session.add(tag)
+    db.session.add(course)
+    db.session.commit()
+    flash('添加成功')
+    return redirect(url_for('teacher.source', courseid=courseid))
+
 
 @blueprint.route('<courseid>/source/files/download/<fileid>')
 def source_download(courseid,fileid):

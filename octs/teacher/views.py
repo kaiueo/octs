@@ -31,6 +31,11 @@ def course_edit(teacherid, id):
     if form.validate_on_submit():
         course.course_introduction = form.course_introduction.data
         course.course_outline=form.course_outline.data
+        userlist=User.query.all()
+        for user in userlist:
+            user.team_min=form.low_member.data
+            user.team_max=form.high_member.data
+            db.session.add(user)
         db.session.add(course)
         db.session.commit()
         return redirect(url_for('teacher.course', teacherid=teacherid))
@@ -41,8 +46,10 @@ def course_edit(teacherid, id):
     form.start_time.data=course.start_time
     form.course_introduction.data=course.course_introduction
     form.course_outline.data=course.course_outline
+    user=User.query.filter(User.id==teacherid).first()
 
-
+    form.low_member.data=user.team_min
+    form.high_member.data=user.team_max
 
     return render_template('teacher/course_edit.html',form=form)
 

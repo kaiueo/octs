@@ -41,24 +41,38 @@ def home():
 
 @blueprint.route('/course/add',methods=['GET','POST'])
 def insert():
+    courseList = Course.query.all()
     form = CourseForm()
-    if form.validate_on_submit():
-        course = Course(form.coursename.data)
-        ##course.name = form.coursename.data
-        course.credit = form.credit.data
-        course.location = form.location.data
-        course.course_introduction = form.course_introduction.data
-        course.start_time = form.start_time.data
-        term = Term.query.order_by(Term.id.desc()).first()
-        course.term = term
-        tag = Tag()
-        tag.name = '默认'
-        course.tags.append(tag)
-        db.session.add(course)
-        db.session.add(tag)
-        db.session.commit()
-        return redirect(url_for('admin.course'))
-    return render_template('admin/add.html',form=form)
+    termList = Term.query.order_by(Term.start_time).all()
+    termList = list(reversed(termList))
+    nowtime = datetime.date.fromtimestamp(time.time())
+    #flash(''+str(nowtime) + ' ' +str(termList[0].end_time))
+    if  termList[0].end_time <= nowtime:
+        flash('学期已结束，不可添加课程！')
+        return render_template('admin/course.html', list=courseList)
+    else :
+            if form.validate_on_submit():
+                course = Course(form.coursename.data)
+                ##course.name = form.coursename.data
+                course.credit = form.credit.data
+                course.location = form.location.data
+                course.course_introduction = form.course_introduction.data
+                course.start_time = form.start_time.data
+                course.end_time = form.end_time.data
+                term = Term.query.order_by(Term.id.desc()).first()
+                course.term = term
+                tag = Tag()
+                tag.name = '默认'
+                course.tags.append(tag)
+                if termList[0].start_time > course.start_time or termList[0].end_time < course.end_time or course.end_time < course.start_time:
+                    flash('课程时间错误！')
+                    return redirect(url_for('admin.insert'))
+                else:
+                    db.session.add(course)
+                    db.session.add(tag)
+                    db.session.commit()
+                    return redirect(url_for('admin.course'))
+            return render_template('admin/add.html',form=form)
 
 @blueprint.route('/course/edit/<id>',methods=['GET','POST'])
 def edit(id):
@@ -72,6 +86,7 @@ def edit(id):
         course.location = form.location.data
         course.course_introduction = form.course_introduction.data
         course.start_time = form.start_time.data
+        course.end_time = form.end_time.data
         db.session.add(course)
         db.session.commit()
         return redirect(url_for('admin.course'))
@@ -80,6 +95,7 @@ def edit(id):
     form.location.data = course.location
     form.course_introduction.data = course.course_introduction
     form.start_time.data = course.start_time
+    form.end_time.data = course.end_time
 
 
     return render_template('admin/edit.html',form=form)

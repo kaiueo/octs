@@ -1,16 +1,11 @@
 {% extends "layout.html" %}
 
-{% block index %}
-    <li><a href="">首页</a></li>
-{% endblock %}
+<title>{% block page_title %}
 
-{% block center %}
+    学生页面
 
-        <li class="active">
-            <a href="">个人中心</a>
-        </li>
-
-{% endblock %}
+    {% endblock %}
+  </title>
 
 {% block content %}
 
@@ -40,13 +35,6 @@
                             </a>
                         {% endblock %}
                     </li>
-                    {#                    <li>#}
-                    {#                        {% block navCourseManage %}#}
-                    {#                            <a class="ajax-link" href="#">#}
-                    {#                                <i class="glyphicon glyphicon-education"></i><span>课程管理</span>#}
-                    {#                            </a>#}
-                    {#                        {% endblock navCourseManage %}#}
-                    {#                    </li>#}
 
                     <li>
                         {% block navTeamAudit %}

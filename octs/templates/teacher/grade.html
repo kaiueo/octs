@@ -47,6 +47,7 @@
             </tr>
         {% endfor %}
            </table>
+         <a href="{{ url_for('teacher.course',teacherid=current_user.id) }}" class="btn btn-primary">返回列表</a>
         </div>
     </div>
 

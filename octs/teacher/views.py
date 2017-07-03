@@ -171,7 +171,7 @@ def score_download(taskid):
 def team_download():
     teams = Team.query.filter_by(status=3).all()
     book = xlwt.Workbook()
-
+    
     alignment = xlwt.Alignment()  # Create Alignment
     alignment.horz = xlwt.Alignment.HORZ_CENTER  # May be: HORZ_GENERAL, HORZ_LEFT, HORZ_CENTER, HORZ_RIGHT, HORZ_FILLED, HORZ_JUSTIFIED, HORZ_CENTER_ACROSS_SEL, HORZ_DISTRIBUTED
     alignment.vert = xlwt.Alignment.VERT_CENTER  # May be: VERT_TOP, VERT_CENTER, VERT_BOTTOM, VERT_JUSTIFIED, VERT_DISTRIBUTED

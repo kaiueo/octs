@@ -245,19 +245,20 @@ def team_detail(teamid):
         User,User.id==TeamUserRelation.user_id).add_columns(User.name,User.gender,User.user_id).all()
     return render_template('teacher/teamdetail.html',list=teamlist)
 
-@blueprint.route('/team/adjustion/<teacherid>')
-def to_adjust(teacherid):
+@blueprint.route('/team/adjustion/adjust',methods=['GET', 'POST'])
+def to_adjust():
     teamlist1=Team.query.join(TeamUserRelation,TeamUserRelation.team_id==Team.id).filter(Team.status==1).filter(
         TeamUserRelation.is_master==True).join(User,User.id==TeamUserRelation.user_id).add_columns(
         Team.name,Team.status,User.username,Team.id).all()
     teamlist2 = Team.query.join(TeamUserRelation,TeamUserRelation.team_id==Team.id).filter(Team.status==3).filter(
         TeamUserRelation.is_master==True).join(User,User.id==TeamUserRelation.user_id).add_columns(
-        Team.name,Team.status,User.username).all()
+        Team.name,Team.status,User.username,Team.id).all()
     teamlist=teamlist1+teamlist2
-    return render_template('teacher/adjust.html',teacher_id=teacherid,list=teamlist)
+    print(teamlist)
+    return render_template('teacher/adjust.html',list=teamlist)
 
-@blueprint.route('/team/adjustion/<teacherid>/adjust/<teamid>',methods=['GET', 'POST'])
-def team_adjust(teacherid,teamid):
+@blueprint.route('/team/adjustion/adjust/<teamid>',methods=['GET', 'POST'])
+def team_adjust(teamid):
     teamlist = Team.query.filter(Team.id == teamid).join(TeamUserRelation, TeamUserRelation.team_id == Team.id).join(
         User, User.id == TeamUserRelation.user_id).add_columns(User.name, User.gender, User.user_id,TeamUserRelation.user_id,Team.id).all()
     otherteam=Team.query.filter(Team.id!=teamid).filter(Team.status==1).all()

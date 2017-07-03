@@ -11,28 +11,18 @@
     <thead>
     <tr>
         <th>作业名称</th>
-
-
-
-
         <th>管理菜单</th>
     </tr>
     </thead>
         {% for task in list %}
-
         <tr>
             <td><a class="" href="{{ url_for('teacher.task_detail',courseid=courseid,taskid=task.id) }}">{{ task.name }}</a></td>
-
-
                 <td>
-
-                <a class="btn btn-primary" href="{{ url_for('teacher.task_edit',courseid=courseid,id=task.id) }}">编辑</a>
+                    <a class="btn btn-primary" href="{{ url_for('teacher.task_edit',courseid=courseid,id=task.id) }}">编辑</a>
                     <a class="btn btn-primary" href="{{ url_for('teacher.student_task',courseid=courseid,taskid =task.id) }}">查看学生作业</a>
                     <a class="btn btn-primary" href="{{ url_for('teacher.task_give_score',courseid=courseid,taskid =task.id) }}">批改作业</a>
                     <a class="btn btn-danger" href="{{ url_for('teacher.delete',courseid=courseid,taskid =task.id) }}">删除</a>
                 </td>
-
-
         </tr>
     {% endfor %}
 

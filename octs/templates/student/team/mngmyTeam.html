@@ -31,7 +31,7 @@
 
             </table>
             {% if myteam.status==0 %}
-                <a href="{{ url_for('student.team_apply', userid=userid,id=myteam.id) }}" class="btn btn-primary" style="margin-left: 70px">完成团队组建并向老师提交组队申请</a>
+                <a href="{{ url_for('student.team_apply', userid=userid,id=myteam.id) }}" class="btn btn-primary" style="margin-left: 70px">提交申请</a>
             {% endif %}
             <br><br>
             <h4><strong>团队成员名单：</strong></h4>

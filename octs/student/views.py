@@ -127,34 +127,47 @@ def my_team(id):
 @blueprint.route('/team/<userid>/apply/<id>')
 def team_apply(userid, id):
     team = Team.query.filter_by(id=id).first()
-
-    turs = TeamUserRelation.query.join(User, User.id == TeamUserRelation.user_id).filter(
+    user = User.query.filter(User.id==userid).first()
+    flag = True
+    number = TeamUserRelation.query.filter(TeamUserRelation.team_id==team.id).filter(TeamUserRelation.is_accepted==True).count()
+    if int(number) < int(user.team_min):
+        flag=False
+        flash('团队人数不足！')
+    if flag:
+        turs = TeamUserRelation.query.join(User, User.id == TeamUserRelation.user_id).filter(
         TeamUserRelation.is_accepted == False).filter(TeamUserRelation.team_id == team.id).add_columns(User.id,
                                                                                                       User.user_id,
                                                                                                       User.username,
                                                                                                       User.gender).all()
-
-    turs = [tur for tur in turs if tur[0].is_accepted==False]
-    for tur in turs:
-        user = User.query.filter_by(id=tur[1]).first()
-        db.session.delete(tur[0])
-        user.in_team = False
-        Message.sendMessage(11, user.id, '你的团队加入申请已被拒绝')
-        db.session.add(user)
-    team.status = 1
-    db.session.add(team)
-    db.session.commit()
-    flash('成功')
+        turs = [tur for tur in turs if tur[0].is_accepted==False]
+        for tur in turs:
+            user = User.query.filter_by(id=tur[1]).first()
+            db.session.delete(tur[0])
+            user.in_team = False
+            Message.sendMessage(11, user.id, '你的团队加入申请已被拒绝')
+            db.session.add(user)
+        team.status = 1
+        db.session.add(team)
+        db.session.commit()
+        flash('成功')
     return redirect(url_for('student.my_team', id=userid))
 
 @blueprint.route('/team/permit/<id>/<userid>')
 def permit(id,userid):
-    stuPermit=TeamUserRelation.query.filter_by(user_id=userid).first()
-    stuPermit.is_accepted=True
-    db.session.add(stuPermit)
-    db.session.commit()
-    Message.sendMessage(id, userid, '你的团队加入申请已被接受！')
-    flash('已同意该同学的申请！')
+    flag=True
+    team=TeamUserRelation.query.filter(TeamUserRelation.user_id==id).first()
+    number=TeamUserRelation.query.filter(TeamUserRelation.team_id==team.team_id).filter(TeamUserRelation.is_accepted==True).count()
+    user=User.query.filter(User.id==id).first()
+    if number >= user.team_max:
+        flag=False
+        flash('团队人数已到上限！不可再加入成员')
+    if flag:
+        stuPermit=TeamUserRelation.query.filter_by(user_id=userid).first()
+        stuPermit.is_accepted=True
+        db.session.add(stuPermit)
+        db.session.commit()
+        Message.sendMessage(id, userid, '你的团队加入申请已被接受！')
+        flash('已同意该同学的申请！')
     return redirect(url_for('student.my_team',id=id))
 
 @blueprint.route('/team/reject/<id>/<userid>')

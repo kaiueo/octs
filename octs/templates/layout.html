@@ -19,6 +19,8 @@
 
   <!-- Mobile viewport optimized: h5bp.com/viewport -->
   <meta name="viewport" content="width=device-width">
+<link href="/static/datetimepicker/js/bootstrap/css/bootstrap.min.css" rel="stylesheet" media="screen">
+    <link href="/static/datetimepicker/css/bootstrap-datetimepicker.min.css" rel="stylesheet" media="screen">
 
   <link rel="stylesheet" href="{{ url_for('static', filename='libs/font-awesome4/css/font-awesome.min.css') }}">
   {% assets "css_all" %}
@@ -87,7 +89,45 @@
     <script type="text/javascript" src="{{ ASSET_URL }}"></script>
 {% endassets %}
 {% block js %}
-    {{ moment.include_moment() }}
+    <script src="/static/js/moment-with-locales.min.js"></script>
+
+    <script type="text/javascript" src="/static/datetimepicker/js/jquery/jquery-1.8.3.min.js" charset="UTF-8"></script>
+<script type="text/javascript" src="/static/datetimepicker/js/bootstrap/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="/static/datetimepicker/js/bootstrap-datetimepicker.js" charset="UTF-8"></script>
+<script type="text/javascript" src="/static/datetimepicker/js/locales/bootstrap-datetimepicker.fr.js" charset="UTF-8"></script>
+<script type="text/javascript">
+    $('.form_datetime').datetimepicker({
+        language:  'en',
+        weekStart: 1,
+        todayBtn:  1,
+		autoclose: 1,
+		todayHighlight: 1,
+		startView: 2,
+		forceParse: 0,
+        showMeridian: 1
+    });
+	$('.form_date').datetimepicker({
+        language:  'en',
+        weekStart: 1,
+        todayBtn:  1,
+		autoclose: 1,
+		todayHighlight: 1,
+		startView: 2,
+		minView: 2,
+		forceParse: 0
+    });
+	$('.form_time').datetimepicker({
+        language:  'en',
+        weekStart: 1,
+        todayBtn:  1,
+		autoclose: 1,
+		todayHighlight: 1,
+		startView: 1,
+		minView: 0,
+		maxView: 1,
+		forceParse: 0
+    });
+</script>
 {% endblock %}
 <!-- end scripts -->
 {% endblock %}

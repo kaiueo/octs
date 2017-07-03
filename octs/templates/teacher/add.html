@@ -4,7 +4,46 @@
 {% block teacherContent %}
     <div class="box-header"><h3><strong>添加作业</strong></h3></div>
     <div class="box-body">
-    {{ wtf.quick_form(form) }}
+
+
+    <form action="" method="post" class="form" role="form">
+<div class="form-group "><label class="control-label" for="taskname">名称</label>
+          <input class="form-control" id="taskname" name="taskname" type="text" value="">
+  </div>
+<div class="form-group "><label class="control-label" for="starttime">开始时间</label>
+
+
+    <div class="input-group date form_datetime col-md-5" data-date="" data-date-format="yyyy-mm-dd hh:ii:ss" data-link-field="dtp_input1">
+                    <input class="form-control" size="16" id="starttime" name="starttime" type="text" value="" readonly>
+                    <span class="input-group-addon"><span class="glyphicon glyphicon-remove"></span></span>
+					<span class="input-group-addon"><span class="glyphicon glyphicon-th"></span></span>
+                </div>
+				<input type="hidden" id="dtp_input1" value="" /><br/>
+
+  </div>
+<div class="form-group "><label class="control-label" for="endtime">结束时间</label>
+
+    <div class="input-group date form_datetime col-md-5" data-date="" data-date-format="yyyy-mm-dd hh:ii:ss" data-link-field="dtp_input1">
+                    <input class="form-control" size="16" id="endtime" name="endtime" type="text" value="" readonly>
+                    <span class="input-group-addon"><span class="glyphicon glyphicon-remove"></span></span>
+					<span class="input-group-addon"><span class="glyphicon glyphicon-th"></span></span>
+                </div>
+				<input type="hidden" id="dtp_input1" value="" /><br/>
+
+  </div>
+<div class="form-group "><label class="control-label" for="subnum">可提交次数</label>
+          <input class="form-control" id="subnum" name="subnum" type="text" value="">
+  </div>
+<div class="form-group "><label class="control-label" for="content">内容</label>
+          <textarea class="form-control" id="content" name="content"></textarea>
+  </div>
+<div class="form-group "><label class="control-label" for="weight">作业权重</label>
+          <input class="form-control" id="weight" name="weight" type="text" value="">
+  </div>
+    <input class="btn btn-default" id="submit" name="submit" type="submit" value="提交">
+</form>
+
+
         <br>
     <a class="btn btn-primary" href="{{ url_for('teacher.task', courseid=courseid) }}">返回</a>
     </div>

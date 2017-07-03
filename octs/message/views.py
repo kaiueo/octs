@@ -1,6 +1,8 @@
 from flask import Blueprint, flash, redirect, render_template, request, url_for,sessions
 from octs.user.models import Course, Message, User
 from octs.database import db
+from .forms import MessageForm
+from flask_login import current_user
 
 blueprint = Blueprint('message', __name__, url_prefix='/message',static_folder='../static')
 
@@ -35,3 +37,20 @@ def show_detail(id):
     db.session.commit()
     user = User.query.filter_by(id=message.from_id).first()
     return render_template('message/detail.html', message=message, name=user.name)
+
+@blueprint.route('/send/', methods=['GET', 'POST'])
+def send():
+    form = MessageForm()
+    if form.validate_on_submit():
+        to_user_id = form.send_to.data
+        user = User.query.filter_by(user_id=to_user_id).first()
+        if user is None:
+            flash('该用户不存在')
+            return redirect(url_for('message.send'))
+        title = form.title.data
+        message = form.message.data
+        Message.sendMessage(current_user.id, user.id, message=message, title=title)
+        flash('消息发送成功')
+        return redirect(url_for('message.send'))
+    return render_template('message/send_message.html', form=form)
+

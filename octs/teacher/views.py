@@ -179,7 +179,7 @@ def score_download(taskid):
 def team_download():
     teams = Team.query.filter_by(status=3).all()
     book = xlwt.Workbook()
-
+    
     alignment = xlwt.Alignment()  # Create Alignment
     alignment.horz = xlwt.Alignment.HORZ_CENTER  # May be: HORZ_GENERAL, HORZ_LEFT, HORZ_CENTER, HORZ_RIGHT, HORZ_FILLED, HORZ_JUSTIFIED, HORZ_CENTER_ACROSS_SEL, HORZ_DISTRIBUTED
     alignment.vert = xlwt.Alignment.VERT_CENTER  # May be: VERT_TOP, VERT_CENTER, VERT_BOTTOM, VERT_JUSTIFIED, VERT_DISTRIBUTED
@@ -245,19 +245,20 @@ def team_detail(teamid):
         User,User.id==TeamUserRelation.user_id).add_columns(User.name,User.gender,User.user_id).all()
     return render_template('teacher/teamdetail.html',list=teamlist)
 
-@blueprint.route('/team/adjustion/<teacherid>')
-def to_adjust(teacherid):
+@blueprint.route('/team/adjustion/adjust',methods=['GET', 'POST'])
+def to_adjust():
     teamlist1=Team.query.join(TeamUserRelation,TeamUserRelation.team_id==Team.id).filter(Team.status==1).filter(
         TeamUserRelation.is_master==True).join(User,User.id==TeamUserRelation.user_id).add_columns(
         Team.name,Team.status,User.username,Team.id).all()
     teamlist2 = Team.query.join(TeamUserRelation,TeamUserRelation.team_id==Team.id).filter(Team.status==3).filter(
         TeamUserRelation.is_master==True).join(User,User.id==TeamUserRelation.user_id).add_columns(
-        Team.name,Team.status,User.username).all()
+        Team.name,Team.status,User.username,Team.id).all()
     teamlist=teamlist1+teamlist2
-    return render_template('teacher/adjust.html',teacher_id=teacherid,list=teamlist)
+    print(teamlist)
+    return render_template('teacher/adjust.html',list=teamlist)
 
-@blueprint.route('/team/adjustion/<teacherid>/adjust/<teamid>',methods=['GET', 'POST'])
-def team_adjust(teacherid,teamid):
+@blueprint.route('/team/adjustion/adjust/<teamid>',methods=['GET', 'POST'])
+def team_adjust(teamid):
     teamlist = Team.query.filter(Team.id == teamid).join(TeamUserRelation, TeamUserRelation.team_id == Team.id).join(
         User, User.id == TeamUserRelation.user_id).add_columns(User.name, User.gender, User.user_id,TeamUserRelation.user_id,Team.id).all()
     otherteam=Team.query.filter(Team.id!=teamid).filter(Team.status==1).all()
@@ -377,7 +378,7 @@ def task_give_score(courseid,taskid):
         return render_template('teacher/task_score.html',flag=False,courseid=courseid,taskname=task_name)
     else:
         task_team_list=TaskTeamRelation.query.join(Task,Task.id==TaskTeamRelation.task_id).join(Team,Team.id==TaskTeamRelation.team_id
-            ).filter(TaskTeamRelation.task_id==taskid).add_columns(Team.name,TaskTeamRelation.task_id,TaskTeamRelation.team_id,TaskTeamRelation.score,Task.weight).all()
+            ).filter(TaskTeamRelation.task_id==taskid).add_columns(Team.name,TaskTeamRelation.task_id,TaskTeamRelation.team_id,TaskTeamRelation.score,Task.weight,TaskTeamRelation.submit_num).all()
         #print(task_name.name)
         return render_template('teacher/task_score.html', flag=True,list=task_team_list,taskname=task_name,courseid=courseid)
 

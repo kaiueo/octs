@@ -16,7 +16,7 @@ def course(teacherid):
     teacher = User.query.filter_by(id=teacherid).first()
     courseList = teacher.courses
     term = Term.query.order_by(Term.id.desc()).first()
-    return render_template('teacher/course.html', list=courseList,termid=term.id)
+    return render_template('teacher/course.html', list=courseList,term=term)
 
 @blueprint.route('/<courseid>/task/<taskid>')
 def task_detail(courseid,taskid):
@@ -549,6 +549,8 @@ def multi_check(courseid):
 
     teams = Team.query.filter_by(course_id = courseid).all()
     return render_template('teacher/multi_check.html',ttrs_all = ttrs_all,courseid = courseid,tasks = tasks,teams = teams)
+
+
 @blueprint.route('/course/calcu_score')
 def calcu_score():
     teams = Team.query.filter_by(status=3).all()
@@ -674,4 +676,38 @@ def task_check_download(courseid):
     book.save(os.path.join(data_uploader.path('', folder='tmp'), filename))
     return send_from_directory(data_uploader.path('', folder='tmp'), filename, as_attachment=True)
 
+
+@blueprint.route('course/grade')
+def grade():
+    students = UserScore.query.all()
+    stu_num = len(students)
+    username=[]
+    for i in range(0, stu_num):
+        stuname=User.query.filter_by(id=students[i].user_id).first()
+        username.append(stuname.name)
+
+    teams = Team.query.filter_by(status=3).all()
+    team_num = len(teams)
+    for i in range(0, team_num):
+        teamtask = TaskTeamRelation.query.filter_by(team_id=teams[i].id).all()
+        sum = 0
+        for task in teamtask:
+            weight = Task.query.filter_by(id=task.task_id).first()
+            sum += weight.weight * task.score
+
+        team_for_score = Team.query.filter_by(id=teams[i].id).first()
+        team_for_score.score = sum
+        db.session.add(team_for_score)
+        db.session.commit()
+
+        userList = TeamUserRelation.query.filter_by(team_id=teams[i].id).all()
+        for user in userList:
+            print(user.user_id)
+            user_for_score = UserScore.query.filter_by(user_id=user.user_id).first()
+            user_for_score.score = sum * user_for_score.grade
+            db.session.add(user_for_score)
+            db.session.commit()
+    flash('计算成功！')
+
+    return render_template('teacher/grade.html',teamList=teams,stuList=students,username=username,stu_num=stu_num)
 

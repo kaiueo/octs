@@ -147,6 +147,7 @@ class Course(SurrogatePK, Model):
     name = Column(db.String(256))
     credit = Column(db.Integer, nullable=False, default=1)
     start_time = Column(db.Date, nullable=False, default=dt.date.today)
+    end_time = Column(db.Date, nullable=False, default=dt.date.today)
     location = Column(db.String(256))
     course_introduction = Column(db.String())
     course_outline = Column(db.String())

@@ -403,16 +403,20 @@ def give_grade():
 
     for i in range(user_num):
         setattr(GradeForm, 'grade'+str(i), FloatField(user_names[i], validators=[DataRequired()]))
+        setattr(GradeForm, 'personalgrade'+str(i), FloatField('', validators=[DataRequired()]))
 
     form = GradeForm()
     if form.validate_on_submit():
         for i in range(user_num):
             user_grades[i].grade = getattr(form, 'grade'+str(i)).data
+            user_grades[i].personal_grade = getattr(form,'personalgrade'+str(i)).data
             db.session.add(user_grades[i])
         db.session.commit()
 
     for i in range(user_num):
         getattr(form, 'grade'+str(i)).data = user_grades[i].grade
+        getattr(form, 'personalgrade' + str(i)).data = user_grades[i].personal_grade
+
 
     return render_template("student/course/give_grade.html",form=form, user_num=user_num)
 

@@ -2,11 +2,11 @@
 
 {% block teacherContent %}
         <div class="box-header">
-    <h3>课程资源管理</h3>
+    <h3><strong>课程资源管理</strong></h3>
     </div>
     <div class="box-body">
     <div>
-    <a href="{{ url_for('student.course_source', courseid=courseid) }}" class="btn btn-primary">全部</a>
+    <a href="{{ url_for('student.course_source', courseid=courseid) }}" class="btn btn-primary">全部分类</a>
     {% for tag in tags %}
         {% if tagid==tag.id|string %}
     <a href="{{ url_for('student.course_source_tag', courseid=courseid, tagid=tag.id) }}" class="btn btn-primary active">{{ tag.name }}</a>

@@ -15,19 +15,23 @@
         {% if file_records|length>0 %}
         <thead>
         <td>文件名</td>
+        <td>上传人</td>
         <td>操作</td>
         </thead>
     {% else %}
     <p>文件列表为空</p>
     {% endif %}
-        {% for file_record in file_records %}
+        {% for i in range(0,filenum) %}
         <tr>
             <td>
-                {{ file_record.name }}
+                {{ file_records[i].name }}
             </td>
             <td>
-                <a class="btn btn-primary" href="{{ url_for('teacher.task_file_download', courseid=courseid, taskid=taskid, fileid=file_record.id) }}">下载</a>
-                <a class="btn btn-danger" href="{{ url_for('teacher.task_file_delete', courseid=courseid, taskid=taskid, fileid=file_record.id,userid = current_user.id) }}">删除</a>
+                {{ usernames[i] }}
+            </td>
+            <td>
+                <a class="btn btn-primary" href="{{ url_for('teacher.task_file_download', courseid=courseid, taskid=taskid, fileid=file_records.id) }}">下载</a>
+                <a class="btn btn-danger" href="{{ url_for('teacher.task_file_delete', courseid=courseid, taskid=taskid, fileid=file_records.id,userid = current_user.id) }}">删除</a>
             </td>
         </tr>
         {% endfor %}
@@ -37,6 +41,15 @@
 
     <form action="" method="post" class="form" enctype="multipart/form-data" role="form">
 
-    <a class="btn btn-primary" href="{{ url_for('teacher.task', courseid=courseid) }}">返回</a>
+<div class="form-group  has-error required"><label class="control-label" for="file">图片上传</label>
+
+          <input id="file" name="file" required="" type="file" multiple="multiple">
+
+            <p class="help-block">请选择文件</p>
+  </div>
+
+    <input class="btn btn-default" id="submit" name="submit" type="submit" value="上传">
+
+</form>
     </div>
 {% endblock %}

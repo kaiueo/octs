@@ -10,6 +10,8 @@ class CourseForm(Form):
     start_time = DateField('开始时间')
     course_introduction = TextAreaField('课程介绍')
     course_outline = TextAreaField("课程大纲")
+    low_member = FloatField('团队下限')
+    high_member = FloatField('团队上限')
     submit = SubmitField('提交')
 
 class TaskForm(Form):

@@ -1,8 +1,10 @@
 {% extends 'admin/index.html'%}
 {% import "bootstrap/wtf.html" as wtf  %}
 {% block adminContent %}
-
-
+<div class="box-header">
+        <h3><strong>新建学期</strong></h3>
+    </div>
+<div class="box-body">
     <form action="" method="post" class="form" role="form">
 <div class="form-group  required"><label class="control-label" for="termname">名称</label>
           <input class="form-control" id="termname" name="termname" required="" type="text" value="">
@@ -31,6 +33,8 @@
 
   </div>
     <input class="btn btn-default" id="submit" name="submit" type="submit" value="提交">
-</form>
+</form><br>
+<a class="btn btn-primary" href="{{ url_for('admin.term') }}">返回</a>
+</div>
 
 {% endblock %}

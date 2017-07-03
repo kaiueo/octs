@@ -101,6 +101,7 @@ def task_edit(courseid, id):
     form = TaskForm()
     task = Task.query.filter_by(id = id).first()
     if form.validate_on_submit():
+        flag = True
         task.name = form.taskname.data
         task.start_time = form.starttime.data
         task.end_time = form.endtime.data
@@ -110,7 +111,6 @@ def task_edit(courseid, id):
         db.session.add(task)
         db.session.commit()
         return redirect(url_for('teacher.task', courseid=courseid))
-
     form.taskname.data = task.name
     form.starttime.data = task.start_time
     form.endtime.data = task.end_time
@@ -314,7 +314,7 @@ def adjust_trans(teacherid,userid,teamid):
 def adjust_add(teacherid,userid,teamid):
     userlist=TeamUserRelation.query.filter(TeamUserRelation.user_id==userid).first()
     if(int(teamid)==int(userlist.team_id)):
-        flash('该生已在本团队了！')
+        flash('该学生已在本团队了！')
     else:
         userlist.team_id=teamid
         userlist.is_adjust=False
@@ -611,7 +611,6 @@ def calcu_score():
             user_for_score.score = sum * user_for_score.grade
             db.session.add(user_for_score)
             db.session.commit()
-    flash('计算成功！')
     return redirect(url_for('teacher.course',teacherid=current_user.id))
 
 
@@ -744,7 +743,6 @@ def grade():
             user_for_score.score = round(sum * user_for_score.grade +user_for_score.personal_grade,1)
             db.session.add(user_for_score)
             db.session.commit()
-    flash('计算成功！')
 
     return render_template('teacher/grade.html',teamList=teams,stuList=students,username=username,stu_num=stu_num)
 

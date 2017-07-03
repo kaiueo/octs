@@ -5,12 +5,12 @@
     <h3><strong>课程资源管理</strong></h3>
     </div>
     <div class="box-body">
-    <a href="{{ url_for('teacher.source', courseid=courseid) }}" class="btn btn-primary active">全部</a>
+    <a href="{{ url_for('teacher.source', courseid=courseid) }}" class="btn btn-primary active">全部分类</a>
     {% for tag in tags %}
     <a href="{{ url_for('teacher.source_tag', courseid=courseid, tagid=tag.id) }}" class="btn btn-primary">{{ tag.name }}</a>
     {% endfor %}
     <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#newTag">
-  新建
+  创建新分类
 </button>
 
 
@@ -55,7 +55,7 @@
 
 
     <div id="newTag" class="modal fade" tabindex="-1" role="dialog">
-  <div class="modal-dialog" role="document">
+  <div class="modal-dialog" role="document" style="left: auto">
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>

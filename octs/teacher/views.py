@@ -162,6 +162,7 @@ def score_download(taskid):
         sheet1.write(row_num,0,team.id,style)
         sheet1.write(row_num,1,team.name,style)
         sheet1.write(row_num,2,team.score,style)
+        row_num=row_num+1
     filename = 'score_table_'+ str(time.time()) + '.xls'
     book.save(os.path.join(data_uploader.path('',folder='tmp'),filename))
     return send_from_directory(data_uploader.path('', folder='tmp'), filename, as_attachment=True)
@@ -382,8 +383,8 @@ def task_edit_score(courseid,taskid,teamid):
         db.session.commit()
         flash('已经提交分数！')
         return redirect(url_for('teacher.task_give_score',courseid=courseid,taskid=taskid))
-
-    form.task_score.data=taskscore.score
+    if taskscore.score>=0:
+        form.task_score.data=taskscore.score
     return render_template('teacher/set_score.html',form=form,courseid=courseid,taskid=taskid,teamid=teamid)
 
 @blueprint.route('/<courseid>/task<taskid>/scores')

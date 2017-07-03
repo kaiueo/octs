@@ -5,7 +5,7 @@
                 {% if current_user.is_authenticated %}
 
                     <li><a href="{{ url_for('message.show_unread', id=current_user.id) }}"><span class="glyphicon glyphicon-bell"></span> </a> </li>
-                    <li><a href="#">{{ current_user.name }}</a></li>
+                    <li><a href="{{ url_for('auth.change_password') }}">{{ current_user.name }}</a></li>
                     <li><a href="{{ url_for('auth.logout') }}"><span class="glyphicon glyphicon-user"></span> 登出</a></li>
                 {% else %}
                     <li><a href="{{ url_for('auth.login') }}"><span class="glyphicon glyphicon-user"></span> 登录</a></li>

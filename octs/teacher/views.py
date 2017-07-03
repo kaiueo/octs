@@ -101,6 +101,7 @@ def task_edit(courseid, userid,id):
     form = TaskForm()
     task = Task.query.filter_by(id = id).first()
     if form.validate_on_submit():
+        flag = True
         task.name = form.taskname.data
         task.start_time = form.starttime.data
         task.end_time = form.endtime.data
@@ -110,7 +111,6 @@ def task_edit(courseid, userid,id):
         db.session.add(task)
         db.session.commit()
         return redirect(url_for('teacher.task', courseid=courseid))
-
     form.taskname.data = task.name
     form.starttime.data = task.start_time
     form.endtime.data = task.end_time
@@ -333,6 +333,8 @@ def adjust_add(teacherid,userid,teamid):
 def task_files(courseid, taskid,teacherid):
     form = FileForm()
     file_records = File.query.filter(File.task_id==taskid).filter(File.user_id == teacherid).all()
+
+
     if form.validate_on_submit():
         for file in request.files.getlist('file'):
             file_record = File()
@@ -355,8 +357,11 @@ def task_files(courseid, taskid,teacherid):
 
             db.session.add(file_record)
         db.session.commit()
+
         return redirect(url_for('teacher.task_files', courseid=courseid, taskid=taskid,teacherid = teacherid))
-    return render_template('teacher/file_manage.html',form=form, file_records=file_records, courseid=courseid, taskid=taskid)
+    return render_template('teacher/task_tabfile.html',form=form, file_records=file_records, courseid=courseid, taskid=taskid)
+
+
 
 @blueprint.route('/<courseid>/task/<taskid>/files/delete/<fileid>/<userid>', methods=['GET', 'POST'])
 def task_file_delete(courseid, taskid, fileid,userid):
@@ -423,6 +428,7 @@ def task_score(courseid,taskid):
 @blueprint.route('/<courseid>/task/<taskid>/files',methods = ['GET','POST'])
 def student_task(courseid,taskid):
     form = FileForm()
+
     course = Course.query.filter_by(id = courseid).first()
     users = course.users
     masters = []
@@ -433,8 +439,11 @@ def student_task(courseid,taskid):
     print(masters)
     file_records = []
     for master in masters:
-        file_records.append((master.team_id ,File.query.filter(File.user_id == master.user_id).filter(File.task_id == int(taskid)).all()))
+        user_master = User.query.filter_by(id=master.user_id).first()
+        file_records.append((master.team_id ,File.query.filter(File.user_id == master.user_id).filter(File.task_id == int(taskid)).all(),user_master.username))
     print(file_records)
+
+
     return render_template('teacher/task_student.html',form = form,file_records=file_records,courseid = courseid,taskid = taskid)
 
 @blueprint.route('/source/<courseid>')

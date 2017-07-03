@@ -1,11 +1,12 @@
 # -*- coding: utf-8 -*-
 """Public section, including homepage and signup."""
 from flask import Blueprint, flash, redirect, render_template, request, url_for
-from flask_login import login_required, login_user, logout_user
-
+from flask_login import login_required, login_user, logout_user, current_user
+from octs.database import db
 from octs.extensions import login_manager
 from octs.auth.forms import LoginForm
 from octs.user.forms import RegisterForm
+from .forms import PasswordForm
 from octs.user.models import User
 from octs.utils import flash_errors
 
@@ -44,6 +45,24 @@ def logout():
     logout_user()
     flash('您已成功登出', 'info')
     return redirect(url_for('public.home'))
+
+@blueprint.route('/password', methods=['GET', 'POST'])
+def change_password():
+    form = PasswordForm()
+    if form.validate_on_submit():
+        old_password = form.old_password.data
+        if current_user.check_password(old_password):
+            new_password = form.new_password.data
+            current_user.set_password(new_password)
+            db.session.add(current_user)
+            db.session.commit()
+            flash('修改成功')
+            return redirect(url_for('public.home'))
+        else:
+            flash('密码错误')
+            return redirect(url_for('auth.change_password'))
+    return render_template('auth/change_password.html', form=form)
+
 
 
 @blueprint.route('/register/', methods=['GET', 'POST'])

@@ -37,7 +37,7 @@
 
     <form action="" method="post" class="form" enctype="multipart/form-data" role="form">
 
-<div class="form-group  has-error required"><label class="control-label" for="file">图片上传</label>
+<div class="form-group  has-error required"><label class="control-label" for="file">文件上传</label>
 
           <input id="file" name="file" required="" type="file" multiple="multiple">
 
@@ -45,7 +45,7 @@
   </div>
 
     <input class="btn btn-default" id="submit" name="submit" type="submit" value="上传">
-
+    <a class="btn btn-primary" href="{{ url_for('teacher.task_edit', courseid=courseid, userid = current_user.id,id = taskid) }}">返回</a>
 </form>
     </div>
 {% endblock %}

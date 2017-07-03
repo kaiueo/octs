@@ -96,8 +96,8 @@ def add(courseid):
         return redirect(url_for('teacher.task', courseid=courseid))
     return render_template('teacher/add.html',form=form, courseid=courseid)
 
-@blueprint.route('/<courseid>/task/edit/<id>',methods = ['GET','POST'])
-def task_edit(courseid, id):
+@blueprint.route('/<courseid>/task/edit/<userid>/<id>',methods = ['GET','POST'])
+def task_edit(courseid, userid,id):
     form = TaskForm()
     task = Task.query.filter_by(id = id).first()
     if form.validate_on_submit():
@@ -329,10 +329,10 @@ def adjust_add(teacherid,userid,teamid):
         session['deleted_stu']=translist
     return redirect(url_for('teacher.team_adjust', teacherid=teacherid, teamid=teamid))
 
-@blueprint.route('/<courseid>/task/<taskid>/files', methods=['GET', 'POST'])
-def task_files(courseid, taskid):
+@blueprint.route('/<courseid>/task/<taskid>/<teacherid>/files', methods=['GET', 'POST'])
+def task_files(courseid, taskid,teacherid):
     form = FileForm()
-    file_records = File.query.filter_by(task_id=taskid).all()
+    file_records = File.query.filter(File.task_id==taskid).filter(File.user_id == teacherid).all()
     if form.validate_on_submit():
         for file in request.files.getlist('file'):
             file_record = File()
@@ -355,7 +355,7 @@ def task_files(courseid, taskid):
 
             db.session.add(file_record)
         db.session.commit()
-        return redirect(url_for('teacher.task_files', courseid=courseid, taskid=taskid))
+        return redirect(url_for('teacher.task_files', courseid=courseid, taskid=taskid,teacherid = teacherid))
     return render_template('teacher/file_manage.html',form=form, file_records=file_records, courseid=courseid, taskid=taskid)
 
 @blueprint.route('/<courseid>/task/<taskid>/files/delete/<fileid>/<userid>', methods=['GET', 'POST'])

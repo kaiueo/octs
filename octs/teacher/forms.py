@@ -30,3 +30,7 @@ class FileForm(Form):
 class TaskScoreForm(Form):
     task_score=FloatField('分数')
     submit = SubmitField('提交')
+
+class RejectReasonForm(Form):
+    content = TextAreaField('内容',validators=[DataRequired('请填写理由')])
+    submit = SubmitField('提交')

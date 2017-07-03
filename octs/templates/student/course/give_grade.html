@@ -7,23 +7,46 @@
     </div>
     <div class="box-body">
 
+
+
     <form method="post" class="form-horizontal" style="align-content: center">
+     <table class="table">
+        <thead>
+        <td>
+            姓名
+        </td>
+        <td>系数</td>
+        <td>表现分</td>
+        </thead>
+
        {% for field in form %}
+           {%- if loop.index is not even %}
            <div class="form-group required">
-           {{ field.label( class="col-sm-2 control-label") }}
-               <div class="col-sm-10">
-               {{ field(class="form-control", style='width: 100px', required="required") }}
-               </div>
+           <tr>
+
+
+           <td>{{ field.label() }}</td>
+
+               <td>{{ field(class="form-control", style='width: 100px', required="required") }}</td>
+
+           {% else %}
+
+               <td> {{ field(class="form-control", style='width: 100px', required="required") }}</td>
+ </tr>
            </div>
+           {% endif %}
 
-{% endfor %}
+
+        {% endfor %}
+
 
             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-        <input style="align-self: center"  id="submit" name="submit" type="submit" value="提交" class="btn btn-primary">
 
+  </table>
+     <input style="align-self: center"  id="submit" name="submit" type="submit" value="提交" class="btn btn-primary">
     </form>
 
 

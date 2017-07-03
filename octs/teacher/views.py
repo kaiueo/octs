@@ -693,7 +693,7 @@ def grade():
         sum = 0
         for task in teamtask:
             weight = Task.query.filter_by(id=task.task_id).first()
-            sum += weight.weight * task.score
+            sum += round(weight.weight * task.score,1)
 
         team_for_score = Team.query.filter_by(id=teams[i].id).first()
         team_for_score.score = sum
@@ -704,7 +704,7 @@ def grade():
         for user in userList:
             print(user.user_id)
             user_for_score = UserScore.query.filter_by(user_id=user.user_id).first()
-            user_for_score.score = sum * user_for_score.grade
+            user_for_score.score = round(sum * user_for_score.grade +user_for_score.personal_grade,1)
             db.session.add(user_for_score)
             db.session.commit()
     flash('计算成功！')

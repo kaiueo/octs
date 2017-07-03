@@ -1,0 +1,53 @@
+{% extends "teacher/index.html" %}
+
+{% block teacherContent %}
+        <div class="box-header">
+    <h3>课程资源管理</h3>
+    </div>
+    <div class="box-body">
+    <a href="{{ url_for('student.course_source', courseid=courseid) }}" class="btn btn-primary active">全部</a>
+    {% for tag in tags %}
+    <a href="{{ url_for('student.course_source_tag', courseid=courseid, tagid=tag.id) }}" class="btn btn-primary">{{ tag.name }}</a>
+    {% endfor %}
+
+
+    {% if file_records|length>0 %}
+        <a style="float: right" href="{{ url_for('student.source_file_download_zip', courseid=courseid) }}" class="btn btn-primary">打包下载</a>
+    {% endif %}
+
+
+    <table class="table">
+        {% if file_records|length>0 %}
+        <thead>
+        <td>资源名</td>
+        <td>标签</td>
+        <td>操作</td>
+        </thead>
+    {% else %}
+    <p>文件列表为空</p>
+    {% endif %}
+        {% for file_record in file_records %}
+        <tr>
+            <td>
+                {{ file_record.name }}
+            </td>
+            <td>
+                {{ tag_names[file_record.tag_id] }}
+            </td>
+        <td>
+            <a class="btn btn-primary" href="{{ url_for('student.course_source_download', courseid=courseid,fileid=file_record.id) }}">下载</a>
+        </td>
+        </tr>
+        {% endfor %}
+    </table>
+
+        <br><br>
+
+
+     <br>
+     <a class="btn btn-primary" href="{{ url_for('student.course') }}">返回</a>
+
+    </div>
+
+
+{% endblock %}

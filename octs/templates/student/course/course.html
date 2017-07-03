@@ -30,12 +30,15 @@
                 <td>{{ course.course_introduction }}</td>
                 <td>{{ course.course_outline }}</td>
                 <td>{{ course.term_id }}</td>
-                <td>    <a width="10%" class="btn btn-primary"  href="{{ url_for('student.tasklist',courseid=course.id) }}">
+                <td>
+                    <a class="btn btn-primary" href="{{ url_for('student.course_source', courseid=course.id) }}">课程资源</a>
+                    <a width="10%" class="btn btn-primary"  href="{{ url_for('student.tasklist',courseid=course.id) }}">
                     查看作业</a>
-                            {% if flag==0 %}
+                    {% if flag==0 %}
                                 <a width="10%" class="btn btn-primary"  href="{{ url_for('student.give_grade') }}">
                     学生评分</a>
                             {% endif %}
+
                 </td>
 
 

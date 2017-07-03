@@ -1,7 +1,7 @@
 from flask import Blueprint, flash, redirect, render_template, request, url_for
 from octs.user.models import Course, User, Permission
 from .forms import CourseForm, TermForm, MemberForm
-from octs.user.models import Term
+from octs.user.models import Term, Tag
 from octs.database import db
 import time
 import datetime
@@ -15,7 +15,7 @@ def term():
     termList = Term.query.order_by(Term.start_time).all()
     termList = list(reversed(termList))
     time_now = datetime.date.fromtimestamp(time.time())
-    return render_template('admin/term.html', list=termList, endtime=termList[0],nowtime=time_now)
+    return render_template('admin/term.html', list=termList,nowtime=time_now)
 @blueprint.route('/term/add',methods=['GET','POST'])
 def term_add():
     form=TermForm()
@@ -51,7 +51,11 @@ def insert():
         course.start_time = form.start_time.data
         term = Term.query.order_by(Term.id.desc()).first()
         course.term = term
+        tag = Tag()
+        tag.name = '默认'
+        course.tags.append(tag)
         db.session.add(course)
+        db.session.add(tag)
         db.session.commit()
         return redirect(url_for('admin.course'))
     return render_template('admin/add.html',form=form)

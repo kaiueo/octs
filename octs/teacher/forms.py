@@ -8,6 +8,7 @@ class CourseForm(Form):
     credit = FloatField('学分')
     location = StringField('地点')
     start_time = DateField('开始时间')
+    end_time = DateField('结束时间')
     course_introduction = TextAreaField('课程介绍')
     course_outline = TextAreaField("课程大纲")
     low_member = FloatField('团队下限')

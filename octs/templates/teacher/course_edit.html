@@ -35,6 +35,15 @@
     </tr>
 
     <tr>
+        <td width="10" class="tableleft">团队下限</td>
+        <td>{{ form.low_member() }}</td>
+    </tr>
+
+    <tr>
+        <td width="10" class="tableleft">团队上限</td>
+        <td>{{ form.high_member() }}</td>
+    </tr>
+    <tr>
         <td class="tableleft"></td>
         <td>
            {{ form.submit(class="btn btn-primary")}}&nbsp;

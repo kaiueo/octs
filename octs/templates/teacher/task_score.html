@@ -33,6 +33,6 @@
     {% endif %}
         <br></br>
  <a href="{{ url_for('teacher.task',courseid=courseid) }}" class="btn btn-primary">返回列表</a>
-    <a class="btn btn-primary" href="{{ url_for('teacher.score_download',taskid=taskid) }}">导出成绩信息</a>
+    <a class="btn btn-primary" href="{{ url_for('teacher.score_download',taskid=taskname.id) }}">导出成绩信息</a>
     </div>
 {% endblock %}

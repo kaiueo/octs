@@ -1,0 +1,54 @@
+{% extends "teacher/index.html" %}
+
+{% block teacherContent %}
+    <br><br>
+    <div class="box-header"><h3><strong>团队成绩：</strong></h3>
+            <a href="{{ url_for('teacher.grade_download') }}" class="btn btn-primary">生成团队成绩报表</a>
+
+    </div>
+    <div class="box-body">
+    <table class="table table-bordered table-hover definewidth m10">
+    <thead>
+    <tr>
+        <th style="width: 33%">团队id</th>
+        <th style="width: 33%">团队名称</th>
+        <th style="width: 33%">成绩</th>
+
+
+    </tr>
+    </thead>
+    {% for team in teamList %}
+        <tr>
+                <td>{{ team.id }}</td>
+                <td>{{ team.name }}</td>
+                <td>{{ team.score }}</td>
+        </tr>
+    {% endfor %}
+       </table>
+    <br><br>
+        <div>
+        <h3><strong>个人成绩：</strong></h3>
+        <a href="{{ url_for('teacher.grade_download_stu') }}" class="btn btn-primary">生成个人成绩报表</a>
+        <table class="table table-bordered table-hover definewidth m10">
+        <thead>
+        <tr>
+            <th style="width: 33%">学生id</th>
+            <th style="width: 33%">学生姓名</th>
+            <th style="width: 33%">成绩</th>
+
+
+        </tr>
+        </thead>
+        {% for i in range(0,stu_num) %}
+            <tr>
+                    <td>{{ stuList[i].user_id }}</td>
+                    <td>{{ username[i] }}</td>
+                    <td>{{ stuList[i].score }}</td>
+            </tr>
+        {% endfor %}
+           </table>
+         <a href="{{ url_for('teacher.course',teacherid=current_user.id) }}" class="btn btn-primary">返回列表</a>
+        </div>
+    </div>
+
+{% endblock %}

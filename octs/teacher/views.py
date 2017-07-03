@@ -31,6 +31,11 @@ def course_edit(teacherid, id):
     if form.validate_on_submit():
         course.course_introduction = form.course_introduction.data
         course.course_outline=form.course_outline.data
+        userlist=User.query.all()
+        for user in userlist:
+            user.team_min=form.low_member.data
+            user.team_max=form.high_member.data
+            db.session.add(user)
         db.session.add(course)
         db.session.commit()
         return redirect(url_for('teacher.course', teacherid=teacherid))
@@ -41,8 +46,10 @@ def course_edit(teacherid, id):
     form.start_time.data=course.start_time
     form.course_introduction.data=course.course_introduction
     form.course_outline.data=course.course_outline
+    user=User.query.filter(User.id==teacherid).first()
 
-
+    form.low_member.data=user.team_min
+    form.high_member.data=user.team_max
 
     return render_template('teacher/course_edit.html',form=form)
 
@@ -161,7 +168,9 @@ def score_download(taskid):
     for team in teams:
         sheet1.write(row_num,0,team.id,style)
         sheet1.write(row_num,1,team.name,style)
-        sheet1.write(row_num,2,team.score,style)
+        score = TaskTeamRelation.query.filter(TaskTeamRelation.team_id==team.id).filter(TaskTeamRelation.task_id==taskid).first()
+        sheet1.write(row_num,2,score.score,style)
+        row_num=row_num+1
     filename = 'score_table_'+ str(time.time()) + '.xls'
     book.save(os.path.join(data_uploader.path('',folder='tmp'),filename))
     return send_from_directory(data_uploader.path('', folder='tmp'), filename, as_attachment=True)
@@ -382,8 +391,8 @@ def task_edit_score(courseid,taskid,teamid):
         db.session.commit()
         flash('已经提交分数！')
         return redirect(url_for('teacher.task_give_score',courseid=courseid,taskid=taskid))
-
-    form.task_score.data=taskscore.score
+    if taskscore.score>=0:
+        form.task_score.data=taskscore.score
     return render_template('teacher/set_score.html',form=form,courseid=courseid,taskid=taskid,teamid=teamid)
 
 @blueprint.route('/<courseid>/task<taskid>/scores')
@@ -548,6 +557,8 @@ def multi_check(courseid):
 
     teams = Team.query.filter_by(course_id = courseid).all()
     return render_template('teacher/multi_check.html',ttrs_all = ttrs_all,courseid = courseid,tasks = tasks,teams = teams)
+
+
 @blueprint.route('/course/calcu_score')
 def calcu_score():
     teams = Team.query.filter_by(status=3).all()
@@ -673,4 +684,38 @@ def task_check_download(courseid):
     book.save(os.path.join(data_uploader.path('', folder='tmp'), filename))
     return send_from_directory(data_uploader.path('', folder='tmp'), filename, as_attachment=True)
 
+
+@blueprint.route('/course/grade')
+def grade():
+    students = UserScore.query.all()
+    stu_num = len(students)
+    username=[]
+    for i in range(0, stu_num):
+        stuname=User.query.filter_by(id=students[i].user_id).first()
+        username.append(stuname.name)
+
+    teams = Team.query.filter_by(status=3).all()
+    team_num = len(teams)
+    for i in range(0, team_num):
+        teamtask = TaskTeamRelation.query.filter_by(team_id=teams[i].id).all()
+        sum = 0
+        for task in teamtask:
+            weight = Task.query.filter_by(id=task.task_id).first()
+            sum += round(weight.weight * task.score,1)
+
+        team_for_score = Team.query.filter_by(id=teams[i].id).first()
+        team_for_score.score = sum
+        db.session.add(team_for_score)
+        db.session.commit()
+
+        userList = TeamUserRelation.query.filter_by(team_id=teams[i].id).all()
+        for user in userList:
+            print(user.user_id)
+            user_for_score = UserScore.query.filter_by(user_id=user.user_id).first()
+            user_for_score.score = round(sum * user_for_score.grade +user_for_score.personal_grade,1)
+            db.session.add(user_for_score)
+            db.session.commit()
+    flash('计算成功！')
+
+    return render_template('teacher/grade.html',teamList=teams,stuList=students,username=username,stu_num=stu_num)
 

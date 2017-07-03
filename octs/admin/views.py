@@ -76,29 +76,38 @@ def insert():
 
 @blueprint.route('/course/edit/<id>',methods=['GET','POST'])
 def edit(id):
-    form = CourseForm()
-
     course = Course.query.filter_by(id = id).first()
+    form = CourseForm()
+    term = Term.query.order_by(Term.id.desc()).first()
+    courseList = Course.query.all()
+    termList = Term.query.order_by(Term.start_time).all()
+    termList = list(reversed(termList))
+    if course.term_id < term.id :
+        flash('该课程为往期课程，不可编辑！')
+        return render_template('admin/course.html', list=courseList)
+    else:
+        if form.validate_on_submit():
+            course.name = form.coursename.data
+            course.credit = form.credit.data
+            course.location = form.location.data
+            course.course_introduction = form.course_introduction.data
+            course.start_time = form.start_time.data
+            course.end_time = form.end_time.data
+            if termList[0].start_time > course.start_time or termList[0].end_time < course.end_time or course.end_time < course.start_time:
+                flash('课程时间错误！')
+                return redirect(url_for('admin.edit',id=id))
+            else:
+                db.session.add(course)
+                db.session.commit()
+                return redirect(url_for('admin.course'))
+        form.coursename.data = course.name
+        form.credit.data = course.credit
+        form.location.data = course.location
+        form.course_introduction.data = course.course_introduction
+        form.start_time.data = course.start_time
+        form.end_time.data = course.end_time
 
-    if form.validate_on_submit():
-        course.name = form.coursename.data
-        course.credit = form.credit.data
-        course.location = form.location.data
-        course.course_introduction = form.course_introduction.data
-        course.start_time = form.start_time.data
-        course.end_time = form.end_time.data
-        db.session.add(course)
-        db.session.commit()
-        return redirect(url_for('admin.course'))
-    form.coursename.data = course.name
-    form.credit.data = course.credit
-    form.location.data = course.location
-    form.course_introduction.data = course.course_introduction
-    form.start_time.data = course.start_time
-    form.end_time.data = course.end_time
-
-
-    return render_template('admin/edit.html',form=form)
+        return render_template('admin/edit.html', form=form)
 
 @blueprint.route('/course/delete/<id>')
 def delete(id):

@@ -1,6 +1,6 @@
 from flask import Blueprint, flash, redirect, render_template, request, url_for,send_from_directory, abort, make_response, send_file, session
 from octs.user.models import Course,Task, User, Message, Team,TeamUserRelation, File,Source,Term,TaskTeamRelation, Tag,UserScore
-from .forms import CourseForm,TaskForm, FileForm,TaskScoreForm
+from .forms import CourseForm,TaskForm, FileForm,TaskScoreForm, RejectReasonForm
 from octs.database import db
 from flask_login import current_user
 from octs.extensions import data_uploader
@@ -179,7 +179,7 @@ def score_download(taskid):
 def team_download():
     teams = Team.query.filter_by(status=3).all()
     book = xlwt.Workbook()
-
+    
     alignment = xlwt.Alignment()  # Create Alignment
     alignment.horz = xlwt.Alignment.HORZ_CENTER  # May be: HORZ_GENERAL, HORZ_LEFT, HORZ_CENTER, HORZ_RIGHT, HORZ_FILLED, HORZ_JUSTIFIED, HORZ_CENTER_ACROSS_SEL, HORZ_DISTRIBUTED
     alignment.vert = xlwt.Alignment.VERT_CENTER  # May be: VERT_TOP, VERT_CENTER, VERT_BOTTOM, VERT_JUSTIFIED, VERT_DISTRIBUTED
@@ -223,6 +223,19 @@ def permit(teacherid,teamid):
     flash('已通过该团队申请！')
     return redirect(url_for('teacher.team'))
 
+@blueprint.route('/team/rejectreason/<teacherid>/<teamid>',methods=['GET','POST'])
+def rejectreason(teacherid,teamid):
+    form = RejectReasonForm()
+    if form.validate_on_submit():
+        reason = form.content.data
+        teamlist = TeamUserRelation.query.filter(TeamUserRelation.team_id == teamid).filter(TeamUserRelation.is_accepted == True).all()
+        for user in teamlist:
+            Message.sendMessage(teacherid,user.user_id,'团队申请已驳回：'+reason)
+
+        return redirect(url_for('teacher.reject',teacherid = teacherid,teamid = teamid))
+    return render_template('teacher/reject_reason.html',teacherid = teacherid,teamid = teamid,form=form)
+
+
 @blueprint.route('/team/reject/<teacherid>/<teamid>')
 def reject(teacherid,teamid):
     team=Team.query.filter(Team.id==teamid).first()
@@ -232,11 +245,12 @@ def reject(teacherid,teamid):
     for stu in teamuser:
         user=User.query.filter(User.id==stu.user_id).first()
         user.in_team=False
-        Message.sendMessage(teacherid,user.id,'提交申请已被驳回')
+        #Message.sendMessage(teacherid,user.id,'提交申请已被驳回')
         db.session.add(user)
         db.session.delete(stu)
     db.session.commit()
     flash('已驳回该团队申请！')
+
     return redirect(url_for('teacher.team'))
 
 @blueprint.route('team/detail/<teamid>')
@@ -245,19 +259,20 @@ def team_detail(teamid):
         User,User.id==TeamUserRelation.user_id).add_columns(User.name,User.gender,User.user_id).all()
     return render_template('teacher/teamdetail.html',list=teamlist)
 
-@blueprint.route('/team/adjustion/<teacherid>')
-def to_adjust(teacherid):
+@blueprint.route('/team/adjustion/adjust',methods=['GET', 'POST'])
+def to_adjust():
     teamlist1=Team.query.join(TeamUserRelation,TeamUserRelation.team_id==Team.id).filter(Team.status==1).filter(
         TeamUserRelation.is_master==True).join(User,User.id==TeamUserRelation.user_id).add_columns(
         Team.name,Team.status,User.username,Team.id).all()
     teamlist2 = Team.query.join(TeamUserRelation,TeamUserRelation.team_id==Team.id).filter(Team.status==3).filter(
         TeamUserRelation.is_master==True).join(User,User.id==TeamUserRelation.user_id).add_columns(
-        Team.name,Team.status,User.username).all()
+        Team.name,Team.status,User.username,Team.id).all()
     teamlist=teamlist1+teamlist2
-    return render_template('teacher/adjust.html',teacher_id=teacherid,list=teamlist)
+    print(teamlist)
+    return render_template('teacher/adjust.html',list=teamlist)
 
-@blueprint.route('/team/adjustion/<teacherid>/adjust/<teamid>',methods=['GET', 'POST'])
-def team_adjust(teacherid,teamid):
+@blueprint.route('/team/adjustion/adjust/<teamid>',methods=['GET', 'POST'])
+def team_adjust(teamid):
     teamlist = Team.query.filter(Team.id == teamid).join(TeamUserRelation, TeamUserRelation.team_id == Team.id).join(
         User, User.id == TeamUserRelation.user_id).add_columns(User.name, User.gender, User.user_id,TeamUserRelation.user_id,Team.id).all()
     otherteam=Team.query.filter(Team.id!=teamid).filter(Team.status==1).all()
@@ -299,7 +314,7 @@ def adjust_trans(teacherid,userid,teamid):
 def adjust_add(teacherid,userid,teamid):
     userlist=TeamUserRelation.query.filter(TeamUserRelation.user_id==userid).first()
     if(int(teamid)==int(userlist.team_id)):
-        flash('该生已在本团队了！')
+        flash('该学生已在本团队了！')
     else:
         userlist.team_id=teamid
         userlist.is_adjust=False
@@ -377,7 +392,7 @@ def task_give_score(courseid,taskid):
         return render_template('teacher/task_score.html',flag=False,courseid=courseid,taskname=task_name)
     else:
         task_team_list=TaskTeamRelation.query.join(Task,Task.id==TaskTeamRelation.task_id).join(Team,Team.id==TaskTeamRelation.team_id
-            ).filter(TaskTeamRelation.task_id==taskid).add_columns(Team.name,TaskTeamRelation.task_id,TaskTeamRelation.team_id,TaskTeamRelation.score,Task.weight).all()
+            ).filter(TaskTeamRelation.task_id==taskid).add_columns(Team.name,TaskTeamRelation.task_id,TaskTeamRelation.team_id,TaskTeamRelation.score,Task.weight,TaskTeamRelation.submit_num).all()
         #print(task_name.name)
         return render_template('teacher/task_score.html', flag=True,list=task_team_list,taskname=task_name,courseid=courseid)
 
@@ -582,7 +597,6 @@ def calcu_score():
             user_for_score.score = sum * user_for_score.grade
             db.session.add(user_for_score)
             db.session.commit()
-    flash('计算成功！')
     return redirect(url_for('teacher.course',teacherid=current_user.id))
 
 
@@ -715,7 +729,6 @@ def grade():
             user_for_score.score = round(sum * user_for_score.grade +user_for_score.personal_grade,1)
             db.session.add(user_for_score)
             db.session.commit()
-    flash('计算成功！')
 
     return render_template('teacher/grade.html',teamList=teams,stuList=students,username=username,stu_num=stu_num)
 

@@ -33,7 +33,9 @@ def term_add():
 @blueprint.route('/course')
 def course():
     courseList = Course.query.all()
-    return render_template('admin/course.html', list=courseList)
+    nowtime = datetime.date.fromtimestamp(time.time())
+    term = Term.query.order_by(Term.id.desc()).first()
+    return render_template('admin/course.html', list=courseList, nowtime=nowtime, term=term)
 
 @blueprint.route('/mainpage')
 def home():
@@ -46,10 +48,11 @@ def insert():
     termList = Term.query.order_by(Term.start_time).all()
     termList = list(reversed(termList))
     nowtime = datetime.date.fromtimestamp(time.time())
+    term = Term.query.order_by(Term.id.desc()).first()
     #flash(''+str(nowtime) + ' ' +str(termList[0].end_time))
     if  termList[0].end_time <= nowtime:
         flash('学期已结束，不可添加课程！')
-        return render_template('admin/course.html', list=courseList)
+        return render_template('admin/course.html', list=courseList,term=term,nowtime=nowtime)
     else :
             if form.validate_on_submit():
                 course = Course(form.coursename.data)
@@ -82,9 +85,10 @@ def edit(id):
     courseList = Course.query.all()
     termList = Term.query.order_by(Term.start_time).all()
     termList = list(reversed(termList))
+    nowtime = datetime.date.fromtimestamp(time.time())
     if course.term_id < term.id :
         flash('该课程为往期课程，不可编辑！')
-        return render_template('admin/course.html', list=courseList)
+        return render_template('admin/course.html', list=courseList, term = term , nowtime = nowtime)
     else:
         if form.validate_on_submit():
             course.name = form.coursename.data

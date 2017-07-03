@@ -1,8 +1,10 @@
 {% extends 'admin/index.html'%}
 {% import "bootstrap/wtf.html" as wtf  %}
 {% block adminContent %}
-
-
+<div class="box-header">
+        <h3><strong>新建学期</strong></h3>
+    </div>
+<div class="box-body">
     <form action="" method="post" class="form" role="form">
 <div class="form-group  required"><label class="control-label" for="termname">名称</label>
           <input class="form-control" id="termname" name="termname" required="" type="text" value="">
@@ -11,12 +13,28 @@
           <input class="form-control" id="week_number" name="week_number" required="" type="text" value="">
   </div>
 <div class="form-group  required"><label class="control-label" for="start_time">开始时间</label>
-          <input class="form-control" id="start_time" name="start_time" required="" type="date" value="">
+
+    <div class="input-group date form_date col-md-5" data-date="" data-date-format="yyyy-mm-dd" data-link-field="dtp_input2" data-link-format="yyyy-mm-dd">
+                    <input class="form-control" size="16" id="start_time" name="start_time" required="" type="text" value="" readonly>
+                    <span class="input-group-addon"><span class="glyphicon glyphicon-remove"></span></span>
+					<span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
+                </div>
+				<input type="hidden" id="dtp_input2" value="" /><br/>
+
   </div>
 <div class="form-group  required"><label class="control-label" for="end_time">结束时间</label>
-          <input class="form-control" id="end_time" name="end_time" required="" type="date" value="">
+
+    <div class="input-group date form_date col-md-5" data-date="" data-date-format="yyyy-mm-dd" data-link-field="dtp_input2" data-link-format="yyyy-mm-dd">
+                    <input class="form-control" size="16" id="end_time" name="end_time" required="" type="text" value="" readonly>
+                    <span class="input-group-addon"><span class="glyphicon glyphicon-remove"></span></span>
+					<span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
+                </div>
+				<input type="hidden" id="dtp_input2" value="" /><br/>
+
   </div>
     <input class="btn btn-default" id="submit" name="submit" type="submit" value="提交">
-</form>
+</form><br>
+<a class="btn btn-primary" href="{{ url_for('admin.term') }}">返回</a>
+</div>
 
 {% endblock %}

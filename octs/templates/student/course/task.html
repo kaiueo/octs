@@ -2,7 +2,7 @@
 
 {% block studentContent %}
 <div class="box-header">
-<h3><strong>作业信息：</strong></h3>
+<h3><strong>作业信息</strong></h3>
 </div>
     <div class="box-body">
    <table class="table table-condensed">
@@ -38,7 +38,7 @@
                href="{{ url_for('student.task_files',taskid=task.id, courseid=task.course_id) }}">附件管理</a>
             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
             <a class="btn btn-primary"
-               href="{{ url_for('student.tasklist',courseid=task.course_id) }}">返回列表</a>
+               href="{{ url_for('student.tasklist',courseid=task.course_id) }}">返回</a>
             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
             {% if flag == 1 %}
             <a class="btn btn-primary"

@@ -5,7 +5,7 @@
                 {% if current_user.is_authenticated %}
 
                     <li><a href="{{ url_for('message.show_unread', id=current_user.id) }}"><span class="glyphicon glyphicon-bell"></span> </a> </li>
-                    <li><a href="#">{{ current_user.name }}</a></li>
+                    <li><a href="{{ url_for('auth.change_password') }}">{{ current_user.name }}</a></li>
                     <li><a href="{{ url_for('auth.logout') }}"><span class="glyphicon glyphicon-user"></span> 登出</a></li>
                 {% else %}
                     <li><a href="{{ url_for('auth.login') }}"><span class="glyphicon glyphicon-user"></span> 登录</a></li>
@@ -13,7 +13,7 @@
 
             </ul>
 
-            <ul class="nav navbar-nav navbar-right" id="nav-links">
+            <ul class="nav navbar-nav navbar-right" id="nav-links" style="margin-right: 50px">
                 <!--<li class="active"><a href="{# {% url 'OnlineTeaching.views.index' %} #}">首页</a></li>-->
                 <li><a href="{{ url_for('public.home') }}">首页</a></li>
                 <!--<li><a href="javascript:void(0)">新闻公告</a></li>
@@ -30,10 +30,7 @@
                         {% endif %}
                     </li>
                 {% endif %}
-                <li>
 
-                        <a>          </a>
-                </li>
 
 
             </ul>

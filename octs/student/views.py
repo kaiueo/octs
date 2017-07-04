@@ -170,6 +170,26 @@ def permit(id,userid):
         flash('已同意该同学的申请！')
     return redirect(url_for('student.my_team',id=id))
 
+@blueprint.route('/team/trans_master/<id>/<userid>')
+def trans_master(id,userid):
+    flag=True
+    if id==userid:
+        flag=False
+        flash('请设置为其他人！')
+        return redirect(url_for('student.my_team', id=id))
+    if flag:
+        user2 = TeamUserRelation.query.filter(TeamUserRelation.user_id==id).first()
+        user2.is_master = False
+        db.session.add(user2)
+        userlist=TeamUserRelation.query.filter(TeamUserRelation.user_id==userid).first()
+        print(userid)
+        userlist.is_master=True
+        db.session.add(userlist)
+        db.session.commit()
+        flash('已经将其设为组长')
+        Message.sendMessage(id, userid, '你已经被原组长设为组长')
+        return redirect(url_for('student.my_team', id=id))
+
 @blueprint.route('/team/reject/<id>/<userid>')
 def reject(id,userid):
     temp = TeamUserRelation.query.filter_by(user_id=userid).first()

@@ -239,8 +239,7 @@ def rejectreason(teacherid,teamid):
 @blueprint.route('/team/reject/<teacherid>/<teamid>')
 def reject(teacherid,teamid):
     team=Team.query.filter(Team.id==teamid).first()
-    team.status=2
-    db.session.add(team)
+    db.session.delete(team)
     teamuser=TeamUserRelation.query.filter(TeamUserRelation.team_id==teamid).all()
     for stu in teamuser:
         user=User.query.filter(User.id==stu.user_id).first()

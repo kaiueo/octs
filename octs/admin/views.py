@@ -1,7 +1,7 @@
 from flask import Blueprint, flash, redirect, render_template, request, url_for
 from octs.user.models import Course, User, Permission
 from .forms import CourseForm, TermForm, MemberForm
-from octs.user.models import Term, Tag
+from octs.user.models import Term, Tag,UserScore
 from octs.database import db
 import time
 import datetime
@@ -185,6 +185,9 @@ def add_member(id):
                 user.gender = gender
                 user.user_id = user_id
             if user not in course.users:
+                userscore = UserScore()
+                userscore.user_id = user.id
+                db.session.add(userscore)
                 course.users.append(user)
             db.session.add(user)
 

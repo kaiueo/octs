@@ -1,7 +1,10 @@
 {% extends 'teacher/index.html'%}
 
 {% block teacherContent %}
-            <td><a class="btn btn-primary" href="{{ url_for('teacher.to_adjust',teacherid=current_user.id) }}">返回</a></td>
+            <div class="box-header">&nbsp;
+                <a class="btn btn-primary" href="{{ url_for('teacher.to_adjust',teacherid=current_user.id) }}">返回</a>
+            </div>
+            <div class="box-body">
             <div class="box-header"><h3><strong>团队成员名单：</strong></h3></div>
             <table class="table table-condensed">
             <thead>
@@ -58,4 +61,5 @@
     {% else %}
     <th>暂无需调整的学生</th>
     {% endif %}
+            </div>
 {% endblock %}

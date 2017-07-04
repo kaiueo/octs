@@ -453,19 +453,25 @@ def source(courseid):
     tags = course.tags
     tag_names = {}
     file_records = File.query.filter_by(course_id=courseid).all()
+    user_names = []
     for file_record in file_records:
         tag = Tag.query.filter_by(id=file_record.tag_id).first()
+        user = User.query.filter_by(id=file_record.user_id).first()
+        user_names.append(user.name)
         tag_names[file_record.tag_id] = tag.name
-    return render_template('teacher/source.html', form=form, file_records=file_records, courseid=courseid, tags=tags, tag_names=tag_names)
+    return render_template('teacher/source.html', form=form, file_records=file_records,
+                           courseid=courseid, tags=tags, tag_names=tag_names,user_names=user_names, file_num=len(file_records))
 
 @blueprint.route('/source/<courseid>/tag/<tagid>',methods=['GET','POST'])
 def source_tag(courseid, tagid):
     form = FileForm()
     course = Course.query.filter_by(id=courseid).first()
     tags = course.tags
-
+    user_names = []
     file_records = File.query.filter_by(tag_id=tagid).all()
-
+    for file_record in file_records:
+        user = User.query.filter_by(id=file_record.user_id).first()
+        user_names.append(user.name)
     if form.validate_on_submit():
         for file in request.files.getlist('file'):
             file_record = File()
@@ -490,7 +496,8 @@ def source_tag(courseid, tagid):
             db.session.add(file_record)
         db.session.commit()
         return redirect(url_for('teacher.source_tag', courseid=courseid, tagid=tagid))
-    return render_template('teacher/source_tag.html', form=form, file_records=file_records, courseid=courseid, tags=tags, tagid=tagid)
+    return render_template('teacher/source_tag.html', form=form, file_records=file_records,
+                           courseid=courseid, tags=tags, tagid=tagid,user_names=user_names,file_num=len(file_records))
 
 @blueprint.route('/source/<courseid>/tag/add/<tagname>',methods=['GET','POST'])
 def tag_add(courseid, tagname):

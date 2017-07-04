@@ -16,6 +16,7 @@
         <thead>
         <td>队名</td>
         <td>文件名</td>
+        <td>上传者</td>
         <td>操作</td>
         </thead>
     {% else %}
@@ -31,7 +32,10 @@
                     <td>
                         {{ item.name }}
                     </td>
+                    <td>
+                        {{ file_record[2] }}
 
+                    </td>
 
                     <td>
                         <a class="btn btn-primary" href="{{ url_for('teacher.task_file_download', courseid=courseid, taskid=taskid, fileid=item.id) }}">下载</a>

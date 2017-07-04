@@ -3,7 +3,7 @@
 
 {% block teacherContent %}
     <div class="box-header">
-        <h3><strong>作业文件管理</strong></h3>
+        <h3><strong>附件管理</strong></h3>
     </div>
     <div class="box-body">
 
@@ -15,19 +15,15 @@
         {% if file_records|length>0 %}
         <thead>
         <td>文件名</td>
-        <td>上传人</td>
         <td>操作</td>
         </thead>
     {% else %}
     <p>文件列表为空</p>
     {% endif %}
-        {% for i in range(0,filenum) %}
+        {% for file_record in file_records %}
         <tr>
             <td>
-                {{ file_records[i].name }}
-            </td>
-            <td>
-                {{ usernames[i] }}
+                {{ file_record.real_name }}
             </td>
             <td>
                 <a class="btn btn-primary" href="{{ url_for('teacher.task_file_download', courseid=courseid, taskid=taskid, fileid=file_records.id) }}">下载</a>

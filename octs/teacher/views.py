@@ -239,7 +239,6 @@ def rejectreason(teacherid,teamid):
 @blueprint.route('/team/reject/<teacherid>/<teamid>')
 def reject(teacherid,teamid):
     team=Team.query.filter(Team.id==teamid).first()
-    db.session.delete(team)
     teamuser=TeamUserRelation.query.filter(TeamUserRelation.team_id==teamid).all()
     for stu in teamuser:
         user=User.query.filter(User.id==stu.user_id).first()
@@ -247,6 +246,7 @@ def reject(teacherid,teamid):
         #Message.sendMessage(teacherid,user.id,'提交申请已被驳回')
         db.session.add(user)
         db.session.delete(stu)
+    db.session.delete(team)
     db.session.commit()
     flash('已驳回该团队申请！')
 

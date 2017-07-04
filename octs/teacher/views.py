@@ -407,6 +407,8 @@ def task_edit_score(courseid,taskid,teamid,teacherid):
     form = TaskScoreForm()
     if form.validate_on_submit():
         taskscore.score=form.task_score.data
+        if int(form.task_score.data)>=100 or int(form.task_score.data)<0:
+            flash('分数必须在0-100之间')
         userlist=TeamUserRelation.query.filter(TeamUserRelation.team_id==teamid).all()
         for user in userlist:
             Message.sendMessage(teacherid,user.user_id,'批改意见：'+form.content.data)
@@ -666,8 +668,9 @@ def grade_download_stu():
     stu_num = len(students)
     for i in range(0,stu_num):
         username = User.query.filter_by(id=students[i].user_id).first()
+        stuid = User.query.filter_by(id=students[i].user_id).first()
         print(username)
-        sheet1.write(i+1,0,students[i].id)
+        sheet1.write(i+1,0,stuid.user_id)
         sheet1.write(i+1,1,username.name)
         sheet1.write(i+1,2,students[i].score)
     filename = 'student_grade_table_' + str(time.time()) + '.xls'
@@ -724,9 +727,11 @@ def grade():
     students = UserScore.query.all()
     stu_num = len(students)
     username=[]
+    stuid=[]
     for i in range(0, stu_num):
         stuname=User.query.filter_by(id=students[i].user_id).first()
         username.append(stuname.name)
+        stuid.append(stuname.user_id)
 
     teams = Team.query.filter_by(status=3).all()
     team_num = len(teams)
@@ -750,5 +755,6 @@ def grade():
             db.session.add(user_for_score)
             db.session.commit()
 
-    return render_template('teacher/grade.html',teamList=teams,stuList=students,username=username,stu_num=stu_num)
+    return render_template('teacher/grade.html',teamList=teams,
+                           stuList=students,username=username,stu_num=stu_num,stuid=stuid)
 

@@ -4,18 +4,17 @@
 
     <div class="box-header"><h3><strong>课程信息</strong></h3></div>
     <div class="box-body">
-    <table class="table table-bordered table-hover definewidth m10">
+    <table class="table table-bordered table-hover definewidth m10" style="table-layout:fixed">
     <thead>
     <tr>
-        <th>课程名称</th>
-        <th>学分</th>
-        <th>开始时间</th>
-        <th>上课地点</th>
-
-        <th>课程介绍</th>
-        <th>课程大纲</th>
-        <th>所属学期</th>
-        <th>操作</th>
+       <th style="width: 7%">课程名称</th>
+        <th style="width: 3%">学分</th>
+        <th style="width: 8%">开始时间</th>
+        <th style="width: 5%">上课地点</th>
+        <th style="width: 8%">课程介绍</th>
+        <th style="width: 8%;word-wrap:break-word">课程大纲</th>
+        <th style="width: 5%">所属学期</th>
+        <th style="width: 25%">管理</th>
 
 
     </tr>
@@ -26,8 +25,8 @@
                 <td>{{ course.credit }}</td>
                 <td>{{ course.start_time }}</td>
                 <td>{{ course.location }}</td>
-                <td>{{ course.course_introduction }}</td>
-                <td>{{ course.course_outline }}</td>
+                <td style="overflow: hidden">{{ course.course_introduction }}</td>
+                <td style="overflow: hidden">{{ course.course_outline }}</td>
                 <td>{{ course.term_id }}</td>
                 <td>
                     <a class="btn btn-primary" href="{{ url_for('student.course_source', courseid=course.id) }}">课程资源</a>

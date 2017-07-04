@@ -4,7 +4,7 @@
     <div class="box-header"><h3><strong>{{ taskname.name }}作业批改</strong></h3></div>
     <div class="box-body">
     {% if flag %}
-        <a class="btn btn-primary" href="{{ url_for('teacher.score_download',taskid=taskname.id) }}">导出成绩信息</a>
+        <a class="btn btn-primary" href="{{ url_for('teacher.score_download',taskid=taskname.id) }}">导出成绩信息</a><br/><br/>
     <table class="table table-bordered table-hover definewidth m10">
     <thead>
     <tr>

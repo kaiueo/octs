@@ -14,10 +14,10 @@
         <a href="{{ url_for('teacher.source_tag', courseid=courseid, tagid=tag.id) }}" class="btn btn-primary">{{ tag.name }}</a>
         {% endif %}
     {% endfor %}
-    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#newTag">
-  创建新分类
-</button>
+    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#newTag"> 创建新分类 </button>
+    {% if file_records|length>0 %}
      <a style="float: right" href="{{ url_for('teacher.source_file_download_zip', courseid=courseid) }}" class="btn btn-primary">打包下载</a>
+    {% endif %}
 </div>
 
 
@@ -50,7 +50,7 @@
 
     <form action="" method="post" class="form" enctype="multipart/form-data" role="form">
 
-<div class="form-group  has-error required"><label class="control-label" for="file">作业上传</label>
+<div class="form-group  has-error required"><label class="control-label" for="file">资源上传</label>
 
           <input id="file" name="file" required="" type="file" multiple="multiple">
 
@@ -68,7 +68,7 @@
 
 
     <div id="newTag" class="modal fade" tabindex="-1" role="dialog">
-  <div class="modal-dialog" role="document">
+  <div class="modal-dialog" role="document" style="left: auto">
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>

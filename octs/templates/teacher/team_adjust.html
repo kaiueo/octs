@@ -1,8 +1,9 @@
 {% extends 'teacher/index.html'%}
 
 {% block teacherContent %}
-            <td><a class="btn btn-primary" href="{{ url_for('teacher.to_adjust',teacherid=current_user.id) }}">返回</a></td>
-            <div class="box-header"><h3><strong>团队成员名单：</strong></h3></div>
+
+            <div class="box-header"><h3><strong>团队成员名单</strong></h3></div>
+    <div class="box-body">
             <table class="table table-condensed">
             <thead>
             <tr>
@@ -10,7 +11,6 @@
                 <th>性别</th>
                 <th>学号</th>
                 <th>操作</th>
-        &nbsp;      &nbsp
              </tr>
             </thead>
             {% set tmp=list[0].id %}
@@ -29,7 +29,7 @@
 
             {% endfor %}
             </table>
-    <h3><strong>待调整成员名单：</strong></h3>
+    <h3><strong>待调整成员名单</strong></h3>
     {% if translist|length>0 %}
             <table class="table table-condensed">
             <thead>
@@ -56,6 +56,8 @@
             {% endfor %}
             </table>
     {% else %}
-    <th>暂无需调整的学生</th>
+    <th>暂无需调整的学生</th><br/><br/>
     {% endif %}
+    <a class="btn btn-primary" href="{{ url_for('teacher.to_adjust') }}">返回</a>
+    </div>
 {% endblock %}

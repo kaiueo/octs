@@ -257,7 +257,7 @@ class TaskTeamRelation(Model):
     task_id = Column(db.Integer, db.ForeignKey('tasks.id'), primary_key=True)
     team_id = Column(db.Integer, db.ForeignKey('teams.id'), primary_key=True)
     submit_num = Column(db.Integer, nullable=False, default=0)
-    score = Column(db.Integer, nullable=False, default=-1)
+    score = Column(db.Integer, nullable=False, default=0)
     task = relationship('Task', backref='teams')
     team = relationship('Team', backref='tasks')
 

@@ -357,12 +357,12 @@ def source(courseid, taskid):
                 db.session.add(file_record)
                 db.session.commit()
 
-                taskteamrelation = TaskTeamRelation.query.filter(TaskTeamRelation.task_id==taskid).filter(TaskTeamRelation.team_id==teamid).first()
-                # taskteamrelation.team_id = teamid
-                # taskteamrelation.task_id = taskid
-                taskteamrelation.submit_num = ttr.submit_num + 1
-                db.session.add(taskteamrelation)
-                db.session.commit()
+            taskteamrelation = TaskTeamRelation.query.filter(TaskTeamRelation.task_id==taskid).filter(TaskTeamRelation.team_id==teamid).first()
+            # taskteamrelation.team_id = teamid
+            # taskteamrelation.task_id = taskid
+            taskteamrelation.submit_num = ttr.submit_num + 1
+            db.session.add(taskteamrelation)
+            db.session.commit()
 
             return redirect(url_for('student.source', courseid=courseid, taskid=taskid))
         return render_template('student/course/task_file_manage.html', form=form, file_records=file_records, courseid=courseid,

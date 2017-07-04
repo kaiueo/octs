@@ -15,7 +15,7 @@ def show_all(id):
         user = User.query.filter_by(id=from_id).first()
         usernames.append(user.name)
     length = len(messages)
-    messages = reversed(messages)
+    messages = list(reversed(messages))
     return render_template('message/list.html', length=length, messages=messages, names=usernames, listtype='全部消息')
 
 @blueprint.route('/unread/<id>')
@@ -28,7 +28,7 @@ def show_unread(id):
         user = User.query.filter_by(id=from_id).first()
         usernames.append(user.name)
     length = len(messages)
-    messages = reversed(messages)
+    messages = list(reversed(messages))
     return render_template('message/list.html', length=length, messages=messages, names=usernames, listtype='未读消息')
 
 @blueprint.route('/detail/<id>')

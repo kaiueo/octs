@@ -1,7 +1,7 @@
 from flask import Blueprint, flash, redirect, render_template, request, url_for
 from octs.user.models import Course, User, Permission
 from .forms import CourseForm, TermForm, MemberForm
-from octs.user.models import Term, Tag
+from octs.user.models import Term, Tag ,File ,TaskTeamRelation, TeamUserRelation, User
 from octs.database import db
 import time
 import datetime
@@ -116,8 +116,33 @@ def edit(id):
 @blueprint.route('/course/delete/<id>')
 def delete(id):
     course = Course.query.filter_by(id = id).first()
+    tags = course.tags
+    teams = course.teams
+    users = course.users
+    for user in users:
+        course.users.remove(user)
+    for tag in tags:
+        db.session.delete(tag)
+    tasks = course.tasks
+    for task in tasks:
+        file_records = File.query.filter_by(task_id=task.id).all()
+        for file_record in file_records:
+            os.remove(file_record.path)
+            db.session.delete(file_record)
+        ttrs = TaskTeamRelation.query.filter_by(task_id=task.id).all()
+        for ttr in ttrs:
+            db.session.delete(ttr)
+        db.session.delete(task)
+
+    for team in teams:
+        turs = TeamUserRelation.query.filter_by(team_id=team.id).all()
+        for tur in turs:
+            tur.user.in_team = False
+            db.session.delete(tur)
+        db.session.delete(team)
     db.session.delete(course)
     db.session.commit()
+    flash('删除成功')
     return redirect(url_for('admin.course'))
 
 @blueprint.route('/course/member/<id>')

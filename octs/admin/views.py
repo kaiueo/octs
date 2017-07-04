@@ -27,7 +27,7 @@ def term_add():
         term.end_time=form.end_time.data
         db.session.add(term)
         db.session.commit()
-        return redirect(url_for('admin.home'))
+        return redirect(url_for('admin.term'))
     return render_template('admin/term/add.html',form=form)
 
 @blueprint.route('/course')

@@ -3,13 +3,9 @@
 
 {% block studentContent %}
     <div class="box-header">
-    <h3>队员评分</h3>
+    <h3><strong>队员评分</strong></h3>
     </div>
     <div class="box-body">
-
-
-
-    <form method="post" class="form-horizontal" style="align-content: center">
      <table class="table">
         <thead>
         <td>
@@ -23,8 +19,6 @@
            {%- if loop.index is not even %}
            <div class="form-group required">
            <tr>
-
-
            <td>{{ field.label() }}</td>
 
                <td>{{ field(class="form-control", style='width: 100px', required="required") }}</td>
@@ -40,14 +34,8 @@
         {% endfor %}
 
 
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-
   </table>
      <input style="align-self: center"  id="submit" name="submit" type="submit" value="提交" class="btn btn-primary">
-    </form>
 
 
     </div>

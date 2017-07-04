@@ -1,7 +1,7 @@
 {% extends 'teacher/index.html'%}
 
 {% block teacherContent %}
-            <div class="box-header"><h3><strong>团队名单</strong></h3></div>
+            <div class="box-header"><h3><strong>团队调整</strong></h3></div>
              <div class="box-body">
                <table class="table table-condensed">
                    <tr>
@@ -41,5 +41,6 @@
                    </tr>
        {% endfor %}
                </table>
+             <a class="btn btn-primary" href="{{ url_for('teacher.team') }}">返回</a>
                 </div>
 {% endblock %}

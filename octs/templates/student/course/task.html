@@ -30,23 +30,18 @@
 	              <td height="28" align="center">可提交次数：</td>
 	              <td width="82%" class="word_grey">{{ task.submit_num }}</td>
 	            </tr>
-   </table>
-    <br><br>
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
-        <th>
-            <a class="btn btn-primary"
-               href="{{ url_for('student.task_files',taskid=task.id, courseid=task.course_id) }}">附件管理</a>
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
-            <a class="btn btn-primary"
-               href="{{ url_for('student.tasklist',courseid=task.course_id) }}">返回</a>
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
-            {% if flag == 1 %}
+       <tr><td></td><td><a class="btn btn-primary"
+               href="{{ url_for('student.task_files',taskid=task.id, courseid=task.course_id) }}">附件管理</a>&nbsp;
+        {% if flag == 1 %}
             <a class="btn btn-primary"
                href="{{ url_for('student.source',courseid=task.course_id,taskid=task.id) }}">提交情况</a>
+           {% endif %}
+       </td></tr>
+   </table>
 
-            {% endif %}
-            <br>
-        </th>
+
+    <a class="btn btn-primary"
+               href="{{ url_for('student.tasklist',courseid=task.course_id) }}">返回</a>
     </div>
 {#    <div class="form-group">#}
 {#            <br><br>#}

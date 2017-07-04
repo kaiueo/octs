@@ -23,7 +23,7 @@
         {% for file_record in file_records %}
         <tr>
             <td>
-                {{ file_record.real_name }}
+                {{ file_record.name }}
             </td>
             <td>
                 <a class="btn btn-primary" href="{{ url_for('teacher.task_file_download', courseid=courseid, taskid=taskid, fileid=file_records.id) }}">下载</a>

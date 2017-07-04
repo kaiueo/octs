@@ -459,17 +459,28 @@ def course_source(courseid):
     tags = course.tags
     tag_names = {}
     file_records = File.query.filter_by(course_id=courseid).all()
+    user_names = []
+
     for file_record in file_records:
+        user = User.query.filter_by(id=file_record.user_id).first()
+        user_names.append(user.name)
         tag = Tag.query.filter_by(id=file_record.tag_id).first()
         tag_names[file_record.tag_id] = tag.name
-    return render_template('student/source.html', file_records=file_records, courseid=courseid, tags=tags, tag_names=tag_names)
+    return render_template('student/source.html', file_records=file_records, courseid=courseid, tags=tags, tag_names=tag_names,
+                           user_names=user_names,file_num=len(file_records))
 
 @blueprint.route('/source/<courseid>/tag/<tagid>')
 def course_source_tag(courseid, tagid):
     course = Course.query.filter_by(id=courseid).first()
     tags = course.tags
     file_records = File.query.filter_by(tag_id=tagid).all()
-    return render_template('student/source_tag.html', file_records=file_records, courseid=courseid, tags=tags, tagid=tagid)
+    user_names = []
+
+    for file_record in file_records:
+        user = User.query.filter_by(id=file_record.user_id).first()
+        user_names.append(user.name)
+    return render_template('student/source_tag.html', file_records=file_records, courseid=courseid, tags=tags, tagid=tagid,
+                           user_names=user_names, file_num=len(file_records))
 
 @blueprint.route('/source/<courseid>/files/download')
 def source_file_download_zip(courseid):

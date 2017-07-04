@@ -7,16 +7,16 @@
     <div class="box-body"><table class="table table-bordered table-hover definewidth m10" style="width: 100%;table-layout:fixed">
     <thead>
     <tr>
-        <th style="width: 7%">课程名称</th>
-        <th style="width: 3%">学分</th>
-        <th style="width: 8%">开始时间</th>
-        <th style="width: 8%">结束时间</th>
-        <th style="width: 5%">上课地点</th>
-        <th style="width: 8%">课程介绍</th>
-        <th style="width: 8%;word-wrap:break-word">课程大纲</th>
-        <th style="width: 5%">所属学期</th>
-        <th style="width: 5%">学生列表</th>
-        <th style="width: 25%">管理</th>
+        <th>课程名称</th>
+        <th>学分</th>
+        <th>开始时间</th>
+        <th>结束时间</th>
+        <th>上课地点</th>
+        <th>课程介绍</th>
+        <th>课程大纲</th>
+        <th>所属学期</th>
+        <th>学生列表</th>
+        <th>管理</th>
 
 
     </tr>
@@ -25,14 +25,14 @@
         <tr >
         {% if course.term_id == term.id %}
                 <td >{{ course.name }}</td>
-                <td style="width: 5%">{{ course.credit }}</td>
-                <td style="width: 5%">{{ course.start_time }}</td>
-                <td style="width: 5%">{{ course.end_time }}</td>
-                <td style="width: 5%">{{ course.location }}</td>
-                <td style="width: 100px;overflow: hidden">{{ course.course_introduction }}</td>
-                <td style="width: 100px;overflow: hidden">{{ course.course_outline }}</td>
-                <td style="width: 5%">{{ course.term.name }}</td>
-                <td style="width: 5%"> <a href="{{ url_for('teacher.student',id=course.id) }}" class="btn btn-primary">查看</a></td>
+                <td>{{ course.credit }}</td>
+                <td>{{ course.start_time }}</td>
+                <td>{{ course.end_time }}</td>
+                <td>{{ course.location }}</td>
+                <td>{{ course.course_introduction }}</td>
+                <td>{{ course.course_outline }}</td>
+                <td>{{ course.term.name }}</td>
+                <td> <a href="{{ url_for('teacher.student',id=course.id) }}" class="btn btn-primary">查看</a></td>
                 <td> <a href="{{ url_for('teacher.course_edit',teacherid=current_user.id,id=course.id) }}" class="btn btn-primary">编辑课程</a>&nbsp;
                                 <a href="{{ url_for('teacher.task',courseid=course.id) }}" class="btn btn-primary">作业管理</a>&nbsp;
                                 <a href="{{ url_for('teacher.source',courseid=course.id) }}" class="btn btn-primary">资源管理</a>&nbsp;
@@ -51,16 +51,16 @@
     <table class="table table-bordered table-hover definewidth m10">
     <thead>
     <tr>
-        <th style="width: 7%">课程名称</th>
-        <th style="width: 4%">学分</th>
-        <th style="width: 8%">开始时间</th>
-        <th style="width: 8%">结束时间</th>
-        <th style="width: 5%">上课地点</th>
-        <th style="width: 8%;height: 50px;word-wrap:break-word">课程介绍</th>
-        <th style="width: 8%;height: 50px;word-wrap:break-word">课程大纲</th>
-        <th style="width: 5%">所属学期</th>
-        <th style="width: 5%">学生列表</th>
-        <th style="width: 25%">管理</th>
+        <th>课程名称</th>
+        <th>学分</th>
+        <th>开始时间</th>
+        <th>结束时间</th>
+        <th>上课地点</th>
+        <th>课程介绍</th>
+        <th>课程大纲</th>
+        <th>所属学期</th>
+        <th>学生列表</th>
+        <th>管理</th>
 
 
     </tr>

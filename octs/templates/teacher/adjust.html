@@ -1,45 +1,46 @@
 {% extends 'teacher/index.html'%}
 
 {% block teacherContent %}
-            <div class="box-header"><h3><strong>团队名单</strong></h3></div>
+            <div class="box-header"><h3><strong>团队调整</strong></h3></div>
              <div class="box-body">
                <table class="table table-condensed">
                    <tr>
-                       <td>
+                       <td width="25%" height="30" align="center">
                            团队名称
                        </td >
-                       <td>
+                       <td width="25%" height="30" align="center">
                            团队组长
                        </td>
-                       <td>
+                       <td width="25%" height="30" align="center">
                            团队状态
                        </td>
-                       <td>
+                       <td width="25%" height="30" align="center">
                            操作
                        </td>
                    </tr>
                    {% for l in list %}
                    <tr>
-                       <td  class="word_grey" ><a href="{{ url_for('teacher.team_detail',teamid=l.id) }}">{{ l.name }}</a></td>
-                         <td  class="word_grey" >{{ l.username }}</td>
+                       <td width="25%" class="word_grey" align="center"><a href="{{ url_for('teacher.team_detail',teamid=l.id) }}">{{ l.name }}</a></td>
+                         <td width="25%" class="word_grey" align="center">{{ l.username }}</td>
                        {% if l.status==0 %}
-                         <td  class="word_grey" >组建中</td>
-                            <td><a  class="btn btn-primary" disabled="disabled" style="background-color: #1a2226">无法调整</a></td>
+                         <td width="30%" class="word_grey" align="center">组建中</td>
+                            <td align="center"><a  class="btn btn-primary" disabled="disabled" style="background-color: #1a2226">无法调整</a></td>
                        {% elif l.status==1 %}
-                         <td  class="word_grey" >待审核</td>
-                           <td>
+                         <td width="25%" class="word_grey" align="center">待审核</td>
+                           <td align="center">
                                <a  class="btn btn-primary"  href="{{ url_for('teacher.team_adjust',teamid=l.id) }}">调整</a></td>
 
                        {% elif l.status==2 %}
-                             <td class="word_grey" >被驳回</td>
-                           <td><a  class="btn btn-primary" disabled="disabled" style="background-color: #1a2226">无法调整</a></td>
+                             <td width="25%" class="word_grey" align="center">被驳回</td>
+                           <td align="center"><a  class="btn btn-primary" disabled="disabled" style="background-color: #1a2226">无法调整</a></td>
                        {% elif l.status==3 %}
-                             <td class="word_grey" >已完成</td>
-                           <td>
+                             <td width="25%" class="word_grey" align="center">已完成</td>
+                           <td align="center">
                                <a  class="btn btn-primary"   href="{{ url_for('teacher.team_adjust',teamid=l.id) }}">调整</a></td>
                        {% endif %}
                    </tr>
        {% endfor %}
                </table>
+             <a class="btn btn-primary" href="{{ url_for('teacher.team') }}">返回</a>
                 </div>
 {% endblock %}

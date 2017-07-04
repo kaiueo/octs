@@ -4,13 +4,14 @@
     <div class="box-header"><h3><strong>{{ taskname.name }}作业批改</strong></h3></div>
     <div class="box-body">
     {% if flag %}
-        <a class="btn btn-primary" href="{{ url_for('teacher.score_download',taskid=taskname.id) }}">导出成绩信息</a>
+        <a class="btn btn-primary" href="{{ url_for('teacher.score_download',taskid=taskname.id) }}">导出成绩信息</a><br/><br/>
     <table class="table table-bordered table-hover definewidth m10">
     <thead>
     <tr>
         <th>小组名称</th>
         <th>作业分数</th>
         <th>所占权重</th>
+        <th>提交情况</th>
         <th>编辑</th>
     </tr>
     </thead>
@@ -24,10 +25,12 @@
             {% endif %}
             <td>{{ task.weight }}</td>
             {% if task.submit_num != 0 %}
-                <td><a class="btn btn-primary" href="{{ url_for('teacher.task_edit_score',courseid=courseid,taskid=taskname.id,teamid=task.team_id,teacherid=current_user.id) }}">设置分数</a></td>
+                <td>已提交</td>
             {% else %}
                 <td>未提交</td>
             {% endif %}
+            <td><a class="btn btn-primary" href="{{ url_for('teacher.task_edit_score',courseid=courseid,taskid=taskname.id,teamid=task.team_id,teacherid=current_user.id) }}">设置分数</a></td>
+            
         </tr>
     {% endfor %}
 

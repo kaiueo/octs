@@ -1,6 +1,6 @@
-{% extends "teacher/index.html" %}
+{% extends "student/index.html" %}
 
-{% block teacherContent %}
+{% block studentContent %}
         <div class="box-header">
     <h3><strong>课程资源管理</strong></h3>
     </div>
@@ -14,8 +14,9 @@
         <a href="{{ url_for('student.course_source_tag', courseid=courseid, tagid=tag.id) }}" class="btn btn-primary">{{ tag.name }}</a>
         {% endif %}
     {% endfor %}
-
+{% if file_records|length>0 %}
      <a style="float: right" href="{{ url_for('teacher.source_file_download_zip', courseid=courseid) }}" class="btn btn-primary">打包下载</a>
+    {% endif %}
 </div>
 
 

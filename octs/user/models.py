@@ -149,8 +149,8 @@ class Course(SurrogatePK, Model):
     start_time = Column(db.Date, nullable=False, default=dt.date.today)
     end_time = Column(db.Date, nullable=False, default=dt.date.today)
     location = Column(db.String(256))
-    course_introduction = Column(db.String())
-    course_outline = Column(db.String())
+    course_introduction = Column(db.String(2048))
+    course_outline = Column(db.String(2048))
     term_id = reference_col('terms')
     teams = relationship('Team', backref='course', lazy='dynamic')
     tasks = relationship('Task', backref='course', lazy='dynamic')
@@ -202,7 +202,7 @@ class Team(SurrogatePK, Model):
 class Task(SurrogatePK, Model):
     __tablename__ = 'tasks'
     name = Column(db.String(1000))
-    content = Column(db.String())
+    content = Column(db.String(2048))
     start_time = Column(db.DateTime, nullable=False, default=dt.datetime.utcnow)
     end_time = Column(db.DateTime, nullable=False, default=dt.datetime.utcnow)
     teacher = Column(db.String(1000), nullable=False, default='x老师')
@@ -220,8 +220,8 @@ class Source(SurrogatePK,Model):
 class Message(SurrogatePK, Model):
     from_id = Column(db.Integer, nullable=False)
     to_id = Column(db.Integer, nullable=False)
-    title = Column(db.String(), default='通知')
-    message = Column(db.String())
+    title = Column(db.String(100), default='通知')
+    message = Column(db.String(2048))
     has_read = Column(db.Boolean, nullable=False, default=False)
     create_time = Column(db.DateTime, nullable=False, default=dt.datetime.utcnow)
 
@@ -242,10 +242,10 @@ class Message(SurrogatePK, Model):
 
 class File(SurrogatePK, Model):
     __tablename__ = 'files'
-    name = Column(db.String(), nullable=False)
-    path = Column(db.String(), nullable=False)
-    directory = Column(db.String(), nullable=False)
-    real_name = Column(db.String(), nullable=False)
+    name = Column(db.String(2048), nullable=False)
+    path = Column(db.String(2048), nullable=False)
+    directory = Column(db.String(2048), nullable=False)
+    real_name = Column(db.String(2048), nullable=False)
     user_id = reference_col('users', nullable=False)
     task_id = Column(db.Integer())
     tag_id = Column(db.Integer())
@@ -270,7 +270,7 @@ class UserScore(SurrogatePK, Model):
 
 class Tag(SurrogatePK, Model):
     __tablename__ = 'tags'
-    name = Column(db.String(), nullable=False)
+    name = Column(db.String(1000), nullable=False)
     course_id = reference_col('courses', nullable=False)
 
 

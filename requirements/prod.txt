@@ -42,3 +42,5 @@ Flask-DebugToolbar==0.10.1
 Flask-BootStrap==3.3.7.1
 Flask-Moment==0.5.1
 xlrd==1.0.0
+xlwt==1.2.0
+Flask-Uploads==0.2.1

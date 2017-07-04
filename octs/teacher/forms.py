@@ -28,7 +28,8 @@ class FileForm(Form):
     submit = SubmitField('上传')
 
 class TaskScoreForm(Form):
-    task_score=FloatField('分数')
+    task_score=FloatField('分数',validators=[NumberRange(1,100)])
+    content=StringField('批改意见')
     submit = SubmitField('提交')
 
 class RejectReasonForm(Form):

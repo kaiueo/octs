@@ -410,18 +410,22 @@ def task_give_score(courseid,taskid):
         #print(task_name.name)
         return render_template('teacher/task_score.html', flag=True,list=task_team_list,taskname=task_name,courseid=courseid)
 
-@blueprint.route('/<courseid>/task/<taskid>/givescore/<teamid>',methods=['GET', 'POST'])
-def task_edit_score(courseid,taskid,teamid):
+@blueprint.route('/<courseid>/task/<taskid>/scores/score/<teamid>/<teacherid>',methods=['GET', 'POST'])
+def task_edit_score(courseid,taskid,teamid,teacherid):
     taskscore=TaskTeamRelation.query.filter(TaskTeamRelation.task_id==taskid).filter(TaskTeamRelation.team_id==teamid).first()
     form = TaskScoreForm()
     if form.validate_on_submit():
         taskscore.score=form.task_score.data
+        userlist=TeamUserRelation.query.filter(TeamUserRelation.team_id==teamid).all()
+        for user in userlist:
+            Message.sendMessage(teacherid,user.user_id,'批改意见：'+form.content.data)
         db.session.add(taskscore)
         db.session.commit()
         flash('已经提交分数！')
         return redirect(url_for('teacher.task_give_score',courseid=courseid,taskid=taskid))
     if taskscore.score>=0:
         form.task_score.data=taskscore.score
+        form.content.data=''
     return render_template('teacher/set_score.html',form=form,courseid=courseid,taskid=taskid,teamid=teamid)
 
 @blueprint.route('/<courseid>/task<taskid>/scores')

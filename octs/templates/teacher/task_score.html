@@ -24,7 +24,7 @@
             {% endif %}
             <td>{{ task.weight }}</td>
             {% if task.submit_num != 0 %}
-                <td><a class="btn btn-primary" href="{{ url_for('teacher.task_edit_score',courseid=courseid,taskid=taskname.id,teamid=task.team_id) }}">设置分数</a></td>
+                <td><a class="btn btn-primary" href="{{ url_for('teacher.task_edit_score',courseid=courseid,taskid=taskname.id,teamid=task.team_id,teacherid=current_user.id) }}">设置分数</a></td>
             {% else %}
                 <td>未提交</td>
             {% endif %}

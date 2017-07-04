@@ -21,22 +21,26 @@
         <thead>
         <td>资源名</td>
         <td>标签</td>
+        <td>上传者</td>
         <td>操作</td>
         </thead>
     {% else %}
             <br/> <br/>
     <p>文件列表为空</p>
     {% endif %}
-        {% for file_record in file_records %}
+        {% for i in range(file_num) %}
         <tr>
             <td>
-                {{ file_record.name }}
+                {{ file_records[i].name }}
             </td>
             <td>
-                {{ tag_names[file_record.tag_id] }}
+                {{ tag_names[file_records[i].tag_id] }}
+            </td>
+            <td>
+                {{ user_names[i] }}
             </td>
         <td>
-            <a class="btn btn-primary" href="{{ url_for('student.course_source_download', courseid=courseid,fileid=file_record.id) }}">下载</a>
+            <a class="btn btn-primary" href="{{ url_for('student.course_source_download', courseid=courseid,fileid=file_records[i].id) }}">下载</a>
         </td>
         </tr>
         {% endfor %}

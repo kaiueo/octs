@@ -170,6 +170,26 @@ def permit(id,userid):
         flash('已同意该同学的申请！')
     return redirect(url_for('student.my_team',id=id))
 
+@blueprint.route('/team/trans_master/<id>/<userid>')
+def trans_master(id,userid):
+    flag=True
+    if id==userid:
+        flag=False
+        flash('请设置为其他人！')
+        return redirect(url_for('student.my_team', id=id))
+    if flag:
+        user2 = TeamUserRelation.query.filter(TeamUserRelation.user_id==id).first()
+        user2.is_master = False
+        db.session.add(user2)
+        userlist=TeamUserRelation.query.filter(TeamUserRelation.user_id==userid).first()
+        print(userid)
+        userlist.is_master=True
+        db.session.add(userlist)
+        db.session.commit()
+        flash('已经将其设为组长')
+        Message.sendMessage(id, userid, '你已经被原组长设为组长')
+        return redirect(url_for('student.my_team', id=id))
+
 @blueprint.route('/team/reject/<id>/<userid>')
 def reject(id,userid):
     temp = TeamUserRelation.query.filter_by(user_id=userid).first()
@@ -439,17 +459,28 @@ def course_source(courseid):
     tags = course.tags
     tag_names = {}
     file_records = File.query.filter_by(course_id=courseid).all()
+    user_names = []
+
     for file_record in file_records:
+        user = User.query.filter_by(id=file_record.user_id).first()
+        user_names.append(user.name)
         tag = Tag.query.filter_by(id=file_record.tag_id).first()
         tag_names[file_record.tag_id] = tag.name
-    return render_template('student/source.html', file_records=file_records, courseid=courseid, tags=tags, tag_names=tag_names)
+    return render_template('student/source.html', file_records=file_records, courseid=courseid, tags=tags, tag_names=tag_names,
+                           user_names=user_names,file_num=len(file_records))
 
 @blueprint.route('/source/<courseid>/tag/<tagid>')
 def course_source_tag(courseid, tagid):
     course = Course.query.filter_by(id=courseid).first()
     tags = course.tags
     file_records = File.query.filter_by(tag_id=tagid).all()
-    return render_template('student/source_tag.html', file_records=file_records, courseid=courseid, tags=tags, tagid=tagid)
+    user_names = []
+
+    for file_record in file_records:
+        user = User.query.filter_by(id=file_record.user_id).first()
+        user_names.append(user.name)
+    return render_template('student/source_tag.html', file_records=file_records, courseid=courseid, tags=tags, tagid=tagid,
+                           user_names=user_names, file_num=len(file_records))
 
 @blueprint.route('/source/<courseid>/files/download')
 def source_file_download_zip(courseid):

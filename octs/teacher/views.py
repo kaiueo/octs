@@ -401,18 +401,22 @@ def task_give_score(courseid,taskid):
         #print(task_name.name)
         return render_template('teacher/task_score.html', flag=True,list=task_team_list,taskname=task_name,courseid=courseid)
 
-@blueprint.route('/<courseid>/task/<taskid>/givescore/<teamid>',methods=['GET', 'POST'])
-def task_edit_score(courseid,taskid,teamid):
+@blueprint.route('/<courseid>/task/<taskid>/scores/score/<teamid>/<teacherid>',methods=['GET', 'POST'])
+def task_edit_score(courseid,taskid,teamid,teacherid):
     taskscore=TaskTeamRelation.query.filter(TaskTeamRelation.task_id==taskid).filter(TaskTeamRelation.team_id==teamid).first()
     form = TaskScoreForm()
     if form.validate_on_submit():
         taskscore.score=form.task_score.data
+        userlist=TeamUserRelation.query.filter(TeamUserRelation.team_id==teamid).all()
+        for user in userlist:
+            Message.sendMessage(teacherid,user.user_id,'批改意见：'+form.content.data)
         db.session.add(taskscore)
         db.session.commit()
         flash('已经提交分数！')
         return redirect(url_for('teacher.task_give_score',courseid=courseid,taskid=taskid))
     if taskscore.score>=0:
         form.task_score.data=taskscore.score
+        form.content.data=''
     return render_template('teacher/set_score.html',form=form,courseid=courseid,taskid=taskid,teamid=teamid)
 
 @blueprint.route('/<courseid>/task<taskid>/scores')
@@ -453,19 +457,25 @@ def source(courseid):
     tags = course.tags
     tag_names = {}
     file_records = File.query.filter_by(course_id=courseid).all()
+    user_names = []
     for file_record in file_records:
         tag = Tag.query.filter_by(id=file_record.tag_id).first()
+        user = User.query.filter_by(id=file_record.user_id).first()
+        user_names.append(user.name)
         tag_names[file_record.tag_id] = tag.name
-    return render_template('teacher/source.html', form=form, file_records=file_records, courseid=courseid, tags=tags, tag_names=tag_names)
+    return render_template('teacher/source.html', form=form, file_records=file_records,
+                           courseid=courseid, tags=tags, tag_names=tag_names,user_names=user_names, file_num=len(file_records))
 
 @blueprint.route('/source/<courseid>/tag/<tagid>',methods=['GET','POST'])
 def source_tag(courseid, tagid):
     form = FileForm()
     course = Course.query.filter_by(id=courseid).first()
     tags = course.tags
-
+    user_names = []
     file_records = File.query.filter_by(tag_id=tagid).all()
-
+    for file_record in file_records:
+        user = User.query.filter_by(id=file_record.user_id).first()
+        user_names.append(user.name)
     if form.validate_on_submit():
         for file in request.files.getlist('file'):
             file_record = File()
@@ -490,7 +500,8 @@ def source_tag(courseid, tagid):
             db.session.add(file_record)
         db.session.commit()
         return redirect(url_for('teacher.source_tag', courseid=courseid, tagid=tagid))
-    return render_template('teacher/source_tag.html', form=form, file_records=file_records, courseid=courseid, tags=tags, tagid=tagid)
+    return render_template('teacher/source_tag.html', form=form, file_records=file_records,
+                           courseid=courseid, tags=tags, tagid=tagid,user_names=user_names,file_num=len(file_records))
 
 @blueprint.route('/source/<courseid>/tag/add/<tagname>',methods=['GET','POST'])
 def tag_add(courseid, tagname):
